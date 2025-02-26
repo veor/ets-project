@@ -23,7 +23,9 @@ export class RequestDialogComponent implements OnInit {
   divisions: any[] = [];
   offices: any[] = [];
 
-  selectedRequestDivision: string = '';
+  selectedRequestDivision: string = ''; 
+  selectedRequestDivisionName: string = '';  // Stores the division name to display
+
   name: string = '';
   property_no: string = '';
   contact_no: string = '';
@@ -32,7 +34,9 @@ export class RequestDialogComponent implements OnInit {
   division_name: string = '';
   issue_request: string = '';
 
-  constructor(public dialogRef: MatDialogRef<RequestDialogComponent>, private clientService: ClientService, private notificationService: NotificationService) {}
+  constructor(public dialogRef: MatDialogRef<RequestDialogComponent>, private clientService: ClientService, private notificationService: NotificationService) {
+    this.dialogRef.disableClose = true;
+  }
 
   ngOnInit(): void {
     this.loadData();
@@ -41,9 +45,18 @@ export class RequestDialogComponent implements OnInit {
   loadData(): void {
     this.isLoading = true;
     Promise.all([this.fetchRequestDivisions(), this.fetchDivisions(), this.fetchOffices()])
-      .then(() => this.isLoading = false)
-      .catch(() => this.isLoading = false);
-  }
+          .then(() => {
+            // Set the division with requestDiv_Id = 1 as selected by default
+            const defaultDivision = this.requestDivisions.find(d => d.requestDiv_Id === "1");
+            if (defaultDivision) {
+              this.selectedRequestDivision = defaultDivision.requestDiv_Id.toString();
+              this.selectedRequestDivisionName = defaultDivision.requestDiv_Name;
+            }
+            this.isLoading = false;
+          })
+          .catch(() => this.isLoading = false);
+      }
+
 
   fetchRequestDivisions(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -108,7 +121,6 @@ export class RequestDialogComponent implements OnInit {
   }
 
   submitRequest(): void {
-    // if (!this.selectedDivision) {
     if (!this.selectedRequestDivision) {
       this.notificationService.showNotification('Please select a division before submitting the request.', 'error');
       return;

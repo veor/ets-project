@@ -11,10 +11,13 @@
       <h2 class="form-title">Generate Service Request</h2>
       <div class="select-search-type">
         <label for="request">Request Technical Support</label><br>
-        <select id="select_request" [(ngModel)]="selectedRequestDivision" required>
+        <input type="text" [value]="selectedRequestDivisionName" readonly />
+        <input type="hidden" [(ngModel)]="selectedRequestDivision" name="selectedRequestDivision"
+          [value]="selectedRequestDivision" />
+<!--         <select id="select_request" [(ngModel)]="selectedRequestDivision" required>
           <option value="" disabled selected>Select Division</option>
           <option *ngFor="let requestDivision of requestDivisions" [value]="requestDivision.requestDiv_Id">{{ requestDivision.requestDiv_Name }}</option>
-        </select>
+        </select> -->
       </div>
       <br>
     
@@ -81,6 +84,10 @@
             <ng-template #loadingSpinner>
               <mat-spinner diameter="20" color="accent"></mat-spinner>
             </ng-template>
+          </button>
+
+          <button mat-raised-button type="button" (click)="closeDialog()" class="cancel-btn">
+            Cancel
           </button>
         </div>
     

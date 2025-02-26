@@ -81,6 +81,15 @@ button:hover {
   background-color: #ff8161;
 }
 
+.cancel-btn {
+  background-color: #ccc;
+  color: #333;
+  margin-left: 10px;
+}
+
+.cancel-btn:hover {
+  background-color: #aaa;
+}
 
 /* Responsive Styles */
 @media (max-width: 768px) {
