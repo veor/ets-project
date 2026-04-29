@@ -8,12 +8,16 @@ defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirn
 defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
 return new \Phalcon\Config([
+// return new \Phalcon\Config\Config([
     'database' => [
         'adapter'     => 'Mysql',
         'host'        => 'localhost',
-        'username'    => 'root',
+        'username'    => 'root', 
         'password'    => 'root',
-        'dbname'      => 'etsdb',
+        'dbname'      => 'etsdb', 
+        // 'username'    => 'qsadmin_kent',
+        // 'password'    => 'c7UAUQ,&uPUS',
+        // 'dbname'      => 'qsadmin_etsdb',
         'charset'     => 'utf8',
     ],
     'application' => [
@@ -27,5 +31,11 @@ return new \Phalcon\Config([
         'tcpdfDir'       => APP_PATH . '/library/tcpdf/',
         'cacheDir'       => BASE_PATH . '/cache/',
         'baseUri'        => '/ets/',
-    ]
+        // 'baseUri'        => 'https://ets.quezonsystems.com/',
+    ],
+    'jwt' => [
+        'secret' => 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456789012345678901234567890abcdef1234567890abcdef',
+        'expiration' => 3600
+    ],
+    
 ]);

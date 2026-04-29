@@ -3,104 +3,144 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { NotificationService } from '../../shared/notification.service';
+// import { NotificationService } from '../../shared/notification.service';
+import { UserSettingsService } from '../../services/user-settings.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SnackBarService } from '../../services/snackbar.service';
+import { LoaderComponent } from '../../shared/loader/loader.component';
 
 @Component({
   selector: 'app-user-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    FormsModule, 
+    MatProgressBarModule,
+    LoaderComponent
+  ],
   templateUrl: './user-settings.component.html',
   styleUrl: './user-settings.component.css'
 })
 export class UserSettingsComponent implements OnInit{
-  /////////// User Settings 
-  myAccountForm: FormGroup;
-  passwordForm: FormGroup;
-  selectedPermissions: number[] = [];
-  isPasswordModalVisible: boolean = false;  // Flag to control modal visibility
-  isPermissionsModalVisible: boolean = false; // Flag to control permissions modal visibility
-
-  allPermissions: { id: number; label: string; children?: { id: number; label: string }[] }[] = [
-    { id: 1.6, label: 'Administrator', children: [
-      { id: 1.1, label: 'Edit User' },
-      { id: 1.2, label: 'Change Password' },
-      { id: 1.3, label: 'Add User (User Management Required!)' },
-      { id: 1.4, label: 'Department Management' },
-      { id: 1.5, label: 'Add/Edit Permissions' },
-      { id: 1.7, label: 'User Management' },
-      { id: 1.8, label: 'Add Personnel (User Management Required!)' },
-    ]},
-    { id: 1.9, label: 'Incoming Task' },
-    { id: 2.1, label: 'Monitoring' },
-    { id: 2.2, label: 'Dashboard' },
-    { id: 2.3, label: 'PMS Log' },
-    { id: 3.1, label: 'ICT Supervisor' },
-    { id: 4.1, label: 'Office Supervisor' },
-  ];
-  
-  // For showing the appropriate section based on permissions 
-  showPermissionsSection: boolean = false;  
-  showAccountSettingsSection: boolean = true;
-  showChangePasswordSection: boolean = true;
-  showUserManagement: boolean = true;
-  showOfficeManagement: boolean = true;
-  showAddUser: boolean = true;
-  showAddPersonnel: boolean = true;
-
-  // for loading account settings data 
+  getCurrentUserId() {
+    throw new Error('Method not implemented.');
+  }
+  updatePassword(arg0: { id_number: any; currentPassword: any; newPassword: any; }) {
+    throw new Error('Method not implemented.');
+  }
   isLoading: boolean = false;
   isSaving: boolean = false;
   isChangingPassword: boolean = false;
   isAddingPerms: boolean = false;
-
-  /////////// User Management 
-  addUserForm!: FormGroup;
-  addPersonnelForm!: FormGroup;
-  divisions: any[] = [];
-  offices: any[] = [];
-  selectedAddPermissions: number[] = [];
-  users: any[] = []; // Store fetched users
-
-  currentPage: number = 1; // Track the current page
-  rowsPerPage: number = 8; // Maximum rows per page
-
-  isUserEditModalOpen = false;
-  selectedUser: any = null;
-
-  // Sub-Permissions
-  adminSubPermissions = [
-    { id: 1.1, label: 'Edit User' },
-    { id: 1.2, label: 'Change User Password' },
-    { id: 1.3, label: 'Add User' },
-    { id: 1.4, label: 'Office Management' },
-    { id: 1.5, label: 'Add/Edit Permissions' },
-  ];
-  
-  // for loading users 
   isLoadingFetch: boolean = false;
   isRegistering: boolean = false;
   isAddingPersonnel: boolean = false;
+  isLoadingPermissions: boolean = false;
 
-  isAddUserModalOpen = false; 
+  // Flag for showing the appropriate section based on permissions
+  showAccountSection: boolean = true;
+  showCurrUserSaveBtn: boolean = true;
+  showCurrUserChangePassBtn: boolean = true;
+  showCurrUserManagePermsBtn: boolean = true;
+
+  showUserSection: boolean = true;
+  showAddUserBtn: boolean = true;
+  showAddTechnicalStaffBtn: boolean = true;
+  showEditUserBtn: boolean = true;
+
+  showDepartmentSection: boolean = true;
+  showAddDepartmentBtn: boolean = true;
+  showEditDepartmentBtn: boolean = true;
+  showActivateUserBtn: boolean = true;
+
+  isPasswordModalVisible: boolean = false;  
+  isPermissionsModalVisible: boolean = false; 
+
+  // ALL PERMS
+  allPermissions: { id: string; label: string; children?: { id: string; label: string }[] }[] = [
+    { id: '1.1', label: 'Administrator', children: [
+      { id: '1.2', label: 'Change Password' },
+      { id: '2.1', label: 'Manage System' },
+      { id: '2.2', label: 'Enable Account Section' },
+      { id: '2.3', label: 'Edit Current User' },
+      { id: '2.4', label: 'Change Current User Password' },
+      { id: '2.5', label: 'Edit Current User Permissions' },
+      { id: '2.6', label: 'Enable User Section' },
+      { id: '2.7', label: 'Add New User' },
+      { id: '2.8', label: 'Add New Technical Staff' },
+      { id: '2.9', label: 'Edit User' },
+      { id: '3.1', label: 'Enable Department Section' },
+      { id: '3.2', label: 'Add New Department' },
+      { id: '3.3', label: 'Edit Department' },
+    ]},
+    { id: '3.4', label: 'Dashboard', children: [
+      { id: '5.4', label: 'My Data' },
+      { id: '5.5', label: 'All Data' },
+
+    ]},
+    // { id: '3.5', label: 'Incoming Task' },
+    { id: '3.6', label: 'Register Device'},
+    { id: '4.1', label: 'Preventive Maintenance', children: [
+      { id: '4.3', label: 'Maintenance Log' },
+      { id: '4.2', label: 'Device Record' },
+    ]},
+      { id: '5.1', label: 'Office Request' },
+      { id: '5.2', label: 'Support Request' },
+      { id: '5.3', label: 'Monitoring' },
+      { id: '3.5', label: 'Task' },
+  ];
+
+  // CURRENT USER ACCOUNT INFORMATION
+  myAccountForm: FormGroup;
+  divisions: any[] = [];
+  allDivs: any[] = [];
+  offices: any[] = [];
+  passwordForm: FormGroup;
+  selectedPermissions: string[] = [];
+  editableSelectedPerms: string[] =[];
+  showCurrentPassword: boolean = false;
+  showNewPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
+  // MANAGE ALL USER INFORMATION
+  users: any[] = [];
+  isAddUserModalOpen = false;
   isAddPersonnelModalOpen = false;
+  addUserForm!: FormGroup;
+  addPersonnelForm!: FormGroup;
+  isUserEditModalOpen = false;
+  selectedUser: any = null;
+  selectedAddUserPermissions: string[] = [];
 
-  // Office Management 
+  // MANAGE OFFICE AND DIVISIONS
+  isModalOpen = false; 
+  departments: any[] = [];
   officeName: string = '';
   officeValue: string = '';
   divisionName: string = '';
-  departments: any[] = [];
-  isModalOpen = false;
-  isEditModalOpen = false; // For edit modal
-  isDivisionModalOpen = false;
-  isEditDivisionModalOpen = false;
   selectedDivision: any = null;
-  selectedOffice: any = null; 
-  currentDeptPage: number = 1; // Track the current page
-  rowsPerDeptPage: number = 8; // Maximum rows per page
-  currentDivPage: number = 1; // Track the current page
-  rowsPerDivPage: number = 8; // Maximum rows per page
-  
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private notificationService: NotificationService) {
+  selectedOfficeId: number | null = null;
+
+  isEditModalOpen = false; 
+  isDivisionModalOpen = false;
+  selectedOffice: any = null; // SAVE EDIT OFFICE 
+
+  currentDeptPage: number = 1; 
+  rowsPerDeptPage: number = 5; 
+  currentDivPage: number = 1; 
+  rowsPerDivPage: number = 5;
+
+  currentPage: number = 1; 
+  rowsPerPage: number = 5; 
+
+  constructor(
+    private fb: FormBuilder, 
+    private userSettingService: UserSettingsService, 
+    private router: Router, 
+    private toast: SnackBarService,
+    // private notificationService: NotificationService
+  ) {
     this.myAccountForm = this.fb.group({
       idNumber: [{ value: '', disabled: true }],
       name: ['', [Validators.required]],
@@ -108,13 +148,6 @@ export class UserSettingsComponent implements OnInit{
       office: ['', Validators.required],
       division: ['', Validators.required],
     });
-
-    this.passwordForm = this.fb.group({
-      currentPassword: ['', Validators.required],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
-    });
-
     this.addUserForm = this.fb.group({
       id_number: ['', Validators.required],
       name: ['', Validators.required],
@@ -123,7 +156,11 @@ export class UserSettingsComponent implements OnInit{
       division: ['', Validators.required],
       office: ['', Validators.required]
     });
-    
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
+    });
     this.addPersonnelForm = this.fb.group({
       personnel_id: ['', Validators.required],
       personnel_name: ['', Validators.required],
@@ -132,326 +169,313 @@ export class UserSettingsComponent implements OnInit{
   }
 
   ngOnInit(): void {
-      // Get current user details from the backend and populate the form
+      // CURRENT USER INFORMATION
+      this.loadUserInfo();
+      this.loadOffices();
+      this.loadUsers();
       this.fetchPermissions();
       this.fetchDepartments();
       this.fetchDivisions();
-      // fetch current user info 
-      this.loadUserInfo();
-      this.loadDivisions();
-      this.loadOffices();
-      this.loadUsers();
-      
-      this.authService.getUserInfo().subscribe((response: any) => {
+
+      this.userSettingService.getUserInfo().subscribe((response: any) => {
         if (response.status === 'success') {
           this.myAccountForm.patchValue({
-            idNumber: response.data.id_number, 
+            idNumber: response.data.id_number,
             name: response.data.name,
             designation: response.data.designation,
-            office: response.data.office_id,  
-            division: response.data.division_id,  
+            office: response.data.office_id,
+            division: response.data.division_id,
           });
-          
+
           // Disable the idNumber control after setting the value
           this.myAccountForm.get('idNumber')?.disable();
         } else {
           alert('Failed to fetch user details');
         }
       });
-
       this.addUserForm = this.fb.group({
         id_number: ['', Validators.required],
         name: ['', Validators.required],
-        password: ['', [Validators.required, Validators.minLength(6)]],
+        password: ['', [
+          Validators.required, 
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[A-Z]).*$/)  // password criteria
+        ]],
         designation: ['', Validators.required],
         division: ['', Validators.required],
         office: ['', Validators.required],
       });
-  
      this.addPersonnelForm = this.fb.group({
-       personnel_id: ['', Validators.required], 
+       personnel_id: ['', Validators.required],
        personnel_name: ['', Validators.required],
        division: ['', Validators.required],
       });
 
   }
-
-  // update logged in user 
-  saveChanges(): void {
-    if (this.myAccountForm.invalid) {
-      this.notificationService.showNotification('Please fill out all required fields.', 'error');
-      return;
-    }
-    
-    this.isSaving = true;
-    const updatedData = this.myAccountForm.getRawValue(); 
-    this.authService.updateUserInfo(updatedData).subscribe(
-      (response: any) => {
-        this.isSaving = false;
-        if (response.status === 'success') {
-          this.notificationService.showNotification('User information updated successfully.', 'success');
-        } else {
-          this.notificationService.showNotification('Failed to update user information: ' ,'error', + response.message);
-        }
-      },
-      (error) => {
-        this.isSaving = false;
-        console.error('Error updating user information', error);
-        this.notificationService.showNotification('An error occurred while updating your information.', 'error');
-      }
-    );
-  }
-
-  // Open Change Password Dialog
-  openChangePasswordDialog(): void {
-    this.isPasswordModalVisible = true;
-  }
-
-  // Close Change Password Dialog
-  closeChangePasswordDialog(): void {
-    this.isPasswordModalVisible = false;
-  }
-
-  // change password for both user and user with permission 
-  changePassword(): void {
-    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.value;
-
-    if (newPassword !== confirmPassword) {
-      this.notificationService.showNotification('Password do not match.', 'error');
-      return;
-    }
-
-    this.isChangingPassword = true;
-    this.authService.changePassword({ current_password: currentPassword, new_password: newPassword }).subscribe(
-      (response: any) => {
-        this.isChangingPassword = false;
-        if (response.status === 'success') {
-          this.notificationService.showNotification('Password updated successfully.', 'success');
-          this.closeChangePasswordDialog();
-          this.passwordForm.reset();
-        } else {
-          this.notificationService.showNotification('Failed to update user password: ', 'error', + response.message);
-        }
-      },
-      (error) => {
-        this.isChangingPassword = false;
-        console.error('Error changing password', error);
-        this.notificationService.showNotification('An error occurred while updating your password.', 'error');
-      }
-    );
-  }
-
-  // dialog for editing logged in user's permission 
-  openPermissionsDialog(): void {
-    this.isPermissionsModalVisible = true;
-  }
-
-  closePermissionsDialog(): void {
-    this.isPermissionsModalVisible = false;
-  }
-
-  // fetch logged in user's permissions and display their corresponding settings based on their permissions. 
-  fetchPermissions(): void {
-    this.authService.getUserPermissions().subscribe(
-      (response: any) => {
-        if (response.status === 'success') {
-          this.selectedPermissions = response.permissions || [];
-
-          // Check if any of the required permissions are present
-          this.showAccountSettingsSection = this.selectedPermissions.includes(1.1);
-          this.showChangePasswordSection =  this.selectedPermissions.includes(1.2); 
-          this.showAddUser =  this.selectedPermissions.includes(1.3); 
-          this.showOfficeManagement =  this.selectedPermissions.includes(1.4); 
-          this.showPermissionsSection = this.selectedPermissions.includes(1.5);
-          this.showUserManagement = this.selectedPermissions.includes(1.7);
-          this.showAddPersonnel =  this.selectedPermissions.includes(1.8); 
-        } else {
-          alert('Failed to fetch permissions.');
-        }
-      },
-      (error) => {
-        console.error('Error fetching permissions', error);
-      }
-    );
-  }
-
-  // fetch selected user permissions for update 
-  fetchPermissionsForSelectedUser(userId: number): void {
-    this.authService.getUserPermissionsById(userId).subscribe(
-      (response: any) => {
-        if (response.status === 'success') {
-          this.selectedPermissions = response.permissions || [];
-        } else {
-          alert('Failed to fetch permissions.');
-        }
-      },
-      (error) => {
-        console.error('Error fetching permissions', error);
-      }
-    );
-  }
-  
-  togglePermission(permission: number, children?: { id: number }[]): void {
-    const index = this.selectedPermissions.indexOf(permission);
-  
-    if (index > -1) {
-      // If permission is already selected, remove it
-      this.selectedPermissions.splice(index, 1);
-  
-      // If it has children, remove them as well
-      if (children) {
-        children.forEach(child => {
-          const childIndex = this.selectedPermissions.indexOf(child.id);
-          if (childIndex > -1) {
-            this.selectedPermissions.splice(childIndex, 1);
-          }
-        });
-      }
-    } else {
-      // Add the selected permission
-      this.selectedPermissions.push(permission);
-  
-      // If it has children, add them as well
-      if (children) {
-        children.forEach(child => {
-          if (!this.selectedPermissions.includes(child.id)) {
-            this.selectedPermissions.push(child.id);
-          }
-        });
-      }
-  
-      // If a child is selected, ensure the parent (Administrator) is also selected
-      const parent = this.allPermissions.find(p => p.children?.some(child => child.id === permission));
-      if (parent && !this.selectedPermissions.includes(parent.id)) {
-        this.selectedPermissions.push(parent.id);
-      }
-    }
-  }
-
-  // toggle selected user's permissions 
-  toggleSelectedUserPermission(permission: number, children?: { id: number }[]): void {
-    const index = this.selectedPermissions.indexOf(permission);
-  
-    if (index > -1) {
-      // If permission is already selected, remove it
-      this.selectedPermissions.splice(index, 1);
-  
-      // If it has children, remove them as well
-      if (children) {
-        children.forEach(child => {
-          const childIndex = this.selectedPermissions.indexOf(child.id);
-          if (childIndex > -1) {
-            this.selectedPermissions.splice(childIndex, 1);
-          }
-        });
-      }
-    } else {
-      // Add the selected permission
-      this.selectedPermissions.push(permission);
-  
-      // If it has children, add them as well
-      if (children) {
-        children.forEach(child => {
-          if (!this.selectedPermissions.includes(child.id)) {
-            this.selectedPermissions.push(child.id);
-          }
-        });
-      }
-  
-      // If a child is selected, ensure the parent (Administrator) is also selected
-      const parent = this.allPermissions.find(p => p.children?.some(child => child.id === permission));
-      if (parent && !this.selectedPermissions.includes(parent.id)) {
-        this.selectedPermissions.push(parent.id);
-      }
-    }
-  }
-  
-  // save current user's permissions 
-  savePermissions(): void {
-    this.isAddingPerms = true;
-    this.authService.updateUserPermissions(this.selectedPermissions).subscribe(
-      (response: any) => {
-        if (response.status === 'success') {
-          this.isAddingPerms = false;
-          this.notificationService.showNotification('Permissions updated successfully.', 'success');
-          this.closePermissionsDialog();
-          setTimeout(() => {
-            // Trigger a page refresh after success
-            window.location.reload();
-          }, 1500);
-        } else {
-          this.isAddingPerms = false;
-          this.notificationService.showNotification('Failed to permissions update successfully.', 'error');
-        }
-      },
-      (error) => {
-        this.isAddingPerms = false;
-        this.notificationService.showNotification('Error updating permissions.', 'error');
-      }
-    );
-  }
-
-  //////////////////////////////// User Management 
+  // LOAD CURRENT USER INFORMATION
   loadUserInfo(): void {
-    this.authService.getUserInfo().subscribe(
-      (response: any) => {
-        if (response.status === 'success') {
-          this.isLoadingFetch = false;
-          const userData = response.data;
-        } else {
-          this.isLoadingFetch = false;
-          this.notificationService.showNotification('Failed to retrieve user info.', 'error');
-          console.error('Failed to retrieve user info');
-        }
-      },
-      (error) => {
-        this.isLoadingFetch = false;
-        this.notificationService.showNotification('Error fetching user info ' ,'error', + error);
-        console.error('Error fetching user info', error);
+    this.userSettingService.getUserInfo().subscribe((response: any) => {
+      if (response.status === 'success') {
+        this.myAccountForm.patchValue({
+          idNumber: response.data.id_number,
+          name: response.data.name,
+          designation: response.data.designation,
+          office: response.data.office_id,
+          division: response.data.division_id,
+        });
+      this.loadDivisions(response.data.office_id);
+      } else {
+        alert('Failed to fetch user details');
       }
-    );
+    });
   }
-
-  loadDivisions(): void {
-    this.authService.getDivisions().subscribe(
-      (response: any) => {
-        if (response.status === 'success') {
-          this.isLoadingFetch = false;
-          this.divisions = response.data; // Populate divisions array
-        } else {
-          this.isLoadingFetch = false;
-          this.notificationService.showNotification('Failed to fetch divisions.', 'error');
-          console.error('Failed to fetch divisions');
-        }
-      },
-      (error) => console.error('Error fetching divisions', error)
-    );
-  }
-
+  // LOAD CURRENT USER OFFICE
   loadOffices(): void {
-    this.authService.getOffices().subscribe(
+    this.userSettingService.getOffices().subscribe(
       (response: any) => {
         if (response.status === 'success') {
-          this.isLoadingFetch = false;
-          this.offices = response.data; // Populate offices array
+          this.offices = response.data;
         } else {
-          this.isLoadingFetch = false;
-          this.notificationService.showNotification('Failed to fetch offices', 'error');
-          console.error('Failed to fetch offices');
+          // this.notificationService.showNotification('Failed to fetch offices', 'error');
+          this.toast.show('Failed to fetch offices', 'error');
         }
       },
       (error) => console.error('Error fetching offices', error)
     );
   }
+  // LOAD CURRENT USER DIVISION BASED ON OFFICE
+  loadDivisions(officeId: number): void {
+    this.userSettingService.getDivisions(officeId).subscribe(
+      (response: any) => {
+        if (response.status === 'success') {
+          this.divisions = response.data;
+        } else {
+          // this.notificationService.showNotification('Failed to fetch divisions', 'error');
+          this.toast.show('Failed to fetch divisions', 'error');
+        }
+      },
+      (error) => console.error('Error fetching divisions', error)
+    );
+  }
+  // HANDLE CHANGE IN OFFICE SELECTION
+  onOfficeChange(event: any): void {
+    const officeId = this.myAccountForm.get('office')?.value;
+    this.loadDivisions(officeId); 
+  }
+  onEditOfficeChange(officeId: number): void {
+    if (officeId) {
+      this.userSettingService.getDivisions(officeId).subscribe({
+        next: (response) => {
+          if (response.status === 'success') {
+            this.divisions = response.data;
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching divisions:', error);
+          this.divisions = [];
+        }
+      });
+    } else {
+      this.divisions = [];
+    }
+  }
+  openEditUserModal(user: any): void {
+    this.selectedUser = { ...user }; 
+    this.isUserEditModalOpen = false; 
+  
+    if (this.selectedUser.office_id) {
+      this.userSettingService.getDivisions(this.selectedUser.office_id).subscribe({
+        next: (response) => {
+          if (response.status === 'success') {
+            this.divisions = response.data;
+  
+            this.isUserEditModalOpen = true;
+          }
+        },
+        error: (error) => {
+          console.error('Failed to load divisions:', error);
+          this.divisions = [];
+          this.isUserEditModalOpen = true;
+        }
+      });
+    } else {
+      this.divisions = [];
+      this.isUserEditModalOpen = true;
+    }
+  }
+  // SAVE CURRENT USER INFORMATION
+  saveChanges(): void {
+    if (this.myAccountForm.invalid) {
+      // this.notificationService.showNotification('Please fill out all required fields.', 'error');
+      this.toast.show('Please fill out all required fields.', 'error');
+      return;
+    }
 
+    this.isSaving = true;
+    const updatedData = this.myAccountForm.getRawValue();
+    this.userSettingService.updateUserInfo(updatedData).subscribe(
+      (response: any) => {
+        this.isSaving = false;
+        if (response.status === 'success') {
+          // this.notificationService.showNotification('User information updated successfully.', 'success');
+          this.toast.show('User information updated successfully.', 'success');
+        } else {
+          // this.notificationService.showNotification('Failed to update user information: ' ,'error', + response.message);
+          this.toast.show('Failed to update user information: ' ,'error', + response.message);
+        }
+      },
+      (error) => {
+        this.isSaving = false;
+        console.error('Error updating user information', error);
+        // this.notificationService.showNotification('An error occurred while updating your information.', 'error');
+        this.toast.show('An error occurred while updating your information.', 'error');
+      }
+    );
+  }
+  // OPEN CURRENT USER CHANGE PASS DIALOG
+  openChangePasswordDialog(): void {
+    this.isPasswordModalVisible = true;
+  }
+  // CLOSE CURRENT USER CHANGE PASS DIALOG
+  closeChangePasswordDialog(): void {
+    this.isPasswordModalVisible = false;
+  }
+  // SAVE NEW PASS FOR CURRENT USER AND PERMISSION BASED USER
+  changePassword(): void {
+    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.value;
+
+    if (newPassword !== confirmPassword) {
+      // this.notificationService.showNotification('Password do not match.', 'error');
+      this.toast.show('Password do not match.', 'error');
+      return;
+    }
+
+    this.isChangingPassword = true;
+    this.userSettingService.changePassword({ current_password: currentPassword, new_password: newPassword }).subscribe(
+      (response: any) => {
+        this.isChangingPassword = false;
+        if (response.status === 'success') {
+          // this.notificationService.showNotification('Password updated successfully.', 'success');
+          this.toast.show('Password updated successfully.', 'success');
+          this.closeChangePasswordDialog();
+          this.passwordForm.reset();
+        } else {
+          // this.notificationService.showNotification('Failed to update user password: ', 'error', + response.message);
+          this.toast.show('Failed to update user password: ', 'error', + response.message);
+        }
+      },
+      (error) => {
+        this.isChangingPassword = false;
+        console.error('Error changing password', error);
+        // this.notificationService.showNotification('An error occurred while updating your password.', 'error');
+        this.toast.show('An error occurred while updating your password.', 'error');
+      }
+    );
+  }
+  // FETCH CURRENT USER PERMS AND SHOW SETTING PERMS BASED
+  fetchPermissions(): void {
+    this.userSettingService.getUserPermissions().subscribe(
+      (response: any) => {
+        if (response.status === 'success') {
+          this.selectedPermissions = response.permissions || [];
+          this.showAccountSection = this.selectedPermissions.includes('2.2');
+          this.showCurrUserSaveBtn = this.selectedPermissions.includes('2.3');
+          this.showCurrUserChangePassBtn = this.selectedPermissions.includes('2.4');
+          this.showCurrUserManagePermsBtn = this.selectedPermissions.includes('2.5');
+        
+          this.showUserSection = this.selectedPermissions.includes('2.6');
+          this.showAddUserBtn = this.selectedPermissions.includes('2.7');
+          this.showAddTechnicalStaffBtn = this.selectedPermissions.includes('2.8');
+          this.showEditUserBtn = this.selectedPermissions.includes('2.9');
+        
+          this.showDepartmentSection = this.selectedPermissions.includes('3.1');
+          this.showAddDepartmentBtn = this.selectedPermissions.includes('3.2');
+          this.showEditDepartmentBtn = this.selectedPermissions.includes('3.3');
+
+        } else {
+          alert('Failed to fetch permissions.');
+        }
+      },
+      (error) => {
+        console.error('Error fetching permissions', error);
+      }
+    );
+  }
+  // OPEN CURRENT USER PERMS DIALOG
+  openPermissionsDialog(): void {
+    this.isPermissionsModalVisible = true;
+  }
+  // CLOSE CURRENT USER PERMS DIALOG
+  closePermissionsDialog(): void {
+    this.isPermissionsModalVisible = false;
+  }
+  // CURRENT USER TOGGLE PERMS
+  togglePermission(permission: string, children?: { id: string }[]): void {
+    const index = this.selectedPermissions.indexOf(permission);
+
+    if (index > -1) {
+      this.selectedPermissions.splice(index, 1);
+
+      if (children) {
+        children.forEach(child => {
+          const childIndex = this.selectedPermissions.indexOf(child.id);
+          if (childIndex > -1) {
+            this.selectedPermissions.splice(childIndex, 1);
+          }
+        });
+      }
+    } else {
+      this.selectedPermissions.push(permission);
+
+      if (children) {
+        children.forEach(child => {
+          if (!this.selectedPermissions.includes(child.id)) {
+            this.selectedPermissions.push(child.id);
+          }
+        });
+      }
+
+      const parent = this.allPermissions.find(p => p.children?.some(child => child.id === permission));
+      if (parent && !this.selectedPermissions.includes(parent.id)) {
+        this.selectedPermissions.push(parent.id);
+      }
+    }
+  }
+  // SAVE CURRENT USER PERMS
+  savePermissions(): void {
+    this.isAddingPerms = true;
+    this.userSettingService.updateUserPermissions(this.selectedPermissions).subscribe(
+      (response: any) => {
+        if (response.status === 'success') {
+          this.isAddingPerms = false;
+          // this.notificationService.showNotification('Permissions updated successfully.', 'success');
+          // this.notificationService.showNotification('Re-login, to see your changes.', 'info');
+          this.toast.show('Permissions updated successfully.', 'success');
+          this.toast.show('Re-login, to see your changes.', 'info');
+          this.closePermissionsDialog();
+        } else {
+          this.isAddingPerms = false;
+          // this.notificationService.showNotification('Failed to permissions update successfully.', 'error');
+          this.toast.show('Failed to permissions update successfully.', 'error');
+        }
+      },
+      (error) => {
+        this.isAddingPerms = false;
+        // this.notificationService.showNotification('Error updating permissions.', 'error');
+        this.toast.show('Error updating permissions.', 'error');
+      }
+    );
+  }
+
+//////////// FETCH ALL USER DATA
   loadUsers(): void {
-    // this.isLoadingFetch = true;
-    this.authService.getUsers().subscribe(
+    this.userSettingService.getUsers().subscribe(
       (response: any) => {
         if (response.status === 'success') {
           this.users = response.data;
         } else {
-          this.notificationService.showNotification('Failed to fetch users', 'error');
+          // this.notificationService.showNotification('Failed to fetch users', 'error');
+          this.toast.show('Failed to fetch users', 'error');
           console.error('Failed to fetch users');
         }
       },
@@ -460,221 +484,302 @@ export class UserSettingsComponent implements OnInit{
       }
     );
   }
-  
-  // Method to handle pagination
-  getPaginatedUsers(): any[] {
-    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
-    return this.users.slice(startIndex, startIndex + this.rowsPerPage);
+  // HANDLE CHANGE IN OFFICE SELECTION (For Add User Modal)
+  onAddUserOfficeChange(event: any): void {
+    const officeId = this.addUserForm.get('office')?.value;
+    this.loadDivisionsForAddUser(officeId); 
   }
 
-  changePage(direction: string): void {
-    if (direction === 'next' && (this.currentPage * this.rowsPerPage) < this.users.length) {
-      this.currentPage++;
-    } else if (direction === 'prev' && this.currentPage > 1) {
-      this.currentPage--;
+  loadDivisionsForAddUser(officeId: number): void {
+    this.userSettingService.getDivisions(officeId).subscribe(
+      (response: any) => {
+        if (response.status === 'success') {
+          this.divisions = response.data;
+        } else {
+          // this.notificationService.showNotification('Failed to fetch divisions', 'error');
+          this.toast.show('Failed to fetch divisions', 'error');
+        }
+      },
+      (error) => console.error('Error fetching divisions', error)
+    );
+  }
+
+  toggleAddUserPermission(id: string, children: any[] = []) {
+    const index = this.selectedAddUserPermissions.indexOf(id);
+  
+    if (index > -1) {
+      this.selectedAddUserPermissions.splice(index, 1);
+  
+      if (children.length) {
+        children.forEach(child => {
+          const childIndex = this.selectedAddUserPermissions.indexOf(child.id);
+          if (childIndex > -1) {
+            this.selectedAddUserPermissions.splice(childIndex, 1);
+          }
+        });
+      }
+    } else {
+      this.selectedAddUserPermissions.push(id);
+  
+      if (children.length) {
+        children.forEach(child => {
+          if (!this.selectedAddUserPermissions.includes(child.id)) {
+            this.selectedAddUserPermissions.push(child.id);
+          }
+        });
+      }
+  
+      const parent = this.allPermissions.find(p =>
+        p.children?.some(child => child.id === id)
+      );
+      if (parent && !this.selectedAddUserPermissions.includes(parent.id)) {
+        this.selectedAddUserPermissions.push(parent.id);
+      }
     }
   }
+  // FETCH SELECTED USER PERMS
+  fetchPermissionsForSelectedUser(userId: string): void {
+    this.isLoadingPermissions = true;
+    this.userSettingService.getUserPermissionsById(userId).subscribe(
+      (response: any) => {
+        if (response.status === 'success') {
+          this.editableSelectedPerms = response.permissions || [];
+        } else {
+          alert('Failed to fetch permissions.');
+        }
+        this.isLoadingPermissions = false;
+      },
+      (error) => {
+        console.error('Error fetching permissions', error);
+        this.isLoadingPermissions = false;
+      }
+    );
+  }
+  // TOGGLE SELECTED USER PERMS
+  toggleSelectedUserPermission(permission: string, children?: { id: string }[]): void {
+    const index = this.editableSelectedPerms.indexOf(permission);
 
-  // Function to open the modal
+    if (index > -1) {
+      this.editableSelectedPerms.splice(index, 1);
+
+      if (children) {
+        children.forEach(child => {
+          const childIndex = this.editableSelectedPerms.indexOf(child.id);
+          if (childIndex > -1) {
+            this.editableSelectedPerms.splice(childIndex, 1);
+          }
+        });
+      }
+    } else {
+      this.editableSelectedPerms.push(permission);
+
+      if (children) {
+        children.forEach(child => {
+          if (!this.editableSelectedPerms.includes(child.id)) {
+            this.editableSelectedPerms.push(child.id);
+          }
+        });
+      }
+
+      const parent = this.allPermissions.find(p => p.children?.some(child => child.id === permission));
+      if (parent && !this.editableSelectedPerms.includes(parent.id)) {
+        this.editableSelectedPerms.push(parent.id);
+      }
+    }
+  }
+  // OPEN ADD USER DIALOG
   openAddUserModal() {
     this.isAddUserModalOpen = true;
   }
-
-  // Function to open the modal
+  // OPEN ADD TECHNICAL DIALOG
   openAddPersonnelModal() {
     this.isAddPersonnelModalOpen = true;
   }
-
-  // Function to close the modal
+  // CLOSE ADD USER DIALOG
   closeAddUserModal() {
     this.isAddUserModalOpen = false;
   }
-
-  // Function to close the modal
+  // CLOSE ADD TECHNICAL DIALOG
   closeAddPersonnelModal() {
     this.isAddPersonnelModalOpen = false;
   }
-
-  toggleUserPermission(permission: number): void {
-    const index = this.selectedAddPermissions.indexOf(permission);
-    if (index > -1) {
-      // Remove permission and its sub-permissions (if Administrator)
-      this.selectedAddPermissions.splice(index, 1);
-      if (permission === 1.6) {
-        this.adminSubPermissions.forEach((subPerm) => {
-          const subIndex = this.selectedAddPermissions.indexOf(subPerm.id);
-          if (subIndex > -1) {
-            this.selectedAddPermissions.splice(subIndex, 1);
-          }
-        });
-      }
-    } else {
-      // Add permission and automatically check all sub-permissions if Administrator
-      this.selectedAddPermissions.push(permission);
-      if (permission === 1.6) {
-        this.adminSubPermissions.forEach((subPerm) => {
-          if (!this.selectedAddPermissions.includes(subPerm.id)) {
-            this.selectedAddPermissions.push(subPerm.id);
-          }
-        });
-      }
-    }
-  }
-
-  toggleSubPermission(subPermission: number): void {
-    const index = this.selectedAddPermissions.indexOf(subPermission);
-
-    if (index > -1) {
-      // Remove sub-permission
-      this.selectedAddPermissions.splice(index, 1);
-
-      // Uncheck Administrator if no sub-permissions are selected
-      const anySubPermissionSelected = this.adminSubPermissions.some((subPerm) =>
-        this.selectedAddPermissions.includes(subPerm.id)
-      );
-      if (!anySubPermissionSelected) {
-        const adminIndex = this.selectedAddPermissions.indexOf(1.6);
-        if (adminIndex > -1) {
-          this.selectedAddPermissions.splice(adminIndex, 1);
-        }
-      }
-    } else {
-      // Add sub-permission
-      this.selectedAddPermissions.push(subPermission);
-
-      // Ensure Administrator is checked if any sub-permission is selected
-      if (!this.selectedAddPermissions.includes(1.6)) {
-        this.selectedAddPermissions.push(1.6);
-      }
-    }
-  }
-
+  // SAVE NEW USER
   registerUser(): void {
-    if (this.addUserForm.valid) {
-      const userData = {
-        ...this.addUserForm.value,
-        permissions: JSON.stringify(this.selectedAddPermissions),
-      };
-
-      this.isRegistering = true;
-      this.authService.register(userData).subscribe((response: any) => {
+    if (this.addUserForm.invalid) {
+      this.addUserForm.markAllAsTouched();
+      return;
+    }
+    const formData = this.addUserForm.value;
+    const userData = {
+      id_number: formData.id_number,
+      name: formData.name,
+      password: formData.password,
+      designation: formData.designation,
+      division: formData.division,
+      office: formData.office,
+      permissions: JSON.stringify(this.selectedAddUserPermissions) 
+    };
+    this.isRegistering = true;
+    this.userSettingService.register(userData).subscribe({
+      next: (response) => {
         if (response.status === 'success') {
           this.isRegistering = false;
-          this.notificationService.showNotification('User registered successfully.', 'success');
-          this.selectedAddPermissions = [];
+          // this.notificationService.showNotification('User registered successfully.', 'success');
+          this.toast.show('User registered successfully.', 'success');
+          this.selectedAddUserPermissions = [];
           this.addUserForm.reset();
           this.closeAddUserModal();
           setTimeout(() => {
-            // Trigger a page refresh after success
             window.location.reload();
           }, 1500);
         } else {
+          console.error('Failed to register user:', response.messages);
           this.isRegistering = false;
-          this.notificationService.showNotification('User registration failed. ' ,'error', + response.message);
-        }
-      });
-    } else {
-      this.isRegistering = false; 
-      this.notificationService.showNotification('Please fill out all required fields.', 'error');
-    }
+          // this.notificationService.showNotification('User registration failed. ' ,'error', + response.message);
+          this.toast.show('User registration failed. ' ,'error', + response.message);
+         }
+      },
+      error: (err) => {
+        this.isRegistering = false;
+        // this.notificationService.showNotification('Please fill out all required fields.', 'error');
+        this.toast.show('Please fill out all required fields.', 'error');
+       }
+    });
   }
-
-  saveAsPersonnel(): void {
-    if (this.addPersonnelForm.valid) {
-      const formData = this.addPersonnelForm.value;
-      const selectedDivision = this.divisions.find(
-        (division) => division.division_id === formData.division
-      );
-  
-      if (!selectedDivision) {
-        this.notificationService.showNotification('Invalid division selected.', 'error');
-        // alert('Invalid division selected.');
-        return;
-      }
-      
-      this.isAddingPersonnel = true;
-      const personnelData = {
-        personnel_id: formData.personnel_id, // Corrected to match formControlName
-        personnel_name: formData.personnel_name, // Corrected to match formControlName
-        division_id: formData.division,  // Save selected Division ID
-        division_name: selectedDivision.division_name, // Save Division Name
-      };
-  
-      // Call service to save data to the database
-      this.authService.savePersonnel(personnelData).subscribe(
-        (response: any) => {
-          if (response.status === 'success') {
-            this.isAddingPersonnel = false;
-            this.notificationService.showNotification('Personnel has been added!', 'success');
-            this.addPersonnelForm.reset();
-            this.closeAddPersonnelModal();
-            setTimeout(() => {
-              // Trigger a page refresh after success
-              window.location.reload();
-            }, 1500);
-          } else {
-            this.isAddingPersonnel = false;
-            this.notificationService.showNotification('Failed to save personnel.', 'error');
-          }
-        },
-        (error) => {
-          this.isAddingPersonnel = false;
-          console.error('Error saving personnel:', error);
-          this.notificationService.showNotification('An error occured while saving personnel ' ,'error');
-        }
-      );
-    } else {
-      this.isAddingPersonnel = false;
-      this.notificationService.showNotification('Please fill out all required fields.', 'error');
-    }
+  // OPEN EDIT SELECTED USER DIALOG
+  openUserEditModal(user: any) {
+    this.selectedUser = { ...user };
+    this.isUserEditModalOpen = true;
+    this.fetchPermissionsForSelectedUser(user.id_number);  
   }
-
-  // update selected user 
+  // CLOSE EDIT SELECTED USER DIALOG
+  closeUserEditModal() {
+    this.isUserEditModalOpen = false;
+  }
+  // SAVE CHANGES FOR EDIT USER
   updateUser(): void {
     if (this.selectedUser && this.selectedUser.name.trim()) {
-      // Include selectedPermissions in the request data
-      this.selectedUser.permissions = this.selectedPermissions; 
+      this.selectedUser.permissions = this.editableSelectedPerms;
   
       this.isChangingPassword = true;
   
-      this.authService.updateUser(this.selectedUser).subscribe(
+      const updatePayload = {
+        id_number: this.selectedUser.id_number,
+        name: this.selectedUser.name,
+        designation: this.selectedUser.designation,
+        office_id: this.selectedUser.office_id,
+        division_id: this.selectedUser.division_id,
+        permissions: this.editableSelectedPerms
+      };
+  
+      this.userSettingService.updateUser(updatePayload).subscribe(
         (response: any) => {
           if (response.status === 'success') {
-            this.notificationService.showNotification('User information saved successfully', 'success');
+            // this.notificationService.showNotification('User information saved successfully', 'success');
+            this.toast.show('User information saved successfully', 'success');
             this.closeUserEditModal();
           } else {
-            this.notificationService.showNotification(`Failed to update user: ${response.message}`, 'error');
+            // this.notificationService.showNotification(`Failed to update user: ${response.message}`, 'error');
+            this.toast.show(`Failed to update user: ${response.message}`, 'error');
           }
         },
         (error) => {
           console.error('Error updating user:', error);
-          this.notificationService.showNotification('An error occurred while updating user', 'error');
+          // this.notificationService.showNotification('An error occurred while updating user', 'error');
+          this.toast.show('An error occurred while updating user', 'error');
         },
         () => {
           this.isChangingPassword = false;
         }
       );
     } else {
-      this.notificationService.showNotification('Please enter a valid user', 'error');
+      // this.notificationService.showNotification('Please enter a valid user', 'error');
+      this.toast.show('Please enter a valid user', 'error');
+    }
+  }
+  // SAVE NEW TECHNICAL SUPP
+  saveAsPersonnel(): void {
+    if (this.addPersonnelForm.valid) {
+      const formData = this.addPersonnelForm.value;
+      const selectedDivision = this.divisions.find(
+        (division) => division.division_id === formData.division
+      );
+
+      if (!selectedDivision) {
+        // this.notificationService.showNotification('Invalid division selected.', 'error');
+        this.toast.show('Invalid division selected.', 'error');
+        return;
+      }
+
+      this.isAddingPersonnel = true;
+      const personnelData = {
+        personnel_id: formData.personnel_id, 
+        personnel_name: formData.personnel_name, 
+        division_id: formData.division,  
+        division_name: selectedDivision.division_name, 
+      };
+
+      this.userSettingService.savePersonnel(personnelData).subscribe(
+        (response: any) => {
+          if (response.status === 'success') {
+            this.isAddingPersonnel = false;
+            // this.notificationService.showNotification('Personnel has been added!', 'success');
+            this.toast.show('Personnel has been added!', 'success');
+            this.addPersonnelForm.reset();
+            this.closeAddPersonnelModal();
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            this.isAddingPersonnel = false;
+            // this.notificationService.showNotification('Failed to save personnel.', 'error');
+            this.toast.show('Failed to save personnel.', 'error');
+          }
+        },
+        (error) => {
+          this.isAddingPersonnel = false;
+          console.error('Error saving personnel:', error);
+          // this.notificationService.showNotification('An error occured while saving personnel ' ,'error');
+          this.toast.show('An error occured while saving personnel ' ,'error');
+        }
+      );
+    } else {
+      this.isAddingPersonnel = false;
+      // this.notificationService.showNotification('Please fill out all required fields.', 'error');
+      this.toast.show('Please fill out all required fields.', 'error');
     }
   }
 
-  openUserEditModal(user: any) {
-    this.selectedUser = { ...user };
-    this.isUserEditModalOpen = true;
-    this.fetchPermissionsForSelectedUser(user.id_number);  // Fetch permissions for the selected user
+  // Toggle user active/inactive status
+  updateUserStatus(user: any, newStatus: number): void {
+    const action = newStatus === 1 ? 'activate' : 'deactivate';
+
+    if (confirm(`Are you sure you want to ${action} this user?`)) {
+      this.isChangingPassword = true; 
+
+      this.userSettingService.updateUserStatus(user.id_number, newStatus).subscribe(
+        (response: any) => {
+          this.isChangingPassword = false;
+          if (response.status === 'success') {
+            user.isActive = newStatus;
+            this.toast.show(`User ${action}d successfully!`, 'success');
+          } else {
+            this.toast.show(`Failed to ${action} user: ${response.message}`, 'error');
+          }
+        },
+        (error) => {
+          this.isChangingPassword = false;
+          console.error(`Error ${action}ing user:`, error);
+          this.toast.show(`An error occurred while ${action}ing user`, 'error');
+        }
+      );
+    }
   }
 
-  closeUserEditModal() {
-
-    this.isUserEditModalOpen = false;
-  }
-
-
-  ////////////////////////////// Office Management 
+  //////////// FETCH ALL OFFICE AND DIVISIONS
   fetchDepartments(): void {
-    this.isLoadingFetch = true; // Start loading
-    this.authService.getAllOffices().subscribe(
+    this.isLoadingFetch = true;
+    this.userSettingService.getAllOffices().subscribe(
       (response: any) => {
         if (response.status === 'success') {
           this.departments = response.data;
@@ -686,17 +791,17 @@ export class UserSettingsComponent implements OnInit{
         console.error('Error fetching offices:', error);
       },
       () => {
-        this.isLoadingFetch = false; // Stop loading
+        this.isLoadingFetch = false;
       }
     );
   }
-
   fetchDivisions(): void {
-    this.isLoadingFetch = true; // Start loading
-    this.authService.getDivisions().subscribe(
+    this.isLoadingFetch = true;
+    this.userSettingService.fetchDivisions().subscribe(
       (response: any) => {
         if (response.status === 'success') {
-          this.divisions = response.data;
+          this.allDivs = response.data;
+          console.log('Divisions fetched:', this.allDivs);
         } else {
           console.error('Failed to fetch division');
         }
@@ -705,210 +810,223 @@ export class UserSettingsComponent implements OnInit{
         console.error('Error fetching divisions:', error);
       },
       () => {
-        this.isLoadingFetch = false; // Stop loading
+        this.isLoadingFetch = false;
+      }
+    );
+  }  
+  // for editing division
+  loadDivisionsForOffice(officeId: number): void {
+    this.userSettingService.fetchEditDiv(officeId).subscribe(
+      (response: any) => {
+        if (response.status === 'success') {
+          this.allDivs = response.data;
+        } else {
+          // this.notificationService.showNotification('Failed to fetch divisions', 'error');
+          this.toast.show('Failed to fetch divisions', 'error');
+        }
+      },
+      (error) => {
+        console.error('Error fetching divisions', error);
+        // this.notificationService.showNotification('Error loading divisions', 'error');
+        this.toast.show('Error loading divisions', 'error');
       }
     );
   }
-
-  // Function to open the modal
+  // Filter divisions by office_id
+  getDivisionsByOfficeId(officeId: number): any[] {
+    return this.allDivs.filter(d => Number(d.office_id) === Number(officeId));
+  }
+  // OPEN ADD OFFICE DIALOG
   openModal() {
     this.isModalOpen = true;
   }
-
-  // Function to close the modal
+  // CLOSE ADD OFFICE DIALOG
   closeModal() {
     this.isModalOpen = false;
   }
-
-  openDivisionModal() {
+  openAddDivisionModal() {
     this.isDivisionModalOpen = true;
   }
-
-  // Function to close the modal
-  closeDivisionModal() {
+  // Method to close the "Add Division" modal
+  closeAddDivisionModal() {
     this.isDivisionModalOpen = false;
-    this.isEditDivisionModalOpen = false;
   }
-
+  // SAVE OFFICE
   addOffice(): void {
     if (this.officeName.trim() && this.officeValue.trim()) {
-      this.isChangingPassword = true; // Start loading
+      this.isChangingPassword = true; 
       const officeData = {
         office_name: this.officeName.toUpperCase(),
-        office_value: this.officeValue  // Add office_value to the data object
+        office_value: this.officeValue  
       };
-  
-      this.authService.addOffice(officeData).subscribe(
+
+      this.userSettingService.addOffice(officeData).subscribe(
         (response: any) => {
           if (response.status === 'success') {
-            this.notificationService.showNotification('Office has been added!', 'success');
-            this.officeName = ''; // Reset the input field
-            this.officeValue = ''; // Reset the office value input
-            this.fetchDepartments(); // Refresh the list of offices
+            // this.notificationService.showNotification('Office has been added!', 'success');
+            this.toast.show('Office has been added!', 'success');
+            this.officeName = ''; 
+            this.officeValue = ''; 
+            this.fetchDepartments(); 
             this.closeModal();
           } else if (response.message === 'Office already exists.') {
-            this.notificationService.showNotification('Office already exists.', 'error');
+            // this.notificationService.showNotification('Office already exists.', 'error');
+            this.toast.show('Office already exists.', 'error');
           } else {
-            this.notificationService.showNotification(`Failed to add office: ${response.message}`, 'error');
+            // this.notificationService.showNotification(`Failed to add office: ${response.message}`, 'error');
+            this.toast.show(`Failed to add office: ${response.message}`, 'error');
           }
         },
         (error) => {
           console.error('Error adding office:', error);
-          this.notificationService.showNotification('An error occurred while adding office', 'error');
+          // this.notificationService.showNotification('An error occurred while adding office', 'error');
+          this.toast.show('An error occurred while adding office', 'error');
         },
         () => {
-          this.isChangingPassword = false; // Stop loading
+          this.isChangingPassword = false;
         }
       );
     } else {
-      this.notificationService.showNotification('Please fill in both office name and value', 'error');
+      // this.notificationService.showNotification('Please fill in both office name and value', 'error');
+      this.toast.show('Please fill in both office name and value', 'error');
     }
   }
-
   addDivision(): void {
-    if (this.divisionName.trim()) {
-      this.isChangingPassword = true; // Start loading
+    if (this.divisionName.trim() && this.selectedOfficeId) {
+      this.isChangingPassword = true; 
       const divisionData = {
-        division_name: this.divisionName.toUpperCase(), // Make sure the key is 'division_name'
+        division_name: this.divisionName.toUpperCase(), 
+        office_id: this.selectedOfficeId,  
       };
   
-      this.authService.addDivision(divisionData).subscribe(
+      this.userSettingService.addDivision(divisionData).subscribe(
         (response: any) => {
           if (response.status === 'success') {
-            this.notificationService.showNotification('Division has been added!', 'success');
-            this.divisionName = ''; // Reset the input field
-            this.fetchDivisions(); // Refresh the list of divisions
-            this.closeDivisionModal(); // Close the modal
+            // this.notificationService.showNotification('Division has been added!', 'success');
+            this.toast.show('Division has been added!', 'success');
+            this.divisionName = ''; 
+            this.closeAddDivisionModal();
           } else if (response.message === 'Division already exists.') {
-            this.notificationService.showNotification('Division already exists.', 'error');
+            // this.notificationService.showNotification('Division already exists.', 'error');
+            this.toast.show('Division already exists.', 'error');
           } else {
-            this.notificationService.showNotification(`Failed to add division: ${response.message}`, 'error');
+            // this.notificationService.showNotification(`Failed to add division: ${response.message}`, 'error');
+            this.toast.show(`Failed to add division: ${response.message}`, 'error');
           }
         },
         (error) => {
           console.error('Error adding division:', error);
-          this.notificationService.showNotification('An error occurred while adding division', 'error');
+          // this.notificationService.showNotification('An error occurred while adding division', 'error');
+          this.toast.show('An error occurred while adding division', 'error');
         },
         () => {
-          this.isChangingPassword = false; // Stop loading
+          this.isChangingPassword = false; 
         }
       );
     } else {
-      this.notificationService.showNotification('Please fill in the division name', 'error');
+      // this.notificationService.showNotification('Please fill in the division name and select an office', 'error');
+      this.toast.show('Please fill in the division name and select an office', 'error');
     }
   }
-
-  openEditDivisionModal(division: any) {
-    this.selectedDivision = { ...division };
-    this.isEditDivisionModalOpen = true;
-  }
-
-  closeEditDivisionModal(){
-    this.selectedDivision = null;
-    this.isEditDivisionModalOpen = false;    
-  }
-
-  updateDivision(): void {
-    if (this.selectedDivision.division_name.trim()) {
-      // Ensure office values are formatted and passed
-      this.selectedDivision.division_name = this.selectedDivision.division_name.toUpperCase();
-  
-      this.isChangingPassword = true;
-  
-      this.authService.updateDivision(this.selectedDivision).subscribe(
-        (response: any) => {
-          if (response.status === 'success') {
-            this.notificationService.showNotification(
-              'Department updated successfully!',
-              'success'
-            );
-            this.fetchDivisions(); // Refresh the list
-            this.closeEditDivisionModal();
-          } else {
-            this.notificationService.showNotification(
-              `Failed to update office: ${response.message}`,
-              'error'
-            );
-          }
-        },
-        (error) => {
-          console.error('Error updating office:', error);
-          this.notificationService.showNotification(
-            'An error occurred while updating office',
-            'error'
-          );
-        },
-        () => {
-          this.isChangingPassword = false;
-        }
-      );
-    } else {
-      this.notificationService.showNotification(
-        'Please enter a valid office name, division name, and office value',
-        'error'
-      );
-    }
-  }
-
+  // edit office
   openEditModal(office: any) {
-    this.selectedOffice = { ...office }; // Create a copy to edit
+    this.selectedOffice = { ...office };
+    
+    this.loadDivisionsForOffice(office.office_id);
+  
+    const selectedDivision = this.allDivs.find(div => div.division_id === office.selectedDivisionId);
+    if (selectedDivision) {
+      this.selectedOffice.selectedDivisionName = selectedDivision.division_name;
+    } else {
+      this.selectedOffice.selectedDivisionName = ''; 
+    }
+  
     this.isEditModalOpen = true;
   }
-
+  // close edit office
   closeEditModal() {
     this.selectedOffice = null;
     this.isEditModalOpen = false;
   }
+  // save edit office
+updateOffice(): void {
+  const hasDivisionName = !!this.selectedOffice.selectedDivisionName?.trim();
 
-  updateOffice(): void {
-    if (this.selectedOffice && this.selectedOffice.office_name.trim() && this.selectedOffice.office_value.trim()) {
-      // Ensure office values are formatted and passed
-      this.selectedOffice.office_name = this.selectedOffice.office_name.toUpperCase();
-      this.selectedOffice.office_value = this.selectedOffice.office_value.toUpperCase();
-  
-      this.isChangingPassword = true;
-  
-      this.authService.updateOffice(this.selectedOffice).subscribe(
+  if (this.selectedOffice && this.selectedOffice.office_name.trim() && this.selectedOffice.office_value.trim()) {
+    // Capitalize the first letter of each word (title case)
+    this.selectedOffice.office_name = this.toTitleCase(this.selectedOffice.office_name);
+    this.selectedOffice.office_value = this.toTitleCase(this.selectedOffice.office_value);
+
+    this.isChangingPassword = true;
+
+    const handleOfficeUpdate = () => {
+      this.userSettingService.updateOffice(this.selectedOffice).subscribe(
         (response: any) => {
           if (response.status === 'success') {
-            this.notificationService.showNotification(
-              'Department updated successfully!',
-              'success'
-            );
-            this.fetchDepartments(); // Refresh the list
+            // this.notificationService.showNotification('Office updated successfully!', 'success');
+            this.toast.show('Office updated successfully!', 'success');
             this.closeEditModal();
           } else {
-            this.notificationService.showNotification(
-              `Failed to update office: ${response.message}`,
-              'error'
-            );
+            // this.notificationService.showNotification(`Failed to update office: ${response.message}`, 'error');
+            this.toast.show(`Failed to update office: ${response.message}`, 'error');
           }
+          this.isChangingPassword = false;
         },
         (error) => {
           console.error('Error updating office:', error);
-          this.notificationService.showNotification(
-            'An error occurred while updating office',
-            'error'
-          );
+          // this.notificationService.showNotification('Error updating office', 'error');
+          this.toast.show('Error updating office', 'error');
+          this.isChangingPassword = false;
+        }
+      );
+    };
+
+    if (hasDivisionName) {
+      this.userSettingService.updateDivisionName(this.selectedOffice.selectedDivisionId, this.selectedOffice.selectedDivisionName).subscribe(
+        divisionResponse => {
+          handleOfficeUpdate(); 
         },
-        () => {
+        (error) => {
+          console.error('Error updating division:', error);
+          // this.notificationService.showNotification('Error updating division', 'error');
+          this.toast.show('Error updating division', 'error');
           this.isChangingPassword = false;
         }
       );
     } else {
-      this.notificationService.showNotification(
-        'Please enter a valid office name, division name, and office value',
-        'error'
-      );
+      handleOfficeUpdate();
+    }
+  } else {
+    // this.notificationService.showNotification('Please enter valid office name and acronym', 'error');
+    this.toast.show('Please enter valid office name and acronym', 'error');
+  }
+}
+
+// Helper method to convert to title case (capitalize first letter of each word)
+private toTitleCase(str: string): string {
+  if (!str) return str;
+  return str.toLowerCase().split(' ').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ');
+}
+  // Method to handle pagination
+  getPaginatedUsers(): any[] {
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    return this.users.slice(startIndex, startIndex + this.rowsPerPage);
+  }
+  changePage(direction: string): void {
+    if (direction === 'next' && (this.currentPage * this.rowsPerPage) < this.users.length) {
+      this.currentPage++;
+    } else if (direction === 'prev' && this.currentPage > 1) {
+      this.currentPage--;
     }
   }
-  
-  // Method to handle pagination
+  // pagination office
   getPaginatedOffices(): any[] {
     const startIndex = (this.currentDeptPage - 1) * this.rowsPerDeptPage;
     return this.departments.slice(startIndex, startIndex + this.rowsPerDeptPage);
   }
-
+  // pagination office
   changeDeptPage(direction: string): void {
     if (direction === 'next' && (this.currentDeptPage * this.rowsPerDeptPage) < this.departments.length) {
       this.currentDeptPage++;
@@ -916,12 +1034,12 @@ export class UserSettingsComponent implements OnInit{
       this.currentDeptPage--;
     }
   }
-
+  // pagination division
   getPaginatedDivisions(): any[] {
     const startIndex = (this.currentDivPage - 1) * this.rowsPerDivPage;
     return this.divisions.slice(startIndex, startIndex + this.rowsPerDivPage);
   }
-
+  // pagination division
   changeDivPage(direction: string): void {
     if (direction === 'next' && (this.currentDivPage * this.rowsPerDivPage) < this.divisions.length) {
       this.currentDivPage++;
@@ -929,5 +1047,4 @@ export class UserSettingsComponent implements OnInit{
       this.currentDivPage--;
     }
   }
-
 }

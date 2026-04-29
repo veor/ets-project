@@ -1,0 +1,155 @@
+/* Dialog Container */
+:host ::ng-deep .mat-mdc-dialog-container {
+  padding: 0;
+}
+
+/* Loading State */
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  min-height: 200px;
+}
+
+.loading-wrapper p {
+  margin-top: 1rem;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 400;
+}
+
+/* Dialog Title */
+h2[mat-dialog-title] {
+  margin: 0;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 32px;
+}
+
+/* Dialog Content */
+div[mat-dialog-content] {
+  padding: 24px;
+  margin: 0;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+/* Form Styling */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Form Fields */
+mat-form-field.full {
+  width: 100%;
+}
+
+/* Ensure proper spacing for form fields */
+::ng-deep .mat-mdc-form-field {
+  display: block;
+}
+
+/* Dialog Actions */
+div[mat-dialog-actions] {
+  padding: 16px 24px;
+  margin: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Button Styling */
+button[mat-button],
+button[mat-raised-button] {
+  min-width: 80px;
+}
+
+/* Responsive Design */
+@media (max-width: 599px) {
+  h2[mat-dialog-title] {
+    padding: 16px 20px;
+    font-size: 18px;
+  }
+
+  div[mat-dialog-content] {
+    padding: 20px;
+    max-height: calc(100vh - 180px);
+  }
+
+  div[mat-dialog-actions] {
+    padding: 12px 20px;
+    gap: 12px;
+  }
+
+  /* Stack buttons vertically on very small screens */
+  div[mat-dialog-actions] {
+    flex-direction: column-reverse;
+  }
+
+  button[mat-button],
+  button[mat-raised-button] {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 959px) {
+  div[mat-dialog-content] {
+    padding: 24px;
+  }
+}
+
+/* Tablets and up */
+@media (min-width: 600px) {
+  :host ::ng-deep .mat-mdc-dialog-container {
+    min-width: 500px;
+    max-width: 600px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 960px) {
+  :host ::ng-deep .mat-mdc-dialog-container {
+    min-width: 560px;
+  }
+
+  form {
+    gap: 20px;
+  }
+}
+
+/* Disabled field styling */
+::ng-deep .mat-mdc-form-field.mat-form-field-disabled {
+  opacity: 0.6;
+}
+
+/* Improve select dropdown appearance */
+::ng-deep .mat-mdc-select-disabled {
+  cursor: not-allowed;
+}
+
+/* Loading spinner color */
+::ng-deep .loading-wrapper .mat-mdc-progress-spinner circle {
+  stroke: var(--mdc-theme-primary, #3f51b5);
+}
+
+/* Smooth transitions */
+.loading-wrapper,
+div[mat-dialog-content] {
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Focus states for accessibility */
+button[mat-button]:focus,
+button[mat-raised-button]:focus {
+  outline: 2px solid var(--mdc-theme-primary, #3f51b5);
+  outline-offset: 2px;
+}

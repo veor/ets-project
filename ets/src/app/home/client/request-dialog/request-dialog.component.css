@@ -1,3 +1,28 @@
+.privacy-consent {
+  background-color: #f9f9f9;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  color: black;
+}
+
+.privacy-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.privacy-label input[type="checkbox"] {
+  margin-top: 5px;
+  transform: scale(1.2);
+  cursor: pointer;
+}
 .request-form-container {
   display: flex;
   flex-direction: column;
@@ -24,6 +49,9 @@
   width: 100%;
   max-width: 800px; /* Increased to accommodate two columns */
   gap: 20px;
+}
+.select-search-type input {
+  border: none;
 }
 
 .form-column {
@@ -57,31 +85,43 @@
   width: 100%;
 }
 
+.loading-button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loading-text {
+  font-size: 0.95rem;
+}
+
+
 .mat-spinner {
   margin: 0 auto;
   display: inline-block;
   vertical-align: middle;
 }
 
-select#select_request {
-  padding: 10px;
-  background-color: beige;
-  border-radius: 6px;
+.request-div{
+  border: none;
+  color: #de4a25;
+  font-weight: 700;
 }
 
 button {
   padding: 10px;
-  background-color: #de4a25;
+  /* background-color: #de4a25; */
   width: 100%;
-  color: #fff;
+  /* color: #fff; */
   border: none;
   border-radius: 6px;
 }
-button:hover {
+/* button:hover {
   background-color: #ff8161;
-}
+} */
 
-.cancel-btn {
+/* .cancel-btn {
   background-color: #ccc;
   color: #333;
   margin-left: 10px;
@@ -89,7 +129,7 @@ button:hover {
 
 .cancel-btn:hover {
   background-color: #aaa;
-}
+} */
 
 /* Responsive Styles */
 @media (max-width: 768px) {
@@ -117,8 +157,8 @@ button:hover {
     margin: 0 auto;
   }
 
-  select#select_request {
-    width: 100%; /* Make select input full width */
+  /* select#select_request {
+    width: 100%; 
     padding: 12px;
-  }
+  } */
 }

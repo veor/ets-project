@@ -1,0 +1,145 @@
+.sidebar {
+  width: 260px;
+  height: calc(100vh - 64px);
+  background: var(--surface);
+  color: var(--text);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 64px;
+  left: 0;
+  transition: transform 0.3s ease, width 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  z-index: 1100;
+}
+
+.sidebar.closed {
+  width: 70px;
+}
+
+/* Menu */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  padding: 14px 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden; /* Hide overflow text */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+.menu li:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .menu li:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.menu li.active {
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0%,
+    rgba(25, 118, 210, 0.15) 100%
+  );
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.menu li.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.dark-mode .menu li.active {
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0%,
+    rgba(100, 181, 246, 0.2) 100%
+  );
+  color: #fff;
+}
+
+.dark-mode .menu li.active {
+  box-shadow: 0 0 10px rgba(100, 181, 246, 0.3);
+}
+
+/* Dropdown */
+.dropdown-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hide arrow when sidebar is closed */
+.sidebar.closed .arrow {
+  display: none;
+}
+
+/* Hide submenu when sidebar is closed */
+.sidebar.closed .submenu {
+  display: none;
+}
+
+.submenu {
+  list-style: none;
+  padding-left: 15px;
+  margin: 0;
+}
+
+.submenu li {
+  padding: 10px 20px;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrow {
+  transition: transform 0.3s;
+  flex-shrink: 0; /* Prevent arrow from shrinking */
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Responsive - Mobile only */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Always hide when closed on mobile */
+  .sidebar.closed {
+    transform: translateX(-100%);
+    width: 260px; /* Force full width on mobile even when "closed" */
+  }
+
+  /* Show full sidebar when open on mobile */
+  .sidebar:not(.closed) {
+    transform: translateX(0);
+    width: 260px;
+  }
+}
+
+/* Desktop - Reset mobile transforms */
+@media (min-width: 769px) {
+  .sidebar {
+    transform: translateX(0) !important; /* Always visible on desktop */
+  }
+}

@@ -1,0 +1,301 @@
+<app-loader [isLoading]="isLoading"></app-loader>
+<h3 class="pending-request-header">Manage Accepted Service Request</h3>
+
+<div class="filter-row mat-elevation-z2">
+  <!-- Filter -->
+  <mat-form-field appearance="outline" class="filter-item">
+    <mat-label>Filter</mat-label>
+    <mat-select [(ngModel)]="selectedFilter" (selectionChange)="onFilterChange()">
+      <mat-option value="openTicket">Open Ticket</mat-option>
+      <mat-option value="review">Review Ticket</mat-option>
+      <mat-option value="closedTicket">Closed Ticket</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Sort By -->
+  <mat-form-field appearance="outline" class="filter-item">
+    <mat-label>Sort By</mat-label>
+    <mat-select [(ngModel)]="sortOption" (selectionChange)="sortReports()">
+      <mat-option value="nameAsc">Name (A-Z)</mat-option>
+      <mat-option value="nameDesc">Name (Z-A)</mat-option>
+      <mat-option value="dateAsc">Date (Oldest First)</mat-option>
+      <mat-option value="dateDesc">Date (Newest First)</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Search -->
+  <mat-form-field appearance="outline" class="filter-item flex-grow">
+    <mat-label>Search By Name/Issue</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="filterReports()"
+       />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<!-- Closed Ticket Date Range Filters -->
+<div class="filter-section mb-3" *ngIf="selectedFilter === 'closedTicket'">
+  <div class="row align-items-end">
+    <div class="col-md-4">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Start Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          [(ngModel)]="startDate"
+          (dateChange)="onDateRangeChange()"
+          placeholder="Select start date" />
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="col-md-4">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>End Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="endPicker"
+          [(ngModel)]="endDate"
+          (dateChange)="onDateRangeChange()"
+          placeholder="Select end date" />
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="mt-2" *ngIf="startDate || endDate">
+    <small class="text-muted">
+      <mat-icon class="small-icon">info</mat-icon>
+      Filtering from
+      <strong>{{ startDate ? (startDate | date:'MMM d, y') : 'beginning' }}</strong>
+      to
+      <strong>{{ endDate ? (endDate | date:'MMM d, y') : 'today' }}</strong>
+      ({{ getFilteredReportsByDateRange().length }} records found)
+    </small>
+  </div>
+</div>
+
+<!-- Quick Date Range Buttons -->
+<div class="d-flex gap-2 mb-4" *ngIf="selectedFilter === 'closedTicket'">
+  <button mat-raised-button color="primary" (click)="setQuickDateRange('thisMonth')">This Month</button>
+  <button mat-raised-button color="primary" (click)="setQuickDateRange('lastMonth')">Last Month</button>
+  <button mat-stroked-button color="primary" (click)="clearDateRange()" [disabled]="!startDate && !endDate">
+    <mat-icon>clear</mat-icon>
+    Clear Dates
+  </button>
+</div>
+
+<!-- Table -->
+<div class="table-container mat-elevation-z2">
+  <table class="job-request-task">
+    <thead *ngIf="filteredReports.length > 0">
+      <tr>
+        <th class="main-table-head" *ngIf="selectedFilter === 'openTicket' || selectedFilter === 'closedTicket' || selectedFilter === 'review'">Ref. #</th>
+        <th class="main-table-head">Name</th>
+        <th class="main-table-head">Date of Request</th>
+        <th class="main-table-head">Office</th>
+        <th class="main-table-head" *ngIf="selectedFilter === 'openTicket' || selectedFilter === 'closedTicket' || selectedFilter === 'review'">Assigned Technical</th>
+        <th class="main-table-head" *ngIf="selectedFilter === 'openTicket' || selectedFilter === 'review'">Date & Time Assigned</th>
+        <th class="main-table-head" *ngIf="selectedFilter === 'closedTicket' || selectedFilter === 'review'">Idle Time</th>
+        <th class="main-table-head" *ngIf="selectedFilter === 'review'">Date & Time Started - Accomplished</th>
+        <th class="main-table-head" *ngIf="selectedFilter === 'closedTicket' || selectedFilter === 'review'">Action Taken</th>
+        <th class="main-table-head" *ngIf="selectedFilter === 'closedTicket' || selectedFilter === 'review'">Process Time</th>
+
+        <th class="main-table-head" *ngIf="selectedFilter === 'review'" colspan="3">Action</th>
+        <th class="main-table-head" *ngIf="selectedFilter === 'closedTicket'">Action</th>
+      </tr>
+    </thead>
+
+    <tbody *ngIf="filteredReports.length > 0">
+      <ng-container *ngFor="let report of paginatedJobRequests">
+        <ng-container *ngIf="shouldDisplayRow(report)">
+          <!-- Main Row -->
+          <tr>
+            <td class="main-table-row-data" 
+                *ngIf="selectedFilter === 'openTicket' || selectedFilter === 'closedTicket' || selectedFilter === 'review'" 
+                [attr.data-label]="'Ref. #'">
+                {{ report.control_no }}
+            </td>
+
+            <td class="main-table-row-data" data-label="Name">{{ report.name }}</td>
+            <td class="main-table-row-data" data-label="Date of Request">{{ report.date_of_request | date:'yyyy-MM-dd' }}</td>
+            <td class="main-table-row-data" data-label="Office">{{ report.office_value }}</td>
+
+            <td class="main-table-row-data" 
+                *ngIf="selectedFilter === 'openTicket' || selectedFilter === 'closedTicket' || selectedFilter === 'review'" 
+                [attr.data-label]="'Assigned Technical'">
+                {{ getPersonnelName(report.personnel_id) || 'Not Assigned' }}
+            </td>
+
+            <td class="main-table-row-data" 
+                *ngIf="selectedFilter === 'openTicket' || selectedFilter === 'review'" 
+                data-label="Date & Time Assigned">
+                {{ report.time_assigned ? (report.time_assigned | date:'MMM d, y h:mm a') : 'N/A' }}
+            </td>
+
+            <td class="main-table-row-data" 
+                *ngIf="selectedFilter === 'closedTicket' || selectedFilter === 'review'" 
+                data-label="Idle Time">
+                {{ report.formatted_idle_time }}
+            </td>
+
+            <td class="main-table-row-data" 
+                *ngIf="selectedFilter === 'review'" 
+                data-label="Started - Accomplished">
+                {{ formatStartedAccomplishedDates(report.date_started, report.datetime_accomplished) }}
+            </td>
+
+            <td class="main-table-row-data" 
+                *ngIf="selectedFilter === 'closedTicket' || selectedFilter === 'review'" 
+                data-label="Action Taken">
+                {{ report.action_taken }}
+            </td>
+
+            <td class="main-table-row-data" 
+                *ngIf="selectedFilter === 'closedTicket' || selectedFilter === 'review'" 
+                data-label="Process Time">
+                {{ formatTimeString(report.process_time) || 'N/A' }}
+            </td>
+
+            <!-- Actions (Review Mode) -->
+            <td class="main-table-row-data action-cell" *ngIf="selectedFilter === 'review'" data-label="Actions">
+              <div class="action-buttons">
+                <button mat-stroked-button color="primary" (click)="openViewDialog(report)">Form</button>
+                <button mat-button color="primary" (click)="toggleRowExpansion(report.control_no)">
+                  <mat-icon>{{ isRowExpanded(report.control_no) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  Review
+                </button>
+                <button mat-flat-button color="primary" (click)="approveReport(report.id, report.control_no)" [disabled]="isApprovingReport(report.id)">
+                  Approve
+                </button>
+              </div>
+            </td>
+
+            <!-- Action for closedTicket -->
+            <td class="main-table-row-data action-cell" *ngIf="selectedFilter === 'closedTicket'" data-label="Actions">
+              <div class="action-buttons">
+                <button mat-stroked-button color="accent" (click)="openPreviewDialog(report)">Preview</button>
+              </div>
+            </td>
+          </tr>
+          <!-- Expanded Row -->
+          <tr *ngIf="isRowExpanded(report.control_no) && selectedFilter === 'review'" class="expanded-row">
+            <td [attr.colspan]="12" class="expanded-content">
+              <div class="details-card">
+                <!-- Loading State -->
+                <div *ngIf="isLoadingDetails(report.control_no)" class="text-center py-3">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                  <p class="text-muted mt-2">Loading details...</p>
+                </div>
+
+                <!-- Details Content -->
+                <div *ngIf="!isLoadingDetails(report.control_no) && getReportDetails(report.control_no)">
+                  <h5>
+                    Ref. #:
+                    <span class="badge text-black">{{ getReportDetails(report.control_no)?.control_no || 'N/A' }}</span>
+                  </h5>
+
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <p class="details-label">Issue Request</p>
+                      <p class="details-value">{{ getReportDetails(report.control_no)?.issue_request || 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p class="details-label">Action Taken</p>
+                      <p class="details-value">{{ getReportDetails(report.control_no)?.action_taken || 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                      <p class="details-label">Remarks</p>
+                      <p class="details-value">{{ getReportDetails(report.control_no)?.remarks || 'N/A' }}</p>
+                    </div>
+                  </div>
+
+                  <!-- Services Section -->
+                  <div *ngIf="getFormattedServices(getReportDetails(report.control_no)).length > 0" class="mt-4">
+                    <h5>Detailed Service Rendered</h5>
+                    <div class="row g-3">
+                      <div *ngFor="let service of getFormattedServices(getReportDetails(report.control_no))" class="col-md-4">
+                        <div class="p-2 border rounded bg-light">
+                          <p class="mb-1">
+                            <span class="service-badge">{{ service.name }}</span>
+                          </p>
+                          <p class="mb-1"><strong>Level:</strong> {{ service.level }}</p>
+                          <p class="mb-0"><strong>Quantity:</strong> {{ service.quantity }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Timeline Section -->
+                  <div class="mt-4">
+                    <h5>Timeline</h5>
+                    <div class="row">
+                      <div class="col-md-4 timeline-item">
+                        <strong>Date & Time Started:</strong>
+                        <span>{{ getReportDetails(report.control_no)?.date_started ? (getReportDetails(report.control_no)?.date_started | date: 'MMM d, y h:mm a') : 'N/A' }}</span>
+                      </div>
+                      <div class="col-md-4 timeline-item">
+                        <strong>Date & Time Accomplished:</strong>
+                        <span>{{ getReportDetails(report.control_no)?.datetime_accomplished ? (getReportDetails(report.control_no)?.datetime_accomplished | date: 'MMM d, y h:mm a') : 'N/A' }}</span>
+                      </div>
+                      <div class="col-md-4 timeline-item">
+                        <strong>Process Time:</strong>
+                        <span>{{ formatTimeString(getReportDetails(report.control_no)?.process_time) || 'N/A' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- No Details -->
+                <div *ngIf="!isLoadingDetails(report.control_no) && !getReportDetails(report.control_no)" class="text-center text-muted py-3">
+                  No detailed information available for this report.
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+
+    <!-- No Data -->
+    <tfoot *ngIf="filteredReports.length === 0">
+      <tr>
+        <td colspan="12" class="no-data-message">No data available to display</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- Toolbar -->
+  <div class="table-toolbar d-flex justify-content-between align-items-center mb-3" *ngIf="selectedFilter === 'closedTicket'">
+    <div class="table-info">
+      <span class="text-muted">
+        Showing {{ paginatedJobRequests.length }} of {{ filteredReports.length }} records
+        <span *ngIf="startDate || endDate">(filtered by date range)</span>
+      </span>
+    </div>
+
+    <div class="table-actions">
+      <button mat-raised-button (click)="generateExcel()" class="excel-green-button me-2" [disabled]="isLoading">
+        <mat-icon>download</mat-icon>
+        {{ getExportButtonText() }}
+      </button>
+
+      <button mat-stroked-button color="primary" (click)="fetchAcceptedReports()" [disabled]="isLoading">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [length]="filteredReports.length"
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 20, 30]"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</div>

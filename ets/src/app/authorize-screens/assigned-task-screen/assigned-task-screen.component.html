@@ -1,0 +1,131 @@
+<app-loader [isLoading]="isLoading"></app-loader>
+<div *ngIf="!isLoading && reports.length > 0; else noReportsTemplate">
+<h3 class="pending-request-header">Assigned Task</h3>
+<div class="filter-row">
+  <div class="filter-container">
+    <label for="statusFilter">Sort By:</label>
+    <select id="statusFilter" [(ngModel)]="selectedStatus" (change)="filterReports()">
+      <option value="Ongoing">On Progress</option>
+      <option value="For Release">For Release</option>
+      <option value="Released">Released</option>
+    </select>
+  </div>
+  <div class="filter-container">
+    <label for="statusFilter">Sort by:</label>
+    <select id="dateSort" [(ngModel)]="dateSortOrder" (change)="filterReports()">
+      <option value="asc">Date (Oldest First)</option>
+      <option value="desc">Date (Newest First)</option>
+    </select>
+  </div>
+  <div class="filter-container">
+    <label for="searchInput">Search:</label>
+    <input type="text" id="searchInput" [(ngModel)]="searchQuery" (input)="filterReports()" placeholder="Search by name/ref no...">
+  </div>
+</div>
+
+  <div class="table-container">
+    <table class="job-request-task">
+      <thead *ngIf="filteredReports.length > 0">
+        <tr>
+          <th class="main-table-head">Ref #</th>
+          <th class="main-table-head">Date</th>
+          <th class="main-table-head">Name</th>
+          <th class="main-table-head">Issue</th>
+          <th class="main-table-head">Status</th>
+          <th class="main-table-head" colspan="3" *ngIf="selectedStatus !== 'Released'">Actions</th>
+          <th class="main-table-head" colspan="2" *ngIf="selectedStatus !== 'Ongoing' && selectedStatus !== 'For Release'">Actions</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="filteredReports.length > 0">
+        <ng-container *ngFor="let report of paginatedReports">
+          <tr>
+            <td class="main-table-row-data">{{ report.control_no }}</td>
+            <td class="main-table-row-data">{{ report.date_of_request | date:'short' }}</td>
+            <td class="main-table-row-data">{{ report.name }}</td>
+            <td class="main-table-row-data">{{ report.issue_request }}</td>
+            <td class="main-table-row-data">
+              <ng-container [ngSwitch]="report.request_status">
+                <span *ngSwitchCase="'Ongoing'" title="Ongoing" class="pending-text">
+                   Ongoing
+                </span>
+                <span *ngSwitchCase="'For Release'" title="For Release" class="for-release-text">
+                  For Release
+                </span>
+                <span *ngSwitchCase="'Released'" title="Released" class="released-text">
+                  Released
+                </span>
+                <span *ngSwitchDefault>
+                  {{ report.request_status }}
+                </span>
+              </ng-container>
+            </td>
+
+            <td class="main-table-row-data" *ngIf="report.request_status !== 'Released' && report.request_status !== 'For Release'">
+              <button
+                class="btn btn-outline-primary btn-sm action-btn"
+                (click)="acceptReport(report)"
+                [disabled]="report.date_started" 
+              >
+                <span>Start</span>
+              </button>
+            </td>
+            <td class="main-table-row-data" *ngIf="report.request_status !== 'Ongoing' && report.request_status !== 'For Release'">
+              <button class="btn btn-outline-info btn-sm action-btn" (click)="openViewDialog(report)">
+                Preview
+              </button>
+            </td>
+            <td class="main-table-row-data" *ngIf="report.request_status !== 'Released' && report.request_status !== 'For Release'">
+              <button
+                class="btn btn-outline-success btn-sm action-btn"
+                (click)="openEditDialog(report)"
+                [disabled]="!report.date_started" 
+              >
+                <span>Accomplish</span>
+              </button>
+            </td>
+            <td class="main-table-row-data" *ngIf="report.request_status !== 'Released' && report.request_status !== 'Ongoing'">
+              <button class="btn btn-outline-dark btn-sm action-btn" (click)="openForReleaseDialog(report)">
+                <span>Sign & Release</span>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+      <tfoot *ngIf="filteredReports.length === 0">
+        <tr>
+          <td>
+            <div *ngIf="filteredReports.length === 0" class="no-reports-message text-center text-muted mt-3">
+              No available reports.
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <mat-paginator
+  [length]="filteredReports.length"
+  [pageSize]="5"
+  [pageSizeOptions]="[5, 10, 15]"
+  (page)="onPageChange($event)">
+</mat-paginator>
+</div>
+
+<ng-template #noReportsTemplate>
+  <div class="no-reports-message text-center text-muted mt-4">
+    <p>No tasks available.</p>
+  </div>
+</ng-template>
+
+<div *ngIf="!isLoading && errorMessage && reports.length === 0" class="text-center text-danger mt-4">
+  <p>{{ errorMessage }}</p>
+</div>
+
+<!-- View Dialog -->
+<app-released-view-dialog
+  [isOpen]="isViewDialogOpen"
+  [selectedReport]="selectedReport"
+  [currentUser]="currentUser"
+  [serviceTypes]="serviceTypes"
+  (closeDialog)="closeViewDialog()"
+  (generatePdf)="generatePdf()">
+</app-released-view-dialog>

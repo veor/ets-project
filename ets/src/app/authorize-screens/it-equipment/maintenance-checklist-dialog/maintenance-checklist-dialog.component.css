@@ -1,0 +1,334 @@
+/* ── Wrapper ─────────────────────────────────────── */
+.checklist-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--content-bg);
+  color: var(--text);
+}
+
+/* ── Title Bar ───────────────────────────────────── */
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  gap: 0.75rem;
+}
+
+.title-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-right: 0.5rem;
+}
+
+.ref-pill {
+  display: inline-block;
+  background: var(--accent, #4299e1);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2em 0.75em;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+.btn-close-dialog {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-close-dialog:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+/* ── Content ─────────────────────────────────────── */
+.dialog-content {
+  flex: 1;
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+  background: var(--content-bg);
+}
+
+/* ── Meta row ────────────────────────────────────── */
+.log-meta {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.meta-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.15rem;
+}
+
+.meta-value {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* ── Section headers ─────────────────────────────── */
+.section-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--accent, #4299e1);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Checklist Table ─────────────────────────────── */
+.checklist-table {
+  font-size: 0.875rem;
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border);
+  margin-bottom: 0;
+}
+
+.checklist-table thead th {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  white-space: nowrap;
+}
+
+.checklist-table tbody td {
+  vertical-align: middle;
+  border-color: var(--border);
+  padding: 0.55rem 0.75rem;
+  background: var(--surface);
+  transition: background 0.15s;
+}
+
+.checklist-table tbody tr:hover td {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.checklist-table tbody tr.row-done td {
+  background: rgba(72, 187, 120, 0.06);
+}
+
+.col-no  { width: 56px;  text-align: center; }
+.col-check { width: 80px; text-align: center; }
+
+/* Strikethrough completed tasks */
+.task-done {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* ── Custom Checkbox ─────────────────────────────── */
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.custom-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent, #4299e1);
+  cursor: pointer;
+}
+
+/* ── Progress Bar ────────────────────────────────── */
+.progress-row {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+}
+
+.progress {
+  height: 8px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: var(--accent, #4299e1);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.progress-bar.bg-success {
+  background: #48bb78 !important;
+}
+
+.progress-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── Findings & Recommendation ───────────────────── */
+.form-label {
+  font-size: 0.875rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.form-control {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-control:focus {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--accent, #4299e1);
+  box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.2);
+}
+
+/* ── Actions Bar ─────────────────────────────────── */
+.dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Status badge */
+.badge {
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.35em 0.75em;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-pending {
+  background: rgba(66, 153, 225, 0.12);
+  color: var(--accent, #4299e1);
+  border: 1px solid rgba(66, 153, 225, 0.3);
+}
+
+.badge-complete {
+  background: rgba(72, 187, 120, 0.12);
+  color: #38a169;
+  border: 1px solid rgba(72, 187, 120, 0.3);
+}
+
+/* Buttons */
+.btn-save {
+  background-color: var(--accent, #4299e1);
+  border-color: var(--accent, #4299e1);
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.btn-save:hover:not(:disabled) {
+  background-color: #57a0d4;
+  border-color: #57a0d4;
+  color: #fff;
+}
+
+.btn-save:disabled {
+  opacity: 0.65;
+}
+
+.btn-outline-secondary {
+  border-color: var(--border);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+/* ── Dark Mode ───────────────────────────────────── */
+.dark-mode .checklist-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dark-mode .checklist-table tbody tr.row-done td {
+  background: rgba(72, 187, 120, 0.08);
+}
+
+.dark-mode .form-control {
+  background: var(--content-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .form-control:focus {
+  background: var(--content-bg);
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .dialog-title,
+  .dialog-content,
+  .dialog-actions {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .dialog-actions .d-flex {
+    justify-content: stretch;
+  }
+
+  .dialog-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .col-task {
+    min-width: 180px;
+  }
+}

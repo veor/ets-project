@@ -1,0 +1,79 @@
+.confirmation-dialog-container {
+  padding: 24px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  min-width: 340px;
+}
+
+/* Title */
+.confirmation-dialog-container h4 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Message text */
+.confirmation-dialog-container p {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+/* Date/time text */
+.current-datetime {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Actions */
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Base button */
+.dialog-actions button {
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Cancel  */
+.btn-cancel {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: var(--content-bg);
+}
+
+/* Approve  */
+.btn-confirm {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-confirm:hover {
+  filter: brightness(1.1);
+}
+
+/* Dark mode tuning */
+.dark-mode .confirmation-dialog-container {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.dark-mode .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+}

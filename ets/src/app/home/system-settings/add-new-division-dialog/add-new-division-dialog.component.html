@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Add Division</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Division Name</mat-label>
+      <input matInput formControlName="division_name" [disabled]="loading">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()" [disabled]="loading">
+    Cancel
+  </button>
+
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="save()"
+    [disabled]="form.invalid || loading"
+    class="add-btn"
+  >
+    <mat-spinner
+      *ngIf="loading"
+      diameter="18"
+      class="btn-spinner"
+    ></mat-spinner>
+
+    <span>
+      {{ loading ? 'Adding Division...' : 'Add' }}
+    </span>
+  </button>
+</mat-dialog-actions>

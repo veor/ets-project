@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>Add New Record</h2>
+<mat-dialog-content>
+  <form>
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Date</mat-label>
+      <input matInput type="date" [(ngModel)]="data.date" name="date" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Ref. #</mat-label>
+      <mat-select [(ngModel)]="data.controlNo" name="controlNo" required>
+        <mat-option *ngFor="let controlNo of controlNumbers" [value]="controlNo">
+          {{ controlNo }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Issues/Problems</mat-label>
+      <input matInput [(ngModel)]="data.issue" name="issue" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Select Technical Staff</mat-label>
+      <mat-select required [(ngModel)]="data.staff" name="techStaff">
+        <mat-option *ngFor="let staff of techStaffList" [value]="staff.personnel_id">
+          {{ staff.personnel_name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>    
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Repair/Maintenance Performed</mat-label>
+      <input matInput [(ngModel)]="data.repair" name="repair" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Remarks</mat-label>
+      <input matInput [(ngModel)]="data.remarks" name="remarks" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Status</mat-label>
+      <input matInput [(ngModel)]="data.record_status" name="status" required>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    (click)="saveData()"
+    class="w-100 btn btn-success"
+    [disabled]="isSaving"
+  >
+    <ng-container *ngIf="!isSaving; else loading">
+      Save
+    </ng-container>
+    <ng-template #loading>
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Processing...
+    </ng-template>
+  </button>
+  <button (click)="closeDialog()" class="w-100 btn btn-secondary">Cancel</button>
+</mat-dialog-actions>

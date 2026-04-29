@@ -1,0 +1,61 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <mat-icon class="warning-icon">warning</mat-icon>
+    <h2 mat-dialog-title>Cancel Service Request</h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="warning-message">
+      <p class="primary-text">Are you sure you want to cancel this service request?</p>
+      <p class="secondary-text">This action will permanently remove the request from the system and cannot be undone.</p>
+    </div>
+
+    <div class="request-details" *ngIf="data">
+      <h3>Request Details:</h3>
+      <div class="detail-row">
+        <span class="label">Ref. #:</span>
+        <span class="value">{{ data.control_no }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Requester:</span>
+        <span class="value">{{ data.name }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Office:</span>
+        <span class="value">{{ data.office_value || 'N/A' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Date Requested:</span>
+        <span class="value">{{ data.date_of_request }}</span>
+      </div>
+      <div class="detail-row" *ngIf="data.personnel_name">
+        <span class="label">Assigned To:</span>
+        <span class="value">{{ data.personnel_name }}</span>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="confirmation-section">
+      <mat-checkbox [(ngModel)]="confirmed" color="warn">
+        <p class="">I understand that this action is permanent and cannot be reversed</p>
+      </mat-checkbox>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-stroked-button (click)="onCancel()" class="cancel-button">
+      <mat-icon>close</mat-icon>
+      Keep Request
+    </button>
+    <button 
+      mat-flat-button 
+      color="warn" 
+      (click)="onConfirm()" 
+      [disabled]="!confirmed"
+      class="confirm-button">
+      <mat-icon>delete_forever</mat-icon>
+      Cancel Request
+    </button>
+  </mat-dialog-actions>
+</div>

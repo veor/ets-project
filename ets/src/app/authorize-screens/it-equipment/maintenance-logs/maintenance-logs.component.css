@@ -1,0 +1,270 @@
+/* Add Device Button */
+.btn-add-device {
+  background-color: var(--accent, #4299e1);
+  border-color: var(--accent, #4299e1);
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-add-device:hover {
+  background-color: #57a0d4;
+  border-color: #57a0d4;
+  color: #fff;
+}
+
+/* Container */
+.maintenance-logs-container {
+  background: var(--content-bg);
+  color: var(--text);
+  padding-bottom: 40px;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  color: var(--text);
+}
+
+.card-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.25rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.card-footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 0.6rem 1.25rem;
+}
+
+/* Labels */
+.form-label {
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+/* Inputs and selects */
+.form-control,
+.form-select {
+  background: var(--content-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--content-bg);
+  color: var(--text);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(var(--accent-rgb, 66, 153, 225), 0.2);
+}
+
+/* Input group icon */
+.input-group-text {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* Table */
+.maintenance-table {
+  color: var(--text);
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.maintenance-table thead tr {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+}
+
+.maintenance-table thead th {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--border);
+  user-select: none;
+}
+
+.maintenance-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.maintenance-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.maintenance-table tbody td {
+  padding: 0.7rem 1rem;
+  vertical-align: middle;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Sortable columns */
+.sortable-col {
+  cursor: pointer;
+  position: relative;
+}
+
+.sortable-col:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.sort-icon {
+  font-size: 0.75rem;
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
+/* Ref # badge */
+.ref-badge {
+  background: var(--accent, #4299e1);
+  color: #fff;
+  font-size: 0.78rem;
+  padding: 0.3em 0.65em;
+  border-radius: 4px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* Empty state */
+.empty-state {
+  color: var(--text-muted);
+}
+
+/* Pagination */
+.pagination .page-link {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+  font-size: 0.82rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.pagination .page-link:hover {
+  background: var(--accent, #4299e1);
+  border-color: var(--accent, #4299e1);
+  color: #fff;
+}
+
+.pagination .page-item.active .page-link {
+  background: var(--accent, #4299e1);
+  border-color: var(--accent, #4299e1);
+  color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Outline secondary button */
+.btn-outline-secondary {
+  border-color: var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .form-label {
+    font-size: 0.85rem;
+  }
+
+  .maintenance-table thead th,
+  .maintenance-table tbody td {
+    padding: 0.55rem 0.6rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* Dark Mode */
+.dark-mode .card,
+.dark-mode .card-header,
+.dark-mode .card-footer {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background: var(--content-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.dark-mode .input-group-text {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+.dark-mode .maintenance-table,
+.dark-mode .maintenance-table thead th,
+.dark-mode .maintenance-table tbody td {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .maintenance-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dark-mode .sortable-col:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .pagination .page-link {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.dark-mode .pagination .page-item.active .page-link,
+.dark-mode .pagination .page-link:hover {
+  background: var(--accent, #4299e1);
+  border-color: var(--accent, #4299e1);
+  color: #fff;
+}
+
+.dark-mode .btn-outline-secondary {
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+.dark-mode .btn-outline-secondary:hover {
+  background: var(--border);
+  color: var(--text);
+}

@@ -1,0 +1,428 @@
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.dark-mode .error-message {
+  color: #ef4444;
+}
+
+/* Signature Display */
+.signature-display {
+  margin: 20px 0;
+  text-align: center;
+  padding: 16px;
+  background: var(--content-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.signature-display img {
+  width: 100%;
+  max-width: 100%;
+  max-height: 200px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+/* Signature Container */
+.signature-container {
+  margin-top: 20px;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--content-bg);
+}
+
+.signature-container canvas {
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: crosshair;
+}
+
+.signature-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.signature-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ========================================
+   VIEW DIALOG (Report View) STYLES
+======================================== */
+
+.view-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dark-mode .view-dialog-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.view-dialog {
+  background: var(--surface);
+  color: var(--text);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 60%;
+  width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dark-mode .view-dialog {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.landscape-dialog {
+  width: 1200px;
+}
+
+/* Logo and Header */
+.logo-form-head-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+
+.logo-container {
+  flex-shrink: 0;
+  margin-right: 15px;
+}
+
+.form-logo {
+  width: 50px;
+  height: auto;
+}
+
+.form-head {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.form-head b {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.form-head p {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Job Order Section */
+.job-order-section {
+  text-align: right;
+  margin-left: auto;
+}
+
+.job-order-section h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #de4a25;
+  margin: 0;
+}
+
+.job-order-section p {
+  font-size: 12px;
+  color: #ffffff;
+  background-color: #0847ad;
+  border-radius: 8px;
+  margin: 0;
+  padding: 3px 15px;
+}
+
+.barcode-container {
+  margin-top: 2px;
+  text-align: center;
+}
+
+.control_no_text {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+#barcode {
+  width: 200px;
+  height: auto;
+}
+
+/* Title and Content */
+.title-form {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin: 16px 0;
+  color: var(--text);
+}
+
+.sub-title-form {
+  font-size: 14px;
+  text-align: center;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.view-dialog hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+/* Dialog Content */
+.dialog-content {
+  margin-top: 20px;
+}
+
+.padding-container {
+  padding: 3px;
+}
+
+/* Tables */
+.details-table,
+.client-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.details-table {
+  border: none;
+  background-color: transparent;
+}
+
+.details-table td,
+.client-table-data {
+  padding: 3px 10px;
+  text-align: left;
+  border: 1px solid var(--border);
+  background-color: var(--content-bg);
+}
+
+.label-column {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.value-column {
+  color: var(--text);
+}
+
+.client-info-label {
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.client-info-value {
+  font-weight: 300;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+/* Layout */
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.half-width {
+  width: 48%;
+}
+
+.column label {
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+/* Textarea-like Display */
+.textarea-like {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  background-color: var(--content-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
+
+.textarea-like:empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.textarea-info-value {
+  display: block;
+  word-wrap: break-word;
+  color: var(--text);
+}
+
+.services-label {
+  margin-top: 10px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* PDF Button */
+.btn-pdf {
+  color: #fff;
+  background-color: #dc3545;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-pdf:hover {
+  background-color: #c82333;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.dark-mode .btn-pdf {
+  background-color: #ef4444;
+}
+
+.dark-mode .btn-pdf:hover {
+  background-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.material-icons {
+  font-size: 1.5rem;
+  vertical-align: middle;
+}
+
+/* Scrollbar for dialogs */
+.dialog-container::-webkit-scrollbar,
+.view-dialog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-container::-webkit-scrollbar-track,
+.view-dialog::-webkit-scrollbar-track {
+  background: var(--content-bg);
+  border-radius: 4px;
+}
+
+.dialog-container::-webkit-scrollbar-thumb,
+.view-dialog::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.dialog-container::-webkit-scrollbar-thumb:hover,
+.view-dialog::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .view-dialog {
+    max-width: 95%; /* Ensure modal width is smaller on mobile */
+    width: auto;
+    margin: 10px;
+  }
+
+  /* Adjust text size and layout for mobile */
+  .form-logo {
+    width: 40px; /* Smaller logo for mobile */
+  }
+
+  .title-form {
+    font-size: 16px; /* Adjust title size */
+  }
+
+  .sub-title-form {
+    font-size: 12px; /* Adjust subtitle size */
+  }
+
+  /* Make sure tables and content fit inside */
+  .details-table,
+  .client-table,
+  .client-table-data {
+    width: 100%; /* Full width for mobile */
+  }
+
+  .textarea-like {
+    width: 100%; /* Ensure text areas are responsive */
+    padding: 8px;
+  }
+
+  .row {
+    flex-direction: column; /* Stack columns vertically */
+    gap: 10px;
+  }
+
+  .half-width {
+    width: 100%; /* Make columns take full width on mobile */
+  }
+
+  .barcode-container {
+    width: 100%;
+  }
+}

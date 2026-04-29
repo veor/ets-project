@@ -47,6 +47,12 @@ class ItrmServiceReport extends \Phalcon\Mvc\Model
 
     /**
      *
+     * @var integer
+     */
+    public $division_id;
+
+    /**
+     *
      * @var string
      */
     public $issue_request;
@@ -61,7 +67,7 @@ class ItrmServiceReport extends \Phalcon\Mvc\Model
      *
      * @var integer
      */
-    public $division_id;
+    public $requestDiv_Id;
 
     /**
      *
@@ -92,6 +98,12 @@ class ItrmServiceReport extends \Phalcon\Mvc\Model
      * @var string
      */
     public $service_level_id;
+
+    /**
+     *
+     * @var string
+     */
+    public $service_quantity_id;
 
     /**
      *
@@ -155,9 +167,45 @@ class ItrmServiceReport extends \Phalcon\Mvc\Model
 
     /**
      *
-     * @var integer
+     * @var string
      */
-    public $units;
+    public $start_time;
+
+    /**
+     *
+     * @var string
+     */
+    public $end_time;
+
+    /**
+     *
+     * @var string
+     */
+    public $approval_datetime;
+
+    /**
+     *
+     * @var string
+     */
+    public $time_accepted;
+
+    /**
+     *
+     * @var string
+     */
+    public $time_assigned;
+
+    /**
+     *
+     * @var string
+     */
+    public $process_time;
+
+    /**
+     *
+     * @var string
+     */
+    public $noted_by;
 
     /**
      * Initialize method for model.
@@ -165,9 +213,12 @@ class ItrmServiceReport extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("etsdb");
+        /* --- PRODUCTION --- */
+        // $this->setSchema("qsadmin_etsdb");
         $this->setSource("itrm_service_report");
         $this->belongsTo('division_id', '\Divisions', 'division_id', ['alias' => 'Divisions']);
         $this->belongsTo('office_id', '\Office', 'office_id', ['alias' => 'Office']);
+        $this->belongsTo('requestDiv_Id', '\RequestDivision', 'requestDiv_Id', ['alias' => 'RequestDivision']);
         $this->belongsTo('personnel_id', '\Users', 'id_number', ['alias' => 'Users']);
     }
 

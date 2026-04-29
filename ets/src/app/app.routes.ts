@@ -2,7 +2,7 @@ import { Routes } from "@angular/router";
 import { LoginGuard } from "./services/login.guard";
 import { AuthGuard } from "./services/auth.guard";
 import { PermissionGuard } from "./services/permission.guard";
-import { AccessDeniedComponent } from "./home/access-denied/access-denied.component";
+import { AccessDeniedComponent } from "./authorize-screens/access-denied/access-denied.component";
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -14,53 +14,81 @@ export const routes: Routes = [
     {
         path: '',
         canMatch: [AuthGuard],
-        loadComponent: () => import('./home/home.component'). then(m => m.HomeComponent),
+        loadComponent: () => import('./home/layout/layout.component'). then(m => m.LayoutComponent),
         children: [
             {
-                path: 'dashboard', // if permission has 2.2 ex: [1.9,2.2]
-                loadComponent: () => import('./home/dashboard/dashboard.component'). then(m => m.DashboardComponent),
-                data: { requiredPermission: 2.2 },
+                // path: 'register-device', 
+                // loadComponent: () => import('./authorize-screens/register-device/register-device.component'). then(m => m.RegisterDeviceComponent),
+                path: 'maintenance-logs', 
+                loadComponent: () => import('./authorize-screens/it-equipment/maintenance-logs/maintenance-logs.component'). then(m => m.MaintenanceLogsComponent),
+                data: { requiredPermission: '3.6' },
                 canActivate: [PermissionGuard],
             },
             {
-                path: 'user-settings', // if permission has 1.6 ex: [1.9,1.6]
-                loadComponent: () => import('./home/user-settings/user-settings.component'). then(m => m.UserSettingsComponent),
+                path: 'system-settings', 
+                loadComponent: () => import('./home/system-settings/system-settings.component'). then(m => m.SystemSettingsComponent),
                 canActivate: [PermissionGuard],
-                data: { requiredPermission: 1.6 },
+                data: { requiredPermission: '2.1' },
             },
             {
-                path: 'task', // if permission has 1.9 ex: [1.9,2.2]
-                loadComponent: () => import('./home/task/task.component'). then(m => m.TaskComponent),
-                data: { requiredPermission: 1.9 },
+                path: 'add-device',
+                loadComponent: () => import('./authorize-screens/add-device-screen/add-device-screen.component'). then(m => m.AddDeviceScreenComponent),
+                canActivate: [PermissionGuard],
+                data: { requiredPermission: '4.2'}
+            },
+            {
+                path: 'it-equipment',
+                loadComponent: () => import('./authorize-screens/it-equipment/it-equipment.component'). then(m => m.ItEquipmentComponent),
+                canActivate: [PermissionGuard],
+                data: { requiredPermission: '4.2'}
+            },
+            // {
+            //     path: 'maintenance-log', 
+            //     loadComponent: () => import('./authorize-screens/preventive-maintenance'). then(m => m.MaintenanceLogComponent),
+            //     canActivate: [PermissionGuard],
+            //     data: { requiredPermission: '4.3' },                
+            // },
+            {
+                path: 'dashboard', 
+                loadComponent: () => import('./authorize-screens/dashboard-screen/dashboard-screen.component'). then(m => m.DashboardScreenComponent),
+                data: { requiredPermission: '3.4' },
                 canActivate: [PermissionGuard],
             },
             {
-                path: 'maintenance-log', // if permission has 2.3 ex: [2.3,2.2]
-                loadComponent: () => import('./home/log/log.component'). then(m => m.LogComponent),
-                data: { requiredPermission: 2.3 },
+                // path: 'office request',
+                path: 'authorize/office-request', 
+                loadComponent: () => import('./authorize-screens/office-screen/office-screen.component'). then(m => m.OfficeScreenComponent),
+                data: { requiredPermission: '5.1' },
+                canActivate: [PermissionGuard],
+            },
+           {
+                // path: 'support request',
+                path: 'authorize/support-request', 
+                loadComponent: () => import('./authorize-screens/support-screen/support-screen.component').then(m => m.SupportScreenComponent),
+                data: { requiredPermission: '5.2' },
+                canActivate: [PermissionGuard],
+            },
+           {
+                // path: 'monitor',
+                path: 'authorize/monitor', 
+                loadComponent: () => import('./authorize-screens/monitor-screen/monitor-screen.component').then(m => m.MonitorComponent),
+                data: { requiredPermission: '5.3' },
                 canActivate: [PermissionGuard],
             },
             {
-                path: 'monitoring', // if permission has 2.1 ex: [2.1,2.2]
-                loadComponent: () => import('./home/monitor/monitor.component'). then(m => m.MonitorComponent),
-                data: { requiredPermission: 2.1 },
+                // path: 'task',
+                path: 'authorize/task' ,
+                loadComponent: () => import('./authorize-screens/assigned-task-screen/assigned-task-screen.component'). then(m => m.AssignedTaskScreenComponent),
+                data: { requiredPermission: '3.5' },
                 canActivate: [PermissionGuard],
             },
-            {
-                path: 'technical-supervisor', // if permission has 3.1 ex: [3.1, 2.2]
-                loadComponent: () => import('./supervisor-home/it-supervisor/it-supervisor.component'). then(m => m.ItSupervisorComponent),
-                data: { requiredPermission: 3.1 },
-                canActivate: [PermissionGuard],
-            },
-            {
-                path: 'head-supervisor', // if permission has 4.1 ex: [1.2, 4.1, 3.1]
-                loadComponent: () => import('./supervisor-home/job-request/job-request.component'). then(m => m.JobRequestComponent),
-                data: { requiredPermission: 4.1 },
-                canActivate: [PermissionGuard],
-            },
+
             { path: 'access-denied', component: AccessDeniedComponent },
         ]
     },
 
     
 ]
+
+
+

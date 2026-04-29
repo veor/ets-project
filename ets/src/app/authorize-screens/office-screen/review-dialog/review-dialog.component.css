@@ -1,0 +1,98 @@
+/* Dialog wrapper */
+.dialog-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+  background: var(--content-bg);
+}
+
+.dialog-body {
+  padding-top: 12px;
+  background: var(--content-bg);
+}
+
+/* Grid layout */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* Individual field */
+.info-item {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+}
+
+/* Full-width row */
+.info-item.full-width {
+  grid-column: span 2;
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  word-break: break-word;
+}
+
+/* Actions */
+.dialog-actions {
+  padding-top: 12px;
+  background: var(--content-bg);
+
+}
+
+.issue-div {
+  border: 1px solid var(--border);
+}
+
+/* Dark mode specific */
+.dark-mode .dialog-title {
+  color: var(--text);
+}
+
+.dark-mode .info-item {
+  background: var(--content-bg);
+  border-color: var(--border);
+}
+
+.dark-mode .label {
+  color: var(--text-muted);
+}
+
+.dark-mode .value {
+  color: var(--text);
+}
+
+.dark-mode .issue-div {
+  border-color: var(--border);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-item.full-width {
+    grid-column: span 1;
+  }
+
+  .dialog-title {
+    font-size: 1.1rem;
+  }
+}

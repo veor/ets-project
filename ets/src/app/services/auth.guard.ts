@@ -16,13 +16,10 @@ export class AuthGuard implements CanMatch {
     route:Route,
     segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       if (this.authService.isLoggedIn()) {
-        
         return true;
       } else {
         this.router.navigate(['/client']);
         return false;
       }
-
-  
   }
 }

@@ -1,0 +1,652 @@
+.light-only {
+  /* Light mode variables (same as :root) */
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --content-bg: #f7f9fb;
+
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #1976d2;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===== Main Container ===== */
+.settings-page {
+  padding: 2rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 100vh;
+}
+
+/* ===== Loading & Error States ===== */
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.loading-container mat-spinner {
+  margin-bottom: 1rem;
+}
+
+.loading-container p,
+.error-container p {
+  font-size: 1rem;
+}
+
+.error-container mat-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: #d32f2f;
+}
+
+/* ===== Material Cards ===== */
+.user-info-card,
+.users-section,
+.departments-section {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  border: 1px solid var(--border);
+}
+
+.user-info-card:hover,
+.users-section:hover,
+.departments-section:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Card Headers ===== */
+::ng-deep .user-info-card .mat-mdc-card-header {
+  padding: 1.5rem 2rem;
+  margin: 0 !important;
+  border-bottom: 2px solid var(--border);
+}
+
+::ng-deep .user-info-card .mat-mdc-card-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 !important;
+}
+
+::ng-deep .user-info-card .mat-mdc-card-title mat-icon {
+  margin-right: 12px;
+  font-size: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+/* Card Content Padding */
+::ng-deep .user-info-card .mat-mdc-card-content,
+::ng-deep .users-section .mat-mdc-card-content,
+::ng-deep .departments-section .mat-mdc-card-content {
+  padding: 2rem;
+}
+
+/* ===== Info Grid ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Static Info Items */
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.info-item strong {
+  font-size: 0.813rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-item strong::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.info-item span {
+  font-size: 1.063rem;
+  font-weight: 500;
+  padding: 0.5rem 0;
+}
+
+/* ===== Material Form Fields ===== */
+::ng-deep .info-item.mat-mdc-form-field {
+  padding: 0;
+  border: none;
+}
+
+::ng-deep .mat-mdc-form-field {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Outline borders */
+::ng-deep .mat-mdc-form-field .mat-mdc-notched-outline .mat-mdc-notched-outline-leading,
+::ng-deep .mat-mdc-form-field .mat-mdc-notched-outline .mat-mdc-notched-outline-notch,
+::ng-deep .mat-mdc-form-field .mat-mdc-notched-outline .mat-mdc-notched-outline-trailing {
+  border-color: var(--border) !important;
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-leading,
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-notch,
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-trailing {
+  border-color: var(--accent) !important;
+}
+
+/* ===== Action Buttons ===== */
+.update-btn-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border);
+}
+
+.update-btn-container button {
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.938rem;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.update-btn-container button:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.update-btn-container button mat-icon {
+  margin-right: 8px;
+}
+
+.update-btn-container button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button Colors */
+.update-btn-container button[color="primary"],
+::ng-deep .mat-mdc-raised-button.mat-primary {
+  color: #fff !important;
+}
+
+.update-btn-container button[color="accent"],
+::ng-deep .mat-mdc-raised-button.mat-accent {
+  color: #fff !important;
+}
+
+.update-btn-container button[color="warn"],
+::ng-deep .mat-mdc-raised-button.mat-warn {
+  color: #fff !important;
+}
+
+/* Icon Button Colors */
+.activate-btn {
+  color: #2e7d32 !important;
+}
+
+.permission-btn {
+  color: #3F51B5 !important;
+}
+
+.edit-user-btn {
+  color: #0097A7 !important;
+}
+
+.change-pass-btn {
+  color: #fb8c00 !important;
+}
+
+::ng-deep .mat-mdc-icon-button[color="warn"] {
+  color: #dc3545 !important;
+}
+
+/* ===== Section Header ===== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-field {
+  min-width: 280px;
+  flex: 1;
+  max-width: 400px;
+}
+
+/* ===== Table Container ===== */
+.table-container {
+  overflow-x: auto;
+}
+
+::ng-deep table.mat-mdc-table {
+  width: 100%;
+}
+
+::ng-deep th.mat-mdc-header-cell {
+  font-weight: 700;
+  font-size: 0.813rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 1.25rem 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+::ng-deep td.mat-mdc-cell {
+  font-size: 0.938rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+::ng-deep .mat-mdc-row {
+  transition: all 0.2s ease;
+}
+
+/* No data row */
+::ng-deep tr.mat-mdc-row.mat-mdc-no-data-row td {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ===== Status Badge ===== */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.status::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Light Mode - Active Status */
+.status.active {
+  color: #155724;
+  border-color: rgba(40, 167, 69, 0.3);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+.status.active::before {
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+}
+
+/* Light Mode - Inactive Status */
+.status.inactive {
+  color: #721c24;
+  border-color: rgba(220, 53, 69, 0.3);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+}
+
+.status.inactive::before {
+  background-color: #dc3545;
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+/* ===== Department Table Inputs ===== */
+.form-control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.form-control-sm {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 0.813rem;
+}
+
+.btn-outline-success {
+  color: #28a745;
+  border: 1px solid #28a745;
+}
+
+.btn-outline-success:hover {
+  color: #fff;
+}
+
+/* ===== Paginator Styling ===== */
+::ng-deep .mat-mdc-paginator {
+  border-top: 1px solid var(--border);
+}
+
+::ng-deep .mat-mdc-paginator-container {
+  padding: 1rem;
+}
+
+/* ===== Material Divider ===== */
+::ng-deep mat-divider {
+  border-top-color: var(--border) !important;
+}
+
+/* ===== Text Utilities ===== */
+.text-center {
+  text-align: center;
+}
+
+.mt-3, .my-3 {
+  margin-top: 1rem;
+}
+
+.mt-4, .my-4 {
+  margin-top: 1.5rem;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+/* ===== Responsive Design ===== */
+
+/* Large Tablets */
+@media (max-width: 1024px) {
+  .settings-page {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-content,
+  ::ng-deep .users-section .mat-mdc-card-content,
+  ::ng-deep .departments-section .mat-mdc-card-content {
+    padding: 1.5rem;
+  }
+
+  .update-btn-container {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .filter-field {
+    min-width: 220px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-header,
+  .section-header {
+    padding: 1.25rem 1.5rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-title,
+  .section-header h3 {
+    font-size: 1.25rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-content,
+  ::ng-deep .users-section .mat-mdc-card-content,
+  ::ng-deep .departments-section .mat-mdc-card-content {
+    padding: 1.25rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .update-btn-container {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-field {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  ::ng-deep th.mat-mdc-header-cell,
+  ::ng-deep td.mat-mdc-cell {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .status {
+    font-size: 0.688rem;
+    padding: 4px 10px;
+  }
+}
+
+/* Mobile Phones */
+@media (max-width: 480px) {
+  .settings-page {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .user-info-card,
+  .users-section,
+  .departments-section {
+    border-radius: 8px;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-header,
+  .section-header {
+    padding: 1rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-title,
+  .section-header h3 {
+    font-size: 1.125rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-content,
+  ::ng-deep .users-section .mat-mdc-card-content,
+  ::ng-deep .departments-section .mat-mdc-card-content {
+    padding: 1rem;
+  }
+
+  .info-item {
+    padding: 0.75rem;
+  }
+
+  .update-btn-container button {
+    height: 44px;
+    font-size: 0.875rem;
+  }
+
+  ::ng-deep .mat-column-office,
+  ::ng-deep .mat-column-division {
+    display: none;
+  }
+
+  ::ng-deep th.mat-mdc-header-cell,
+  ::ng-deep td.mat-mdc-cell {
+    padding: 0.625rem 0.375rem;
+    font-size: 0.813rem;
+  }
+
+  .status {
+    font-size: 0.625rem;
+    padding: 3px 8px;
+  }
+
+  .status::before {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  .settings-page {
+    padding: 0.5rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-header,
+  .section-header {
+    padding: 0.75rem;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-content,
+  ::ng-deep .users-section .mat-mdc-card-content,
+  ::ng-deep .departments-section .mat-mdc-card-content {
+    padding: 0.75rem;
+  }
+
+  .info-grid {
+    gap: 0.75rem;
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .settings-page {
+    background: white;
+    padding: 0;
+  }
+
+  .update-btn-container,
+  .filter-field,
+  ::ng-deep mat-paginator {
+    display: none !important;
+  }
+
+  .user-info-card,
+  .users-section,
+  .departments-section {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  ::ng-deep .user-info-card .mat-mdc-card-header,
+  .section-header {
+    background: #f5f5f5 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .table-container {
+    overflow: visible;
+  }
+
+  ::ng-deep .mat-mdc-row {
+    page-break-inside: avoid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .user-info-card,
+  .users-section,
+  .departments-section {
+    border: 2px solid currentColor;
+  }
+
+  .status {
+    border: 2px solid currentColor;
+  }
+}

@@ -1,4 +1,4 @@
 <div *ngIf="notification" class="notification" [ngClass]="notification.type">
     {{ notification.message }}
+    <button class="close-btn" (click)="closeNotification()">×</button>
   </div>
-  

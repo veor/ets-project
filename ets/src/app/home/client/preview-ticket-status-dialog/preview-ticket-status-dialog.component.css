@@ -1,0 +1,370 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "poppins", sans-serif;
+}
+
+.view-dialog {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.landscape-dialog {
+  width: 1200px;
+  max-width: 100%;
+}
+
+.logo-form-head-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.logo-container {
+  flex-shrink: 0;
+  margin-right: 15px;
+}
+
+.form-logo {
+  width: 50px;
+  height: auto;
+}
+
+.form-head {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.form-head b {
+  font-size: 12px;
+  color: #333;
+}
+
+.form-head p {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.2;
+}
+
+.job-order-section {
+  text-align: right;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+#barcode {
+  width: 160px;
+  height: auto;
+  display: block;
+}
+
+.barcode-container {
+  margin-top: 2px;
+  text-align: center;
+}
+
+.control_no_text {
+  font-size: 12px;
+}
+
+.title-form {
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.sub-title-form {
+  font-size: 13px;
+  text-align: center;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.padding-container {
+  padding: 3px 0;
+}
+
+/* Tables */
+.details-table {
+  border: none;
+  border-collapse: collapse;
+  background-color: transparent;
+  width: 100%;
+}
+
+.details-table td {
+  border: none;
+  background-color: transparent;
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.label-column,
+.value-column {
+  background-color: #f9f9f9;
+}
+
+.client-info-label {
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.client-info-value {
+  font-weight: 300;
+  font-size: 12px;
+}
+
+.client-table-data {
+  padding: 4px 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+  font-size: 12px;
+}
+
+p {
+  margin: 0;
+  color: #333;
+  font-size: 13px;
+}
+
+/* Two column layout */
+.two-col-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Info cards */
+.info-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-card--full {
+  width: 100%;
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.info-card-header svg {
+  flex-shrink: 0;
+  stroke: #de4a25;
+}
+
+.info-card-body {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #333;
+  line-height: 1.6;
+  min-height: 60px;
+  background-color: #fafafa;
+  white-space: pre-wrap;
+  flex: 1;
+}
+
+/* Timeline */
+.timeline-stack {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  min-height: unset;
+}
+
+.timeline-dates-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+}
+
+.date-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 12px;
+}
+
+.date-divider-horizontal {
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.date-divider-vertical {
+  width: 1px;
+  background-color: #e0e0e0;
+  align-self: stretch;
+}
+
+.date-value {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #aaa;
+  font-weight: 600;
+}
+
+.meta-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .view-dialog {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-form-head-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .logo-container {
+    margin-right: 0;
+  }
+
+  .form-head {
+    text-align: center;
+    width: 100%;
+  }
+
+  .job-order-section {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+  }
+
+  #barcode {
+    width: 140px;
+    margin: 0 auto;
+  }
+
+  .two-col-section {
+    grid-template-columns: 1fr;
+  }
+
+  .details-table,
+  .client-table {
+    font-size: 11px;
+  }
+
+  .client-table-data {
+    display: block;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-dialog {
+    padding: 12px;
+  }
+
+  .logo-form-head-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-head b {
+    font-size: 11px;
+  }
+
+  .form-head p {
+    font-size: 10px;
+  }
+
+  .title-form {
+    font-size: 12px;
+  }
+
+  .sub-title-form {
+    font-size: 11px;
+  }
+
+  .info-card-header {
+    font-size: 9px;
+    padding: 5px 8px;
+  }
+
+  .info-card-body {
+    font-size: 11px;
+    padding: 8px;
+    min-height: 50px;
+  }
+
+  .timeline-dates-row {
+    grid-template-columns: 1fr;
+  }
+
+  .date-divider-vertical {
+    width: 100%;
+    height: 1px;
+  }
+
+  .date-block {
+    padding: 6px 8px;
+  }
+
+  .date-value {
+    font-size: 12px;
+  }
+
+  .meta-label {
+    font-size: 9px;
+  }
+
+  .meta-value {
+    font-size: 11px;
+  }
+
+  .client-table-data {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  #barcode {
+    width: 120px;
+  }
+}

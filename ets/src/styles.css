@@ -1,8 +1,174 @@
-/* You can add global styles to this file, and also import other style files */
-
-
+/* ================================
+   Global
+=================================== */
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { 
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+}
+
+:root {
+  /* Light mode */
+  --bg: #eef1f5;          /* page background */
+  --surface: #ffffff;    /* navbar, sidebar, cards */
+  --content-bg: #f7f9fb; /* main content area */
+
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #1976d2;
+}
+
+.dark-mode {
+  /* Soft Dark Mode */
+  --bg: #1c1d21;          /* page background */
+  --surface: #26282d;     /* navbar, sidebar */
+  --content-bg: #22242a;  /* main content */
+
+  --text: #e5e7eb;
+  --text-muted: #9ca3af;
+  --border: #32343a;
+  --accent: #64b5f6;
+}
+
+/* ================================
+  Dark/Light Mode Toggle Icon Style
+=================================== */
+
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 6px;
+  color: var(--text);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.dark-mode .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.theme-toggle .material-symbols-outlined {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text);
+}
+
+/* ================================
+   User Menu Dark Mode Text
+=================================== */
+
+.dark-mode .user-menu,
+.dark-mode .user-name,
+.dark-mode .caret,
+.dark-mode .dropdown a,
+.dark-mode .dropdown button,
+.dark-mode .logout {
+  color: #ffffff;
+}
+
+.dark-mode .dropdown a:hover,
+.dark-mode .dropdown button:hover {
+  color: #ffffff;
+}
+
+.dark-mode .dropdown {
+  background: #1e1f23;
+  border-color: #32343a;
+}
+
+/* ================================
+ Dark mode on Add device  
+=================================== */
+
+.mat-mdc-select-panel {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.mat-mdc-option {
+  color: var(--text) !important;
+}
+
+.mat-mdc-option:hover {
+  background: var(--content-bg) !important;
+}
+
+.mat-mdc-option.mat-mdc-option-active {
+  background: var(--content-bg) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected {
+  color: #fff !important;
+}
+
+.mat-pseudo-checkbox-checked.mat-pseudo-checkbox-minimal::after {
+  color: var(--accent) !important;
+}
+
+.dark-mode .mat-mdc-select-panel {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+.dark-mode .mat-mdc-option {
+  color: var(--text) !important;
+}
+
+.dark-mode .mat-mdc-option:hover {
+  background: var(--content-bg) !important;
+}
+
+
+
+
+
+
+
+/* ================================
+Toast Snackbar style  
+=================================== */
+
+/* Success */
+.mat-mdc-snack-bar-container.toast-success {
+  --mdc-snackbar-container-color: #4caf50;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+/* Error */
+.mat-mdc-snack-bar-container.toast-error {
+  --mdc-snackbar-container-color: #f44336;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+/* Warning */
+.mat-mdc-snack-bar-container.toast-warning {
+  --mdc-snackbar-container-color: #ff9800;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+/* Info */
+.mat-mdc-snack-bar-container.toast-info {
+  --mdc-snackbar-container-color: #2196f3;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+
+
+
+
+
 
 
 

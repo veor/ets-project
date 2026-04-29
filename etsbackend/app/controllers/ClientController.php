@@ -3,12 +3,11 @@ declare(strict_types=1);
 
 class ClientController extends \Phalcon\Mvc\Controller
 {
-
+    // fetch request division which is IT & Repair Maintenance 
     public function getRequestDivisionAction()
     {
         $this->view->disable(); 
 
-        // Fetch divisions from the database
         $requestDivisions = RequestDivision::find(); 
 
         if ($requestDivisions) {
@@ -23,11 +22,10 @@ class ClientController extends \Phalcon\Mvc\Controller
             ];
         }
 
-        // Send JSON response
         $this->response->setJsonContent($response);
         return $this->response->send();
     }
-
+    // fetch offices 
     public function getOfficesAction()
     {
         $this->view->disable();
@@ -47,12 +45,11 @@ class ClientController extends \Phalcon\Mvc\Controller
             'data' => $officeData
         ]);
     }
-
+    // fetch divisions 
     public function getDivisionsAction()
     {
         $this->view->disable(); 
 
-        // Fetch divisions from the database
         $divisions = Divisions::find(); 
 
         $divisionData = [];
@@ -60,7 +57,8 @@ class ClientController extends \Phalcon\Mvc\Controller
         foreach ($divisions as $division) {
             $divisionData[] = [
                 'division_id' => $division->division_id,
-                'division_name' => $division->division_name
+                'division_name' => $division->division_name,
+                'office_id'=> $division->office_id
             ];
         }
     
@@ -81,48 +79,108 @@ class ClientController extends \Phalcon\Mvc\Controller
             ];
         }
 
-        // Send JSON response
         $this->response->setJsonContent($response);
         return $this->response->send();
     }
+    // submit service request to their respective office/division 
+    // public function createServiceReportAction()
+    // {
+    //     $this->view->disable();
+    //     $rawData = $this->request->getJsonRawBody(true);
+    
+    //     // $name = trim(strip_tags($rawData['name']));
+    //     $name = ucwords(strtolower(trim(strip_tags($rawData['name']))));
+    //     $property_no = trim(strip_tags($rawData['property_no']));
+    //     $contact = trim(strip_tags($rawData['contact']));
+    //     $dept_head = trim(strip_tags($rawData['dept_head']));
+    //     $requestDiv_Id = (int)$rawData['requestDiv_Id'];
+    //     $office_id = (int)$rawData['office_id'];
+    //     $division_id = (int)$rawData['division_id'];
+    //     $issue_request = trim(strip_tags($rawData['issue_request']));
 
-    // submit job request to office supervisor 
+    //     $targetTable = null;
+    //     // switch ($division_id) {
+    //     switch ($requestDiv_Id) {
+    //         case 1:
+    //             $targetTable = new ItrmServiceReport();
+    //             break;
+    //         // case 2:
+    //         //     $targetTable = new SysdevServiceReport();
+    //         //     break;
+    //         // case 3:
+    //         //     $targetTable = new CwServiceReport();
+    //         //     break;
+    //         default:
+    //             $this->response->setJsonContent(['status' => 'fail', 'message' => 'Invalid division ID.']);
+    //             return $this->response->send();
+    //     }
+    
+    //     $targetTable->name = $name;
+    //     $targetTable->contact_no = $contact;
+    //     $targetTable->dept_head = $dept_head;
+    //     $targetTable->office_id = $office_id;
+    //     $targetTable->division_id = $division_id;
+    //     $targetTable->issue_request = $issue_request;
+    //     $targetTable->personnel_id = null;
+    //     $targetTable->requestDiv_Id = $requestDiv_Id;
+    //     $targetTable->approval_status = 0; // Default to unapproved
+    //     $targetTable->property_no = $property_no;
+    //     $targetTable->date_of_request = null; // Default to empty
+    //     $targetTable->dept_sign = null; // Default to empty
+    //     $targetTable->request_status = "Our technical staff will assist you as soon as they become available";
+    
+    //     if ($targetTable->save()) {
+    //         $this->response->setJsonContent(['status' => 'success', 'message' => 'Service report created successfully.']);
+    //     } else {
+    //         $this->response->setJsonContent(['status' => 'fail', 'message' => 'Failed to save service report.', 'errors' => $targetTable->getMessages()]);
+    //     }
+    
+    //     return $this->response->send();
+    // }
     public function createServiceReportAction()
     {
         $this->view->disable();
         $rawData = $this->request->getJsonRawBody(true);
-    
-        // Sanitize and retrieve inputs
-        $name = $this->filter->sanitize($rawData['name'], 'string');
-        $property_no = $this->filter->sanitize($rawData['property_no'], 'string');
-        $contact = $this->filter->sanitize($rawData['contact'], 'string');
-        $dept_head = $this->filter->sanitize($rawData['dept_head'], 'string');
+
+        $name = ucwords(strtolower(trim(strip_tags($rawData['name']))));
+        $property_no = trim(strip_tags($rawData['property_no']));
+        $contact = trim(strip_tags($rawData['contact']));
+        $dept_head = trim(strip_tags($rawData['dept_head']));
         $requestDiv_Id = (int)$rawData['requestDiv_Id'];
         $office_id = (int)$rawData['office_id'];
         $division_id = (int)$rawData['division_id'];
-        $issue_request = $this->filter->sanitize($rawData['issue_request'], 'string');
 
+        // issue_request sentence format capitalize first letter ends with a period
+        $issue_request = trim(strip_tags($rawData['issue_request']));
+        $issue_request = ucfirst(strtolower($issue_request));
+        $issue_request = rtrim($issue_request, '.') . '.';
 
-    
-        // Determine the target table based on division_id
         $targetTable = null;
-        // switch ($division_id) {
+        // switch ($requestDiv_Id) {
+        //     case 1:
+        //         $targetTable = new ItrmServiceReport();
+        //         break;
+        //     default:
+        //         $this->response->setJsonContent(['status' => 'fail', 'message' => 'Invalid division ID.']);
+        //         return $this->response->send();
+        // }
         switch ($requestDiv_Id) {
             case 1:
                 $targetTable = new ItrmServiceReport();
                 break;
-            // case 2:
-            //     $targetTable = new SysdevServiceReport();
-            //     break;
-            // case 3:
-            //     $targetTable = new CwServiceReport();
-            //     break;
+            case 2:
+                $targetTable = new SysdevServiceReport();
+                break;
+            case 3:
+                $targetTable = new CwServiceReport();
+                break;
             default:
-                $this->response->setJsonContent(['status' => 'fail', 'message' => 'Invalid division ID.']);
-                return $this->response->send();
+                return $this->response->setJsonContent([
+                    'status' => 'fail',
+                    'message' => 'Invalid request division.'
+                ]);
         }
-    
-        // Assign common fields to the target table
+
         $targetTable->name = $name;
         $targetTable->contact_no = $contact;
         $targetTable->dept_head = $dept_head;
@@ -131,22 +189,21 @@ class ClientController extends \Phalcon\Mvc\Controller
         $targetTable->issue_request = $issue_request;
         $targetTable->personnel_id = null;
         $targetTable->requestDiv_Id = $requestDiv_Id;
-        $targetTable->approval_status = 0; // Default to unapproved
+        $targetTable->approval_status = 0;
         $targetTable->property_no = $property_no;
-        $targetTable->date_of_request = null; // Default to empty
-        $targetTable->dept_sign = null; // Default to empty
-    
-        // Save the data into the specific table
+        $targetTable->date_of_request = null;
+        $targetTable->dept_sign = null;
+        $targetTable->request_status = "Our technical staff will assist you as soon as they become available";
+
         if ($targetTable->save()) {
             $this->response->setJsonContent(['status' => 'success', 'message' => 'Service report created successfully.']);
         } else {
             $this->response->setJsonContent(['status' => 'fail', 'message' => 'Failed to save service report.', 'errors' => $targetTable->getMessages()]);
         }
-    
+
         return $this->response->send();
     }
-
-    // display data based on search input value 
+    // fetch and display data on table  
     public function getServiceReportAction()
     {
         $this->view->disable();
@@ -164,18 +221,18 @@ class ClientController extends \Phalcon\Mvc\Controller
             'bind' => ['query' => '%' . $query . '%']
         ]);
     
-        // Create a result set that includes the personnel_name instead of personnel_id
+        // Create a result set that includes the personnel_name 
         $result = [];
         foreach ($reports as $report) {
             $personnelId = $report->personnel_id;
         
-            // Get the user details from the 'users' table based on personnel_id
+            // fetch the user details from the 'users' table based on personnel_id
             $user = Users::findFirst([
                 'conditions' => 'id_number = :personnel_id:',
                 'bind' => ['personnel_id' => $personnelId]
             ]);
         
-            // Append the report data with the name from the users table
+            // append the report data with the name from the users table
             $reportData = $report->toArray();
             $reportData['personnel_name'] = $user ? $user->name : 'N/A';
         
@@ -195,42 +252,6 @@ class ClientController extends \Phalcon\Mvc\Controller
         }
     }  
 
-    // save signature to itrm_service_report
-    // public function saveSignatureAction()
-    // {
-    //     $this->view->disable();
-    //     $rawData = $this->request->getJsonRawBody(true);
-    
-    //     $reportId = $this->filter->sanitize($rawData['reportId'], 'int');
-    //     $signature = $rawData['signature']; // Base64 encoded signature
-    
-    //     // Fetch the report
-    //     $report = ItrmServiceReport::findFirstById($reportId);
-    
-    //     if (!$report) {
-    //         return $this->response->setJsonContent([
-    //             'status' => 'fail',
-    //             'message' => 'Report not found.'
-    //         ]);
-    //     }
-    
-    //     // Save the signature
-    //     $report->signature = $signature;
-    
-    //     if ($report->save()) {
-    //         return $this->response->setJsonContent([
-    //             'status' => 'success',
-    //             'message' => 'Signature saved successfully.'
-    //         ]);
-    //     } else {
-    //         return $this->response->setJsonContent([
-    //             'status' => 'fail',
-    //             'message' => 'Failed to save signature.',
-    //             'errors' => $report->getMessages()
-    //         ]);
-    //     }
-    // }
-    
     
 }
 

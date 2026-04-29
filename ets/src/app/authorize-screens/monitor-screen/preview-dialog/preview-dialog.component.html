@@ -1,0 +1,148 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>SERVICE REPORT DETAILS</h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="header-section">
+      <div class="header-row">
+        <div class="header-item">
+          <strong>Date of Request:</strong> 
+          {{ data.date_of_request | date: 'MMM d, y h:mm a' }}
+        </div>
+        <div class="header-item">
+          <strong>Date Released:</strong> 
+          {{ data.date_released | date: 'MMM d, y h:mm a' }}
+        </div>
+      </div>
+      
+      <div class="header-row">
+        <div class="header-item">
+          <strong>Released To:</strong> 
+          {{ data.released_to || 'N/A' }}
+        </div>
+        <div class="header-item">
+          <strong>Ref. #:</strong> 
+          {{ data.control_no }}
+        </div>
+      </div>  
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      <!-- Left Column - Request Information -->
+      <div class="column left-column">
+        <div class="section-header">
+          <h3>REQUEST INFORMATION</h3>
+        </div>
+        
+        <div class="field-row">
+          <div class="field-item">
+            <strong>Name:</strong> 
+            {{ data.name || 'N/A' }}
+          </div>
+          <div class="field-item">
+            <strong>Contact:</strong> 
+            {{ data.contact_no }}
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-item">
+            <strong>Property #:</strong> 
+            {{ data.property_no }}
+          </div>
+        </div>
+
+        <div class="field-full">
+          <strong>Department:</strong> 
+          {{ data.office_value }}
+        </div>
+
+        <div class="field-full">
+          <strong>Department Head:</strong>
+          <span *ngIf="data.approval_datetime; else noApproval" class="approval-text">
+            Digitally Approved By: <strong>{{ data.dept_head }}</strong>
+            ({{ data.approval_datetime | date: 'MMM d, y h:mm a' }})
+          </span>
+          <ng-template #noApproval>
+            <span>{{ data.dept_head || 'N/A' }}</span>
+          </ng-template>
+        </div>
+
+        <div class="field-full">
+          <strong>Issue:</strong> 
+          {{ data.issue_request || 'N/A' }}
+        </div>
+
+        <div *ngIf="data.services?.length > 0" class="services-section">
+          <div class="section-header">
+            <h3>SERVICE/S RENDERED</h3>
+          </div>
+          <div class="services-grid">
+            <div *ngFor="let service of data.services" class="service-card">
+              <div class="service-name">
+                <strong>{{ service.name }}</strong>
+              </div>
+              <div class="service-details">
+                <span class="service-detail">
+                  <strong>Level:</strong> {{ service.level }}
+                </span>
+                <span class="service-detail">
+                  <strong>Quantity:</strong> {{ service.quantity }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column right-column">
+        <div class="section-header">
+          <h3>TIMELINE & COMPLETION</h3>
+        </div>
+        
+        <div class="field-row">
+          <div class="field-item">
+            <strong>Date Started:</strong> 
+            {{ data.date_started | date: 'MMM d, y h:mm a' }}
+          </div>
+          <div class="field-item">
+            <strong>Date Accomplished:</strong> 
+            {{ data.datetime_accomplished | date: 'MMM d, y h:mm a' }}
+          </div>
+        </div>
+
+        <div class="field-full">
+          <strong>Technical Staff:</strong> 
+          {{ data.personnel_name }}
+        </div>
+
+        <div class="field-full">
+          <strong>Noted By:</strong>
+          <span *ngIf="data.datetime_noted_by; else noNoted" class="approval-text">
+            Digitally Approved By: <strong>Leney C. Laygo</strong>
+            ({{ data.datetime_noted_by | date: 'MMM d, y h:mm a' }})
+          </span>
+          <ng-template #noNoted>
+            <span>Leney C. Laygo</span>
+          </ng-template>
+        </div>
+
+        <div class="field-full">
+          <strong>Action Taken:</strong> 
+          {{ data.action_taken || 'N/A' }}
+        </div>
+
+        <div class="field-full">
+          <strong>Remarks/Recommendation:</strong> 
+          {{ data.remarks || 'N/A' }}
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button color="primary" (click)="closeDialog()">Close</button>
+  </mat-dialog-actions>
+</div>

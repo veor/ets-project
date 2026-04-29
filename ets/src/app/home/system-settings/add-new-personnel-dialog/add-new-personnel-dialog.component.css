@@ -1,0 +1,32 @@
+mat-form-field {
+  margin-bottom: 16px;
+}
+
+mat-dialog-content {
+  min-width: 400px;
+  padding: 20px 24px;
+}
+
+.spinner-border {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15em;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+/* Style for disabled fields to show they're locked */
+::ng-deep .mat-form-field-disabled {
+  opacity: 0.7;
+}
+
+::ng-deep .mat-form-field-disabled .mat-form-field-label {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+::ng-deep .mat-form-field-disabled input,
+::ng-deep .mat-form-field-disabled .mat-select {
+  color: rgba(0, 0, 0, 0.6) !important;
+  cursor: not-allowed;
+}

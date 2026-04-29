@@ -1,0 +1,432 @@
+
+.dialog-container {
+  padding: 24px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Title */
+h3 {
+  margin: 0 0 20px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+/* Form Row */
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+/* Form Group */
+.form-group {
+  flex: 1;
+  margin-bottom: 5px;
+}
+
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="datetime-local"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--content-bg);
+  color: var(--text);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="datetime-local"]:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+/* Read-only inputs */
+input[type="text"]:read-only,
+input[type="datetime-local"]:read-only {
+  background: var(--content-bg);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Dark mode calendar icon */
+.dark-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* Error Message */
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.dark-mode .error-message {
+  color: #ef4444;
+}
+
+/* Signature Display */
+.signature-display {
+  margin: 20px 0;
+  text-align: center;
+  padding: 16px;
+  background: var(--content-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.signature-display img {
+  width: 100%;
+  max-width: 100%;
+  max-height: 200px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+}
+
+/* Signature Container */
+.signature-container {
+  margin-top: 20px;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--content-bg);
+}
+
+.signature-container canvas {
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: crosshair;
+  max-width: 100%;
+}
+
+/* Signature Actions */
+.signature-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.signature-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Dialog Footer */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.dialog-footer button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+  justify-content: center;
+}
+
+/* Button Variants */
+
+/* Secondary Button (Cancel) */
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border) !important;
+}
+
+.btn-secondary:hover {
+  background: var(--content-bg);
+  border-color: var(--text-muted) !important;
+}
+
+/* Light Button (Clear Signature) */
+.btn-light {
+  background: var(--content-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-light:hover {
+  background: var(--surface);
+  border-color: var(--text-muted);
+}
+
+/* Success Button (Release / Save) */
+.btn-success {
+  background: #28a745;
+  color: #fff;
+  border: none;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #218838;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Icon spacing */
+.btn-success i,
+.signature-actions button i {
+  margin-right: 4px;
+}
+
+/* Loading Spinner */
+.ediTask-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   DARK MODE SPECIFIC OVERRIDES
+======================================== */
+
+.dark-mode .dialog-container {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.dark-mode h3 {
+  color: var(--text);
+}
+
+.dark-mode label {
+  color: var(--text-muted);
+}
+
+.dark-mode input[type="text"],
+.dark-mode input[type="datetime-local"] {
+  background: var(--content-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.dark-mode input[type="text"]:focus,
+.dark-mode input[type="datetime-local"]:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.15);
+}
+
+.dark-mode input[type="text"]:read-only,
+.dark-mode input[type="datetime-local"]:read-only {
+  background: var(--content-bg);
+  color: var(--text-muted);
+}
+
+.dark-mode .signature-display {
+  background: var(--content-bg);
+  border-color: var(--border);
+}
+
+.dark-mode .signature-display img {
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.dark-mode .signature-container {
+  background-color: var(--content-bg);
+  border-color: var(--border);
+}
+
+.dark-mode .signature-container canvas {
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.dark-mode .btn-secondary {
+  color: var(--text);
+  border-color: var(--border) !important;
+}
+
+.dark-mode .btn-secondary:hover {
+  background: var(--content-bg);
+}
+
+.dark-mode .btn-light {
+  background: var(--content-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .btn-light:hover {
+  background: var(--surface);
+}
+
+.dark-mode .btn-success {
+  background: #2e7d32;
+}
+
+.dark-mode .btn-success:hover:not(:disabled) {
+  background: #256d29;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.4);
+}
+
+.dark-mode .btn-success:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+======================================== */
+
+.dialog-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-container::-webkit-scrollbar-track {
+  background: var(--content-bg);
+  border-radius: 4px;
+}
+
+.dialog-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.dialog-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.dark-mode .dialog-container::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+.dark-mode .dialog-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+.dark-mode .dialog-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 768px) {
+  .dialog-container {
+    padding: 16px;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  .dialog-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dialog-footer button {
+    width: 100%;
+  }
+
+  .signature-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .signature-actions button {
+    width: 100%;
+  }
+
+  .signature-container {
+    padding: 15px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog-container {
+    padding: 12px;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
+  input[type="text"],
+  input[type="datetime-local"] {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .dialog-footer button,
+  .signature-actions button {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,105 @@
+/* Tabs */
+.nav-tabs {
+  border-bottom: 2px solid var(--border, #dee2e6);
+}
+
+.nav-tabs .nav-link {
+  color: var(--text-muted, #6c757d);
+  border: 1px solid transparent;
+  border-radius: 6px 6px 0 0;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s, background 0.2s;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--accent, #0d6efd);
+  background-color: rgba(66, 153, 225, 0.07);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--accent, #0d6efd);
+  background-color: var(--surface, #fff);
+  border-color: var(--border, #dee2e6) var(--border, #dee2e6) var(--surface, #fff);
+  border-bottom: 2px solid var(--surface, #fff);
+  margin-bottom: -2px;
+}
+
+.tab-content-wrapper {
+  border: 1px solid var(--border, #dee2e6);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  background: var(--surface, #fff);
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25em 0.65em;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.badge-servicable {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-unservicable {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-disposal {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Table */
+.equipment-table {
+  color: var(--text);
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.equipment-table thead th {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--border, #dee2e6);
+  user-select: none;
+}
+
+.equipment-table tbody td {
+  padding: 0.7rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border, #dee2e6);
+}
+
+.equipment-table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.sortable-col {
+  cursor: pointer;
+}
+
+.sortable-col:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.sort-icon {
+  font-size: 0.75rem;
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
+.empty-state {
+  color: var(--text-muted);
+}

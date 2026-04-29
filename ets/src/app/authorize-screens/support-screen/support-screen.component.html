@@ -1,0 +1,102 @@
+<app-loader [isLoading]="isLoading"></app-loader>
+
+<h3 class="pending-request-header">Requesting Service</h3>
+
+<!-- Filters Row -->
+<div class="filter-row mat-elevation-z2">
+  <!-- Filter By -->
+  <mat-form-field appearance="outline" class="filter-item">
+    <mat-label>Filter By</mat-label>
+    <mat-select [(ngModel)]="selectedRequestType" (selectionChange)="applyFilters()">
+      <mat-option value="pending">In Process</mat-option>
+      <mat-option value="approved">Status of Request</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Sort By -->
+  <mat-form-field appearance="outline" class="filter-item">
+    <mat-label>Sort By</mat-label>
+    <mat-select [(ngModel)]="sortOption" (selectionChange)="applySorting()">
+      <mat-option value="date_of_request">Date</mat-option>
+      <mat-option value="name">Name</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Search -->
+  <mat-form-field appearance="outline" class="filter-item flex-grow">
+    <mat-label>Search by Name</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchFilters.name"
+      (input)="applyFilters()" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<!-- Table -->
+<div class="table-container" *ngIf="!isLoading && paginatedJobRequests.length > 0">
+  <table class="job-request-task">
+    <thead>
+      <tr>
+        <ng-container *ngIf="selectedRequestType === 'approved'">
+          <th class="main-table-head">Ref. #.</th>
+        </ng-container>
+        <th class="main-table-head">Date</th>
+        <th class="main-table-head">Name</th>
+        <th class="main-table-head">Issue/Request</th>
+        <th class="main-table-head">Status</th>
+        <th *ngIf="selectedRequestType !== 'approved'" class="main-table-head">Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let request of paginatedJobRequests">
+        <td *ngIf="selectedRequestType === 'approved'" class="main-table-row-data">{{ request.control_no }}</td>
+        <td class="main-table-row-data">{{ request.date_of_request | date:'short' }}</td>
+        <td class="main-table-row-data">{{ request.name }}</td>
+        <td class="main-table-row-data">{{ request.issue_request }}</td>
+        <td class="main-table-row-data">
+          <mat-chip [color]="request.approval_status === '1' ? 'primary' : 'warn'" class="status-chip">
+            {{ request.approval_status === '1' ? 'Approved' : 'In Process' }}
+          </mat-chip>
+        </td>
+        <td *ngIf="selectedRequestType !== 'approved'" class="main-table-row-data">
+        <div class="actions-container">
+          <button
+            mat-button
+            class="btn-approve"
+            (click)="openConfirmationDialog(request)"
+            [disabled]="loadingRequests[request.id]">
+
+            <mat-icon>check_circle</mat-icon>
+            Approve
+          </button>
+
+          <button
+            mat-button
+            class="btn-cancel"
+            (click)="openCancelConfirmationDialog(request)">
+
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+        </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- No Data Message -->
+<div class="no-data-message" *ngIf="!isLoading && paginatedJobRequests.length === 0">
+  No records found for this filter.
+</div>
+
+<!-- Paginator -->
+<mat-paginator
+  [length]="filteredJobRequests.length"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 20]"
+  (page)="onPageChange($event)">
+</mat-paginator>

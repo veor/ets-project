@@ -1,0 +1,500 @@
+
+/* ========================================
+   CANCEL SERVICE REQUEST DIALOG
+======================================== */
+
+.dialog-container {
+  padding: 0;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* ========================================
+   DIALOG HEADER
+======================================== */
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: var(--content-bg);
+  border-bottom: 2px solid var(--border);
+}
+
+.warning-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #dc3545;
+}
+
+.dark-mode .warning-icon {
+  color: #ef4444;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ========================================
+   DIALOG CONTENT
+======================================== */
+
+.dialog-content {
+  padding: 24px !important;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Warning Message Section */
+.warning-message {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(220, 53, 69, 0.08);
+  border-radius: 6px;
+}
+
+.dark-mode .warning-message {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.warning-message .primary-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.warning-message .secondary-text {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Request Details Section */
+.request-details {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--content-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.request-details h3 {
+  margin: 0 0 16px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detail-row .label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  min-width: 120px;
+}
+
+.detail-row .value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+  word-break: break-word;
+}
+
+p {
+  color: var(--text);
+}
+
+/* Divider */
+::ng-deep .dialog-content mat-divider {
+  margin: 20px 0;
+  border-top-color: var(--border) !important;
+}
+
+/* Confirmation Section */
+.confirmation-section {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* Material Checkbox Styling */
+::ng-deep .confirmation-section .mat-mdc-checkbox {
+  display: flex;
+  align-items: flex-start;
+}
+
+::ng-deep .confirmation-section .mat-mdc-checkbox-label {
+  color: var(--text) !important;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-left: 8px;
+}
+
+::ng-deep .confirmation-section .mat-mdc-checkbox.mat-warn .mdc-checkbox__background {
+  border-color: #ffffff !important;
+  background-color: #dc3545 !important;
+}
+
+::ng-deep .dark-mode .confirmation-section .mat-mdc-checkbox.mat-warn .mdc-checkbox__background {
+  border-color: #ffffff !important;
+}
+
+::ng-deep .confirmation-section .mat-mdc-checkbox:hover .mdc-checkbox__background {
+  border-color: #dc3545 !important;
+}
+
+::ng-deep .dark-mode .confirmation-section .mat-mdc-checkbox:hover .mdc-checkbox__background {
+  border-color: #ef4444 !important;
+}
+
+/* ========================================
+   DIALOG ACTIONS
+======================================== */
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 16px 24px !important;
+  background: var(--content-bg);
+  border-top: 1px solid var(--border);
+  margin: 0 !important;
+}
+
+.dialog-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  text-transform: none;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.dialog-actions button mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Keep Request Button - Neutral Outlined */
+.cancel-button {
+  background: transparent !important;
+  color: var(--text) !important;
+  border: 1.5px solid var(--border) !important;
+}
+
+.cancel-button:hover {
+  background: var(--content-bg) !important;
+  border-color: var(--text-muted) !important;
+}
+
+/* Cancel Request Button - Warning Filled */
+.confirm-button {
+  background: #dc3545 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.confirm-button:hover:not(:disabled) {
+  background: #c82333 !important;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  transform: translateY(-1px);
+}
+
+.confirm-button:disabled {
+  background: var(--border) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Dark Mode Button Overrides */
+.dark-mode .cancel-button {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.dark-mode .cancel-button:hover {
+  background: var(--content-bg) !important;
+  border-color: var(--text-muted) !important;
+}
+
+.dark-mode .confirm-button {
+  background: #ef4444 !important;
+}
+
+.dark-mode .confirm-button:hover:not(:disabled) {
+  background: #dc2626 !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.dark-mode .confirm-button:disabled {
+  background: var(--border) !important;
+  color: var(--text-muted) !important;
+}
+
+/* Button focus states */
+.dialog-actions button:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.confirm-button:focus {
+  outline-color: #dc3545 !important;
+}
+
+.dark-mode .confirm-button:focus {
+  outline-color: #ef4444 !important;
+}
+
+/* ========================================
+   DIALOG CONTAINER GLOBAL
+======================================== */
+
+::ng-deep .mat-mdc-dialog-container {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+.dark-mode ::ng-deep .mat-mdc-dialog-container {
+  background: var(--surface) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+/* Tablets and below */
+@media (max-width: 768px) {
+  .dialog-container {
+    max-width: 90vw;
+  }
+
+  .dialog-header {
+    padding: 16px 20px;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .warning-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .dialog-content {
+    padding: 20px !important;
+  }
+
+  .warning-message {
+    padding: 14px;
+  }
+
+  .request-details {
+    padding: 14px;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 8px 0;
+  }
+
+  .detail-row .label {
+    min-width: unset;
+    font-size: 0.8rem;
+  }
+
+  .detail-row .value {
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
+  .dialog-actions {
+    padding: 12px 16px !important;
+    gap: 10px;
+  }
+
+  .dialog-actions button {
+    min-width: 120px;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .dialog-container {
+    max-width: 95vw;
+  }
+
+  .dialog-header {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .dialog-header h2 {
+    font-size: 1rem;
+  }
+
+  .warning-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .dialog-content {
+    padding: 16px !important;
+    max-height: 60vh;
+  }
+
+  .warning-message {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .warning-message .primary-text {
+    font-size: 0.9rem;
+  }
+
+  .warning-message .secondary-text {
+    font-size: 0.8rem;
+  }
+
+  .request-details {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .request-details h3 {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  .confirmation-section {
+    padding: 12px;
+  }
+
+  ::ng-deep .confirmation-section .mat-mdc-checkbox-label {
+    font-size: 0.8rem;
+  }
+
+  .dialog-actions {
+    flex-direction: column;
+    padding: 12px !important;
+    gap: 8px;
+  }
+
+  .dialog-actions button {
+    width: 100%;
+    min-width: unset;
+    padding: 12px 16px;
+  }
+
+  .dialog-actions button mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Very small mobile devices */
+@media (max-width: 360px) {
+  .dialog-header h2 {
+    font-size: 0.95rem;
+  }
+
+  .dialog-content {
+    padding: 12px !important;
+  }
+
+  .warning-message .primary-text {
+    font-size: 0.85rem;
+  }
+
+  .warning-message .secondary-text {
+    font-size: 0.75rem;
+  }
+
+  .detail-row .label,
+  .detail-row .value {
+    font-size: 0.75rem;
+  }
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+======================================== */
+
+.dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-content::-webkit-scrollbar-track {
+  background: var(--content-bg);
+  border-radius: 4px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.dark-mode .dialog-content::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+.dark-mode .dialog-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+.dark-mode .dialog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

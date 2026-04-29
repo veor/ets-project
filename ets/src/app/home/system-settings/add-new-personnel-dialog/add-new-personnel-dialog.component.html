@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>
+  <mat-icon style="vertical-align: middle; margin-right: 8px;">person_add</mat-icon>
+  Add New Technical Staff
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="personnelForm">
+    <!-- Personnel ID with loading indicator -->
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Personnel ID Number</mat-label>
+      <input matInput formControlName="personnel_id" placeholder="Enter personnel ID">
+      <mat-icon matPrefix>badge</mat-icon>
+      <mat-spinner *ngIf="loadingUserInfo" matSuffix diameter="20"></mat-spinner>
+      <mat-icon *ngIf="!loadingUserInfo && userFound" matSuffix color="primary">check_circle</mat-icon>
+      <mat-hint *ngIf="loadingUserInfo">Looking up user information...</mat-hint>
+      <mat-hint *ngIf="!loadingUserInfo && userFound">User found! Information auto-filled and locked.</mat-hint>
+      <mat-error *ngIf="personnelForm.get('personnel_id')?.hasError('required')">
+        Personnel ID is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Personnel Name -->
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Name of Technical Staff</mat-label>
+      <input matInput formControlName="personnel_name" placeholder="Enter full name">
+      <mat-icon matPrefix>person</mat-icon>
+      <mat-icon *ngIf="userFound" matSuffix color="primary">lock</mat-icon>
+      <mat-error *ngIf="personnelForm.get('personnel_name')?.hasError('required')">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Division -->
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Division</mat-label>
+      <mat-select formControlName="division_id">
+        <mat-option *ngFor="let division of allDivisions" [value]="division.division_id">
+          {{ division.division_name }} ({{ division.office_name }})
+        </mat-option>
+      </mat-select>
+      <mat-icon matPrefix>account_tree</mat-icon>
+      <mat-icon *ngIf="userFound" matSuffix color="primary">lock</mat-icon>
+      <mat-error *ngIf="personnelForm.get('division_id')?.hasError('required')">
+        Division is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading || loadingUserInfo">
+    <mat-icon *ngIf="!loading">save</mat-icon>
+    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+    {{ loading ? 'Adding...' : 'Add Technical Staff' }}
+  </button>
+</mat-dialog-actions>

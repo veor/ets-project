@@ -1,0 +1,10 @@
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-spinner {
+  width: 18px !important;
+  height: 18px !important;
+}

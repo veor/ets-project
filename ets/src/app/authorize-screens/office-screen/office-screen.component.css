@@ -1,0 +1,553 @@
+/* ---------- Page Container ---------- */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.pending-request-header {
+  margin: 20px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+/* ---------- Filter Section ---------- */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 6px;
+  background: var(--surface);
+  align-items: center;
+  border: 1px solid var(--border);
+}
+
+.filter-item {
+  min-width: 200px;
+  flex: 1;
+}
+
+.flex-grow {
+  flex: 2;
+}
+
+/* Material Form Field Styling */
+::ng-deep .filter-item .mat-mdc-text-field-wrapper {
+  background: var(--content-bg) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-form-field-focus-overlay {
+  background-color: transparent !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select {
+  color: var(--text) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select-value {
+  color: var(--text) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select-placeholder {
+  color: var(--text-muted) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select-arrow {
+  color: var(--text) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-floating-label {
+  color: var(--text-muted) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+  color: var(--accent) !important;
+}
+
+/* Input field styling */
+::ng-deep .filter-item .mat-mdc-input-element {
+  color: var(--text) !important;
+  caret-color: var(--accent) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-input-element::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.7;
+}
+
+/* Material icon in search field */
+::ng-deep .filter-item .mat-icon {
+  color: var(--text-muted) !important;
+}
+
+/* Outline borders */
+::ng-deep .filter-item .mat-mdc-notched-outline .mat-mdc-notched-outline-leading,
+::ng-deep .filter-item .mat-mdc-notched-outline .mat-mdc-notched-outline-notch,
+::ng-deep .filter-item .mat-mdc-notched-outline .mat-mdc-notched-outline-trailing {
+  border-color: var(--border) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-leading,
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-notch,
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-trailing {
+  border-color: var(--accent) !important;
+}
+
+/* ---------- Table Styling ---------- */
+.table-container {
+  margin-top: 12px;
+  border-radius: 6px;
+  overflow-x: auto; 
+  background: var(--surface);
+  padding: 8px;
+  margin-bottom: 0;
+  border: 1px solid var(--border);
+}
+
+table.job-request-task {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background-color: var(--surface);
+  color: var(--text);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Table header */
+table.job-request-task th.main-table-head {
+  background-color: var(--content-bg);
+  color: var(--text);
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+}
+
+/* Table rows */
+table.job-request-task td.main-table-row-data {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+table.job-request-task tr:nth-child(even) td {
+  background-color: var(--content-bg);
+}
+
+/* Hover effect */
+table.job-request-task tbody tr:hover td {
+  background-color: var(--content-bg);
+}
+
+/* Remove border from last row */
+table.job-request-task tbody tr:last-child .main-table-row-data {
+  border-bottom: none;
+}
+
+/* No data placeholder */
+.no-data-message {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* ---------- Actions Column ---------- */
+.actions-container,
+.assign-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ---------- Button Styles ---------- */
+/* Base button styling */
+.actions-container button,
+.assign-controls button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  text-transform: none;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  cursor: pointer;
+  border: none;
+}
+
+/* Icons inside buttons */
+.actions-container button mat-icon,
+.assign-controls button mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+/* View Button - Outlined Primary */
+.actions-container button[color="primary"][mat-stroked-button] {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.actions-container button[color="primary"][mat-stroked-button]:hover {
+  background: rgba(25, 118, 210, 0.08);
+}
+
+.dark-mode .actions-container button[color="primary"][mat-stroked-button] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.dark-mode .actions-container button[color="primary"][mat-stroked-button]:hover {
+  background: rgba(100, 181, 246, 0.12);
+}
+
+/* Accept Button - Filled Primary */
+.actions-container button[color="primary"][mat-flat-button]:not([color="warn"]) {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
+
+.actions-container button[color="primary"][mat-flat-button]:not([color="warn"]):hover {
+  filter: brightness(1.1);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.actions-container button[color="primary"][mat-flat-button]:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dark-mode .actions-container button[color="primary"][mat-flat-button]:not([color="warn"]) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.dark-mode .actions-container button[color="primary"][mat-flat-button]:not([color="warn"]):hover {
+  filter: brightness(1.15);
+  box-shadow: 0 2px 8px rgba(100, 181, 246, 0.4);
+}
+
+/* Cancel Button - Filled Warning/Danger */
+.actions-container button[color="warn"][mat-flat-button],
+.assign-controls button[color="warn"][mat-stroked-button] {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+}
+
+.actions-container button[color="warn"][mat-flat-button]:hover,
+.assign-controls button[color="warn"][mat-stroked-button]:hover {
+  background: #c82333;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.dark-mode .actions-container button[color="warn"][mat-flat-button],
+.dark-mode .assign-controls button[color="warn"][mat-stroked-button] {
+  background: #ef4444;
+  color: #fff;
+}
+
+.dark-mode .actions-container button[color="warn"][mat-flat-button]:hover,
+.dark-mode .assign-controls button[color="warn"][mat-stroked-button]:hover {
+  background: #dc2626;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Assign/Re-Assign Button in Open Tickets */
+.assign-controls button[color="primary"][mat-flat-button] {
+  background: var(--accent);
+  color: #fff;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.assign-controls button[color="primary"][mat-flat-button]:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.assign-controls button[color="primary"][mat-flat-button]:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dark-mode .assign-controls button[color="primary"][mat-flat-button] {
+  background: var(--accent);
+}
+
+.dark-mode .assign-controls button[color="primary"][mat-flat-button]:hover:not(:disabled) {
+  filter: brightness(1.15);
+  box-shadow: 0 2px 8px rgba(100, 181, 246, 0.4);
+}
+
+/* Cancel Request Button - Outlined Warning */
+.assign-controls button[color="warn"][mat-stroked-button] {
+  background: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.assign-controls button[color="warn"][mat-stroked-button]:hover {
+  background: rgba(220, 53, 69, 0.08);
+}
+
+.dark-mode .assign-controls button[color="warn"][mat-stroked-button] {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: transparent;
+}
+
+.dark-mode .assign-controls button[color="warn"][mat-stroked-button]:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Loading spinner inside button */
+.assign-controls button mat-progress-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Button focus states */
+.actions-container button:focus,
+.assign-controls button:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.actions-container button[color="warn"]:focus,
+.assign-controls button[color="warn"]:focus {
+  outline-color: #dc3545;
+}
+
+.dark-mode .actions-container button[color="warn"]:focus,
+.dark-mode .assign-controls button[color="warn"]:focus {
+  outline-color: #ef4444;
+}
+
+.assign-select {
+  width: 220px;
+  min-width: 140px;
+}
+
+/* Material select inside table */
+::ng-deep .assign-select .mat-mdc-text-field-wrapper {
+  background: var(--content-bg) !important;
+}
+
+::ng-deep .assign-select .mat-mdc-select {
+  color: var(--text) !important;
+}
+
+::ng-deep .assign-select .mat-mdc-select-value {
+  color: var(--text) !important;
+}
+
+::ng-deep .assign-select .mat-mdc-floating-label {
+  color: var(--text-muted) !important;
+}
+
+::ng-deep .assign-select .mat-mdc-notched-outline .mat-mdc-notched-outline-leading,
+::ng-deep .assign-select .mat-mdc-notched-outline .mat-mdc-notched-outline-notch,
+::ng-deep .assign-select .mat-mdc-notched-outline .mat-mdc-notched-outline-trailing {
+  border-color: var(--border) !important;
+}
+
+.assign-btn {
+  min-width: 90px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button mat-progress-spinner {
+  margin-right: 8px;
+}
+
+/* Paginator Styling */
+::ng-deep mat-paginator {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-top: 16px;
+}
+
+::ng-deep mat-paginator .mat-mdc-paginator-page-size-label,
+::ng-deep mat-paginator .mat-mdc-paginator-range-label {
+  color: var(--text) !important;
+}
+
+::ng-deep mat-paginator .mat-mdc-paginator-range-actions {
+  color: var(--text) !important;
+}
+
+::ng-deep mat-paginator .mat-mdc-icon-button {
+  color: var(--text) !important;
+}
+
+::ng-deep mat-paginator .mat-mdc-icon-button:disabled {
+  color: var(--text-muted) !important;
+}
+
+::ng-deep mat-paginator .mat-mdc-select {
+  color: var(--text) !important;
+}
+
+::ng-deep mat-paginator .mat-mdc-select-value {
+  color: var(--text) !important;
+}
+
+::ng-deep mat-paginator .mat-mdc-select-arrow {
+  color: var(--text) !important;
+}
+
+/* Dark Mode Specific Overrides */
+.dark-mode .pending-request-header {
+  color: var(--text);
+}
+
+.dark-mode .filter-row {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.dark-mode .table-container {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.dark-mode table.job-request-task {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+.dark-mode table.job-request-task th.main-table-head {
+  background-color: var(--content-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode table.job-request-task td.main-table-row-data {
+  color: var(--text);
+  border-color: var(--border);
+  background-color: var(--surface);
+}
+
+.dark-mode table.job-request-task tr:nth-child(even) td {
+  background-color: var(--content-bg);
+}
+
+.dark-mode table.job-request-task tbody tr:hover td {
+  background-color: var(--content-bg);
+}
+
+.dark-mode .no-data-message {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* ---------- Responsive Breakpoints ---------- */
+
+/* Large tablets and below */
+@media (max-width: 1024px) {
+  .assign-select {
+    width: 180px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .filter-row {
+    padding: 10px;
+    gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-item,
+  .flex-grow {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .pending-request-header {
+    font-size: 20px;
+    margin: 16px 0;
+  }
+
+  .assign-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .assign-select,
+  .assign-btn {
+    width: 100%;
+  }
+
+  table.job-request-task th,
+  table.job-request-task td {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .actions-container {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .actions-container button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .container {
+    padding: 12px;
+  }
+
+  .pending-request-header {
+    font-size: 18px;
+  }
+
+  .filter-row {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .table-container {
+    padding: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .assign-select,
+  .assign-btn {
+    width: 100%;
+  }
+}

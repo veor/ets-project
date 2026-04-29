@@ -1,0 +1,166 @@
+<app-loader [isLoading]="isLoading"></app-loader>
+
+<h3 class="pending-request-header">Manage IT Support Request</h3>
+
+<!-- Filters Row -->
+<div class="filter-row mat-elevation-z2">
+  <!-- Filter -->
+  <mat-form-field appearance="outline" class="filter-item">
+    <mat-label>Filter</mat-label>
+    <mat-select [(ngModel)]="requestType" (selectionChange)="filterReports()">
+      <mat-option value="warrant">Accept Request</mat-option>
+      <mat-option value="openTicket">Open Ticket</mat-option>
+      <mat-option value="closedTicket">Closed Ticket</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Sort By -->
+  <mat-form-field appearance="outline" class="filter-item">
+    <mat-label>Sort By</mat-label>
+    <mat-select [(ngModel)]="sortOrder" (selectionChange)="sortReports()">
+      <mat-option value="nameAsc">Name (A-Z)</mat-option>
+      <mat-option value="nameDesc">Name (Z-A)</mat-option>
+      <mat-option value="dateAsc">Date (Oldest First)</mat-option>
+      <mat-option value="dateDesc">Date (Newest First)</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Search -->
+  <mat-form-field appearance="outline" class="filter-item flex-grow">
+    <mat-label>Search Name/Issue</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="filterReports()"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<!-- Table -->
+<div class="table-container" *ngIf="!isLoading && paginatedReports.length > 0">
+  <table class="job-request-task">
+    <thead>
+      <tr>
+        <!-- Approve Request -->
+        <ng-container *ngIf="requestType === 'warrant'">
+          <th class="main-table-head">Name</th>
+          <th class="main-table-head">Date of Request</th>
+          <th class="main-table-head">Action</th>
+        </ng-container>
+
+        <!-- Open Ticket -->
+        <ng-container *ngIf="requestType === 'openTicket'">
+          <th class="main-table-head">Ref. #</th>
+          <th class="main-table-head">Name</th>
+          <th class="main-table-head">Date of Request</th>
+          <th class="main-table-head">Office</th>
+          <th class="main-table-head">Action</th>
+        </ng-container>
+
+        <!-- Closed Ticket -->
+        <ng-container *ngIf="requestType === 'closedTicket'">
+          <th class="main-table-head">Ref. #</th>
+          <th class="main-table-head">Name</th>
+          <th class="main-table-head">Date of Request</th>
+          <th class="main-table-head">Office</th>
+          <th class="main-table-head">Assigned Ticket</th>
+          <th class="main-table-head">Idle Time</th>
+          <th class="main-table-head">Action Taken</th>
+          <th class="main-table-head">Process Time</th>
+        </ng-container>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let report of paginatedReports">
+        <!-- Approve Request -->
+        <ng-container *ngIf="requestType === 'warrant'">
+          <td class="main-table-row-data">{{ report.name }}</td>
+          <td class="main-table-row-data">{{ report.date_of_request }}, {{ report.time_of_request }}</td>
+          <td class="main-table-row-data">
+            <div class="actions-container">
+              <button mat-stroked-button color="primary" (click)="openReviewDialog(report)">View</button>
+              <button mat-flat-button color="primary" [disabled]="loadingReports[report.id]" (click)="openConfirmDialog(report)" *ngIf="allowedToAcceptRequest">
+                Accept
+              </button>
+              <button mat-flat-button color="warn" (click)="openCancelDialog(report)">Cancel</button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Open Ticket -->
+        <ng-container *ngIf="requestType === 'openTicket'">
+          <td class="main-table-row-data">{{ report.control_no }}</td>
+          <td class="main-table-row-data">{{ report.name }}</td>
+          <td class="main-table-row-data">{{ report.date_of_request }}, {{ report.time_of_request }}</td>
+          <td class="main-table-row-data">{{ report.office_value || 'N/A' }}</td>
+          <td class="main-table-row-data">
+            <div class="assign-controls">
+              <mat-form-field appearance="fill" class="assign-select">
+                <mat-label>
+                  {{ report.personnel_name ? report.personnel_name : 'Select Technical' }}
+                </mat-label>
+                <mat-select 
+                  [(ngModel)]="report.selectedPersonnelId" 
+                  [placeholder]="report.personnel_name || 'Select Technical'">
+                  <mat-option 
+                    *ngFor="let person of personnelNames" 
+                    [value]="person.personnel_id">
+                    {{ person.personnel_name }}
+                    <span *ngIf="person.personnel_id === report.personnel_id" class="current-indicator">
+                      (Current)
+                    </span>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button 
+                mat-flat-button 
+                color="primary" 
+                (click)="assignPersonnel(report)" 
+                [disabled]="report.isAssigning || !report.selectedPersonnelId">
+                <mat-progress-spinner *ngIf="report.isAssigning" diameter="18" mode="indeterminate"></mat-progress-spinner>
+                {{ report.personnel_name ? 'Re-Assign' : 'Assign' }}
+              </button>
+              <button 
+                mat-stroked-button 
+                color="warn"  
+                (click)="openCancelServiceRequestDialog(report)">
+                <mat-icon>cancel</mat-icon>
+                Cancel Request
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Closed Ticket -->
+        <ng-container *ngIf="requestType === 'closedTicket'">
+          <td class="main-table-row-data">{{ report.control_no }}</td>
+          <td class="main-table-row-data">{{ report.name }}</td>
+          <td class="main-table-row-data">{{ report.date_of_request }}, {{ report.time_of_request }}</td>
+          <td class="main-table-row-data">{{ report.office_value || 'N/A' }}</td>
+          <td class="main-table-row-data">{{ report.personnel_name || 'Unassigned' }}</td>
+          <td class="main-table-row-data">{{ report.formatted_idle_time }}</td>
+          <td class="main-table-row-data">{{ report.action_taken || 'N/A' }}</td>
+          <td class="main-table-row-data">{{ formatTimeString(report.process_time) }}</td>
+        </ng-container>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [length]="filteredReports.length"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons
+    class="mat-elevation-z2">
+  </mat-paginator>
+</div>
+
+<div class="no-data-message" *ngIf="!isLoading && filteredReports.length === 0">
+  No records found for this filter.
+</div>

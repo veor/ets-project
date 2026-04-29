@@ -1,0 +1,90 @@
+<div class="dialog-container">
+  <h3>Pending Request</h3>
+  <form (ngSubmit)="submitEditForm()" #editForm="ngForm">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="control_no">Ref #:*</label>
+        <input type="text" id="control_no" [(ngModel)]="selectedReport.control_no" name="control_no" readonly>
+      </div>
+    </div>
+
+    <div class="form-group full-width">
+      <label for="issue_request">Issue:*</label>
+      <textarea id="issue_request" [(ngModel)]="selectedReport.issue_request" name="issue_request" readonly></textarea>
+    </div>
+
+    <div class="form-group full-width">
+      <label>Service/s:*</label>
+      <div class="services-grid">
+        <div *ngFor="let service of serviceTypes" class="service-column">
+          <label>
+            <input
+              type="checkbox"
+              [checked]="selectedReport.selectedServices.includes(service.id)"
+              (change)="onServiceChange(service.id, $event)"
+              required>
+            {{ service.service_type }}
+          </label>
+
+          <div *ngIf="service.levels && selectedReport.selectedServices.includes(service.id)" class="service-level">
+            <div *ngFor="let level of service.levels">
+              <label>
+                <input
+                  type="radio"
+                  name="serviceLevel_{{service.id}}"
+                  [(ngModel)]="selectedReport.service_level_id[service.id]"
+                  [value]="level"
+                  required>
+                {{ level }}
+              </label>
+            </div>
+          </div>
+
+          <div *ngIf="selectedReport.selectedServices.includes(service.id)" class="quantity-input">
+            <label for="quantity_{{ service.id }}">Quantity:</label>
+            <input
+              type="number"
+              id="quantity_{{ service.id }}"
+              [(ngModel)]="selectedReport.service_quantity_id[service.id]"
+              [min]="1"
+              [step]="1"
+              placeholder="Enter quantity"
+              name="quantity_{{ service.id }}"
+              required />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="datetime_accomplished">Datetime Accomplished:*</label>
+        <input type="datetime-local" id="datetime_accomplished" [(ngModel)]="selectedReport.datetime_accomplished" name="datetime_accomplished" required>
+      </div>
+      <div class="form-group">
+        <label for="date_started">Date Started:</label>
+        <input type="datetime-local" id="date_started" [value]="selectedReport?.date_started" name="date_started" readonly/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="remarks">Remarks:*</label>
+        <textarea id="remarks" [(ngModel)]="selectedReport.remarks" name="remarks" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="action_taken">Action Taken:*</label>
+        <textarea id="action_taken" [(ngModel)]="selectedReport.action_taken" name="action_taken" required></textarea>
+      </div>
+    </div>
+
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeDialog()">Cancel</button>
+      <button type="submit" [disabled]="editForm.invalid || isButtonLoading" class="btn btn-primary">
+        For Release
+        <span *ngIf="!isButtonLoading">&nbsp;</span>
+        <span *ngIf="isButtonLoading" class="ediTask-spinner"></span>
+      </button>
+    </div>
+  </form>
+</div>

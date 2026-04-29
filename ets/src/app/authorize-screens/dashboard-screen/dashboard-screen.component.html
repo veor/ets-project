@@ -1,0 +1,109 @@
+<mat-progress-bar class="custom-progress" *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1 class="dashboard-title">Dashboard Overview</h1>
+          <p class="dashboard-subtitle">Monitor your ticket management performance</p>
+        </div>
+        <div class="col-md-6">
+
+          <div class="filter-controls">
+            <div class="btn-group filter-group" role="group">
+              <button type="button"
+                      *ngIf="showData"
+                      class="btn btn-filter"
+                      [class.active]="selectedFilter === 'self'"
+                      (click)="onFilterChange('self')">
+                <i class="fas fa-user me-1"></i>My Data
+              </button>
+
+              <button type="button"
+                      *ngIf="showAllData"
+                      class="btn btn-filter"
+                      [class.active]="selectedFilter === 'all'"
+                      (click)="onFilterChange('all')">
+                <i class="fas fa-users me-1"></i>All Data
+              </button>
+            </div>
+          </div>
+
+        </div> 
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <!-- Stats Cards -->
+    <div class="stats-section">
+      <div class="row g-3 g-md-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-4" *ngFor="let stat of stats; let i = index">
+          <div class="stat-card" [attr.data-index]="i">
+            <div class="stat-card-inner">
+              <div class="stat-icon" 
+                   [ngStyle]="stat.color ? {'background-color': stat.color} : {}"
+                   [ngClass]="stat.bg ? stat.bg : 'bg-primary'">
+                <i class="fas" 
+                   [ngClass]="{
+                     'fa-clock': stat.label.includes('Approval'),
+                     'fa-cogs': stat.label.includes('Process'),
+                     'fa-check-circle': stat.label.includes('Release'),
+                     'fa-tasks': !stat.label.includes('Approval') && !stat.label.includes('Process') && !stat.label.includes('Release')
+                   }"></i>
+              </div>
+              
+              <div class="stat-content">
+                <div class="stat-number">{{ stat.count }}</div>
+                <div class="stat-label">{{ stat.label }}</div>
+                <div class="stat-description">{{ stat.description }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <div class="row g-3 g-md-4">
+        <!-- Monthly Chart -->
+        <div class="col-12 col-xl-8">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fas fa-chart-bar me-2"></i>
+                Monthly Ticket Trends
+              </div>
+              <div class="chart-subtitle">Total tickets submitted per month</div>
+            </div>
+            <div class="chart-body">
+              <div class="chart-container">
+                <canvas id="monthlyChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Doughnut Chart -->
+        <div class="col-12 col-xl-4">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fas fa-chart-pie me-2"></i>
+                Service Distribution
+              </div>
+              <div class="chart-subtitle">Services rendered breakdown</div>
+            </div>
+            <div class="chart-body">
+              <div class="chart-container doughnut-container">
+                <canvas id="doughnutChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

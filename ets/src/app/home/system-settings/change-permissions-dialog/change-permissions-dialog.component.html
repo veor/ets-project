@@ -1,0 +1,60 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">shield</mat-icon>
+  Manage Permissions
+</h2>
+
+<mat-dialog-content>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading permissions...</p>
+  </div>
+
+  <!-- Permissions List -->
+  <div *ngIf="!loading" class="permissions-container">
+
+    <div *ngFor="let permission of allPermissions" class="permission-group mat-elevation-z1">
+
+      <!-- Parent Permission -->
+      <div class="parent-permission">
+        <mat-checkbox
+          [checked]="isChecked(permission.id)"
+          (change)="togglePermission(permission.id, permission.children)"
+          color="primary">
+          <strong>{{ permission.label }}</strong>
+        </mat-checkbox>
+      </div>
+
+      <!-- Child Permissions -->
+      <div *ngIf="permission.children" class="children-permissions">
+        <div *ngFor="let child of permission.children" class="child-permission">
+          <mat-checkbox
+            [checked]="isChecked(child.id)"
+            (change)="togglePermission(child.id)"
+            color="primary">
+            {{ child.label }}
+          </mat-checkbox>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="closeDialog()" [disabled]="isAddingPerms">
+    Cancel
+  </button>
+
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="savePermissions()"
+    [disabled]="isAddingPerms || loading">
+    
+    <mat-spinner *ngIf="isAddingPerms" diameter="20" class="inline-spinner"></mat-spinner>
+    {{ isAddingPerms ? 'Saving...' : 'Save Permissions' }}
+  </button>
+</mat-dialog-actions>

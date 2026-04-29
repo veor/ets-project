@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment.development';
 
-const API_URL = '/api/ets/etsbackend';
+// --- PRODUCTION ---
+// const API_URL = environment.apiUrl+'/etsbackend/';
+// --- SSL ---
+const API_URL = environment.apiUrl;
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,122 +17,210 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly AUTH_TOKEN_KEY = 'authToken'; // Store token locally (or session)
-  private readonly USER_PERMISSIONS_KEY = 'permissions'; // New key for permissions
+  private readonly AUTH_TOKEN_KEY = 'authToken'; 
+  private readonly USER_PERMISSIONS_KEY = 'permissions'; 
+  private readonly USER_DATA_KEY = 'userData';
+  private readonly TOKEN_EXPIRY_KEY = 'tokenExpiry';
+  private userInfo: any = null;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+      this.checkTokenExpiry();
+  }
+  setUserInfo(user: any) {
+    this.userInfo = user;
+  }
+  getUserInfo() {
+    return this.userInfo;
+  }
 
-  // Store auth token after login
+  private getHttpOptions(): { headers: HttpHeaders } {
+    const token = this.getAuthToken();
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
+      })
+    };
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<any> {
+    let errorMessage = 'An error occurred';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = error.error.message;
+    } else {
+      // Server-side error
+      if (error.error && error.error.message) {
+        errorMessage = error.error.message;
+      } else if (error.status === 0) {
+        errorMessage = 'Unable to connect to server';
+      } else {
+        errorMessage = `Server error: ${error.status}`;
+      }
+    }
+
+    console.error('Auth Service Error:', errorMessage);
+    return throwError(() => ({ status: 'error', message: errorMessage }));
+  }
+
+  isTokenExpired(token?: string): boolean {
+    try {
+      const tokenToCheck = token || this.getAuthToken();
+      if (!tokenToCheck) return true;
+
+      const payload = JSON.parse(atob(tokenToCheck.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      // 5 minute buffer before expiry
+      return payload.exp < (currentTime + 300);
+    } catch (error) {
+      console.error('Error checking token expiry:', error);
+      return true;
+    }
+  }
+
+  private checkTokenExpiry(): void {
+    const token = this.getAuthToken();
+    if (token && this.isTokenExpired(token)) {
+      console.log('Token expired, clearing auth data');
+      this.clearAuthToken();
+      this.router.navigate(['/login']);
+    }
+  }
+
   setAuthToken(token: string): void {
-    localStorage.setItem(this.AUTH_TOKEN_KEY, token);
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      localStorage.setItem(this.AUTH_TOKEN_KEY, token);
+      localStorage.setItem(this.TOKEN_EXPIRY_KEY, payload.exp.toString());
+    } catch (error) {
+      console.error('Error storing auth token:', error);
+    }
   }
 
-  // Get auth token
   getAuthToken(): string | null {
-    return localStorage.getItem(this.AUTH_TOKEN_KEY);
+    const token = localStorage.getItem(this.AUTH_TOKEN_KEY);
+    if (token && this.isTokenExpired(token)) {
+      this.clearAuthToken();
+      return null;
+    }
+    return token;
   }
+
   setUserPermissions(permissions: string[]): void {
-    localStorage.setItem(this.USER_PERMISSIONS_KEY, JSON.stringify(permissions)); // Store permissions as JSON string
+    localStorage.setItem(this.USER_PERMISSIONS_KEY, JSON.stringify(permissions));
   }
+
+  setUserData(userData: any): void {
+    localStorage.setItem(this.USER_DATA_KEY, JSON.stringify(userData));
+  }
+
+  getUserData(): any {
+    const userData = localStorage.getItem(this.USER_DATA_KEY);
+    return userData ? JSON.parse(userData) : null;
+  }
+
   getCurrentUserPermissions(): Observable<string[]> {
     const permissions = JSON.parse(localStorage.getItem(this.USER_PERMISSIONS_KEY) || '[]');
-    return new Observable((observer) => {
-      observer.next(permissions);
-      observer.complete();
-    });
-  }
-  
-  // Check if the user is logged in by verifying session or token for auth
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('authToken'); 
+    return of(permissions);
   }
 
-  // Check if authenticated
-  isAuthenticated(): boolean {
-    return !!this.getAuthToken(); // Returns true if token exists
+  hasPermission(permission: string): boolean {
+    const permissions = JSON.parse(localStorage.getItem(this.USER_PERMISSIONS_KEY) || '[]');
+    return permissions.includes(permission);
   }
- 
-  // Clear auth token during logout
+
+  isLoggedIn(): boolean {
+    const token = this.getAuthToken();
+    return !!token && !this.isTokenExpired(token);
+  }
+
+  isAuthenticated(): boolean {
+    return this.isLoggedIn();
+  }
+
   clearAuthToken(): void {
     localStorage.removeItem(this.AUTH_TOKEN_KEY);
     localStorage.removeItem(this.USER_PERMISSIONS_KEY);
+    localStorage.removeItem(this.USER_DATA_KEY);
+    localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
   }
 
-  login(userData: any): Observable<any> {
-    return this.http.post(API_URL + '/users/login', userData).pipe(
+ login(userData: { id_number: string; password: string }): Observable<any> {
+    // Validate input before sending
+    if (!userData.id_number || !userData.password) {
+      return throwError(() => ({ 
+        status: 'fail', 
+        message: 'ID number and password are required' 
+      }));
+    }
+
+    return this.http.post(API_URL + '/auth/login', userData, this.getHttpOptions()).pipe(
+    /* --- PRODUCTION --- */
+    // return this.http.post(API_URL + 'auth/login', userData, this.getHttpOptions()).pipe(
       tap((response: any) => {
         if (response.status === 'success') {
-          this.setAuthToken(response.token); // Store token on success
-          this.setUserPermissions(response.permissions);
-          console.log('User permissions set:', response.permissions); // Log permissions
-
+          this.setAuthToken(response.token);
+          this.setUserPermissions(response.permissions || []);
+          this.setUserData(response.user || {});
+          console.log('Login successful for user:', response.user?.id_number);
         }
-      })
+      }),
+      catchError(this.handleError.bind(this))
     );
   }
 
   logout(): Observable<any> {
-    return this.http.post(API_URL + '/users/logout', {}).pipe(
-      tap(() => this.clearAuthToken()) // Clear token on successful logout
+    return this.http.post(API_URL + '/auth/logout', {}, this.getHttpOptions()).pipe(
+    /* --- PRODUCTION */
+    // return this.http.post(API_URL + 'auth/logout', {}, this.getHttpOptions()).pipe(
+      tap(() => {
+        console.log('Logout successful');
+        this.clearAuthToken();
+      }),
+      catchError((error) => {
+        // Clear token even if logout request fails
+        this.clearAuthToken();
+        return this.handleError(error);
+      })
     );
   }
-  
-  // Change user password service
-  changePassword(passwordData: any): Observable<any> {
-    return this.http.post(API_URL + '/users/changePassword', passwordData, httpOptions);
+
+  validateToken(): Observable<any> {
+    const token = this.getAuthToken();
+    if (!token) {
+      return throwError(() => ({ status: 'fail', message: 'No token available' }));
+    }
+
+    return this.http.post(API_URL + '/auth/validateToken', {}, this.getHttpOptions()).pipe(
+    /* --- PRODUCTION --- */
+    // return this.http.post(API_URL + 'auth/validateToken', {}, this.getHttpOptions()).pipe(
+      catchError((error) => {
+        if (error.status === 401 || error.status === 403) {
+          this.clearAuthToken();
+          this.router.navigate(['/login']);
+        }
+        return this.handleError(error);
+      })
+    );
   }
 
   changeUserPassword(currentPassword: string, newPassword: string): Observable<any> {
     const payload = { current_password: currentPassword, new_password: newPassword };
     return this.http.post<any>(API_URL + '/users/changePassword', payload, httpOptions);
+    /* --- PRODUCTION --- */
+    // return this.http.post<any>(API_URL + 'users/changePassword', payload, httpOptions);
   }
-  // update logged in user's info service
-  updateUserInfo(data: any): Observable<any> {
-    return this.http.post(API_URL + '/users/updateUserInfo', data, httpOptions);
-  }
-
-  // fetch all the permissions for logged in users service
-  getUserPermissions(): Observable<any> {
-    return this.http.get(API_URL + '/users/getUserPermissions', httpOptions);
-  }
-  // fetch selected user permissions for editing
-  getUserPermissionsById(userId: number): Observable<any> {
-    return this.http.get<any>(`${API_URL}/users/getUserPermissionsById/${userId}`, { withCredentials: true }).pipe(
-      catchError(error => {
-        console.error('Error fetching permissions for user', error);
-        return of({ status: 'fail', message: 'Failed to fetch user permissions' }); // Return fallback response
-      })
-    );
-  }
-  
-  // update logged in user's perms service
-  updateUserPermissions(permissions: number[]): Observable<any> {
-    return this.http.post(API_URL + '/users/updateUserPermissions', { permissions }, httpOptions);
-  }
-  
-  // Add a new user to table 'users' service
-  register(userData: any): Observable<any> {
-    return this.http.post(API_URL + '/users/register', userData, httpOptions);
-  }
-
-// fetch all users 
-  getUsers(): Observable<any> {
-    return this.http.post(API_URL + '/users/getUsers', {}, httpOptions);
-  }
-  
-  // Get user data from the table 'users' service
-  getUserInfo(): Observable<any> {
-    return this.http.get(API_URL + '/users/getUserInfo', httpOptions);
-  }
-
-  // Submit issue from client to suspervisor service
-  submitIssue(issueData: any): Observable<any> {
-    return this.http.post(API_URL + '/users/submitIssue', issueData, httpOptions);
-  }  
 
   // Get User Permissions service
   getUserPerms(): Observable<any> {
-    return this.http.get(API_URL + '/users/getUserPerms', httpOptions);
+    return this.http.get(API_URL + '/auth/getUserPerms', httpOptions);
+    /* --- PRODUCTION --- */
+    // return this.http.get(API_URL + 'auth/getUserPerms', httpOptions);
   }
 
   // check user permission if supervisor then direct them accordingly 
@@ -137,105 +229,41 @@ export class AuthService {
       map(response => {
         if (response.status === 'success') {
           const permissions = response.data.permissions;
-  
-          if (permissions.includes('3.1')) {
-            // User has permission 3.1, redirect to 'technical-supervisor'
-            this.router.navigate(['/technical-supervisor']);
-          } else if (permissions.includes('4.1')) {
-            // User has permission 4.1, redirect to 'head-supervisor'
-            this.router.navigate(['/head-supervisor']);
+
+          // if (permissions.includes('5.1')) {  User has permission, redirect to 'Office Request for Technicals'
+          //   this.router.navigate(['authorize/office-request']);
+          if (permissions.includes('3.4')) {  // User has permission, redirect to 'Dashboard for Technicals'
+            this.router.navigate(['/dashboard']);
+          } else if (permissions.includes('5.2')) { // User has permission, redirect to 'Support Request for All Office Reps or Heads'
+            this.router.navigate(['authorize/support-request']);
           } else {
-            // Default route, can be a generic dashboard or some default page
+            // Default route, default page
             this.router.navigate(['/dashboard']);
           }
         }
       }),
       catchError((error) => {
         console.error('Error fetching user permissions', error);
-        // Return an empty observable to fulfill the `Observable<void>` return type
-        return of(undefined);  // This resolves to `void`, which matches the return type
+        return of(undefined); 
       })
     );
   }
 
-  // get division service
-  getDivisions(): Observable<any> {
-    return this.http.get(API_URL + '/users/getDivisions', httpOptions);
-  } 
+  refreshTokenIfNeeded(): Observable<boolean> {
+    const token = this.getAuthToken();
+    if (!token) {
+      return of(false);
+    }
 
-  // fetch office service
-  getOffices() {
-    return this.http.get(API_URL + '/users/getOffice', httpOptions);
+    // Refresh if token expires in less than 10 minutes
+    if (this.isTokenExpired(token)) {
+      return this.validateToken().pipe(
+        map(() => true),
+        catchError(() => of(false))
+      );
+    }
+
+    return of(true);
   }
 
-  updateOffice(office: any): Observable<any> {
-    return this.http.post(API_URL + '/users/updateOffice', office, httpOptions);
-  }  
-
-  updateDivision(division: any): Observable<any> {
-    return this.http.post(API_URL + '/users/updateDivision', division, httpOptions);
-  }  
-
-  // update selected user on administrator 
-  updateUser(users: any): Observable<any> {
-    return this.http.post(API_URL + '/users/updateUser', users, httpOptions);
-  }  
-
-  getAllOffices(): Observable<any> {
-    return this.http.post(API_URL + '/users/getAllOffices', {}, httpOptions);
-  }  
-  
-  // add office service
-  addOffice(officeData: any): Observable<any> {
-    return this.http.post(API_URL + '/users/addOffice', officeData, httpOptions);
-  } 
-
-  addDivision(divisionData: any): Observable<any> {
-    return this.http.post(API_URL + '/users/addDivision', divisionData, httpOptions);
-  } 
-
-  fetchAcceptedReports(): Observable<any> {
-    return this.http.get<any>(API_URL +  '/users/fetchAcceptedReports', httpOptions);
-  }
-  
-  savePersonnel(personnelData: any): Observable<any> {
-    return this.http.post(API_URL + '/users/savePersonnel', personnelData, httpOptions);
-  }
-
-  // // fetch logged in users division id and display personnel names on dropdown in monitor 
-  getPersonnelByDivision() {
-    return this.http.get<{status: string, data?: any[], message?: string}>(API_URL + '/users/getPersonnelByDivision', httpOptions);
-  }
-  
-  // store the personnel name to their specified table 
-  assignPersonnelToReport(controlNo: string, personnelId: string) {
-    return this.http.post<{ status: string, message?: string }>(API_URL + '/users/assignPersonnelToReport', {
-      control_no: controlNo,
-      personnel_id: personnelId
-    }, httpOptions);
-  }
-
-
-
-  // // Login service 
-  // login(userData: any): Observable<any> {
-  //   return this.http.post(API_URL+'/users/login', userData, httpOptions);
-  // }
-
-  // // logout service 
-  // logout(): Observable<any> {
-  //   return this.http.post(`${API_URL}/users/logout`, {}, httpOptions);
-  // }
-
-  // monitor serviice 
-  // getReportsByDivision(): Observable<any> {
-  //   return this.http.get(API_URL + '/users/getReportsByDivision', httpOptions);
-  // }
-
-  // IT Repair & Maintenance service reports data
-  // getServiceReports(): Observable<any> {
-  //   return this.http.get(API_URL + '/itrmserviceReport/getServiceReports', httpOptions);
-  // }
-
-  
 }

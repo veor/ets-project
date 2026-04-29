@@ -1,0 +1,52 @@
+<div *ngIf="loadingData" class="loading-wrapper">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Loading user data...</p>
+</div>
+
+<h2 mat-dialog-title>Edit User</h2>
+
+<div *ngIf="!loadingData">
+<div mat-dialog-content>
+  <form [formGroup]="editForm">
+    <mat-form-field class="full" appearance="outline">
+      <mat-label>ID Number</mat-label>
+      <input matInput formControlName="id_number" [disabled]="true">
+    </mat-form-field>
+
+    <mat-form-field class="full" appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+
+    <mat-form-field class="full" appearance="outline">
+      <mat-label>Designation</mat-label>
+      <input matInput formControlName="designation">
+    </mat-form-field>
+
+    <mat-form-field class="full" appearance="outline">
+      <mat-label>Office</mat-label>
+      <mat-select formControlName="office_id" (selectionChange)="onOfficeChange($event.value)">
+        <mat-option *ngFor="let o of offices" [value]="o.office_id">
+          {{ o.office_name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="full" appearance="outline">
+      <mat-label>Division</mat-label>
+      <mat-select formControlName="division_id" [disabled]="!editForm.value.office_id">
+        <mat-option *ngFor="let d of divisions" [value]="d.division_id">
+          {{ d.division_name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </form>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()">Save</button>
+</div>
+</div>
+

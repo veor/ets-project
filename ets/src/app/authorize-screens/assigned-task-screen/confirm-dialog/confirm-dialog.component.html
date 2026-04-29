@@ -1,0 +1,19 @@
+<div class="confirmation-dialog">
+    <h4>Begin Task.</h4>
+
+    <p>Do you wish to start?</p>
+
+    <label for="currentDate" class="date-label">Current Date:</label>
+    <input id="currentDate" type="date" [(ngModel)]="currentDate" class="date-input"/>
+
+  <div class="dialog-actions">
+    <button class="btn-cancel" (click)="onCancel()">
+      Cancel
+    </button>
+    <button class="btn-confirm" (click)="onConfirm()">
+      Approve
+    </button>
+  </div>
+</div>
+
+

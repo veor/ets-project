@@ -1,0 +1,14 @@
+<app-navbar (menuToggle)="isSidebarOpen = !isSidebarOpen"></app-navbar>
+
+<!-- Overlay (mobile only) -->
+<div
+  class="overlay"
+  *ngIf="isSidebarOpen"
+  (click)="isSidebarOpen = false">
+</div>
+
+<app-sidebar [isOpen]="isSidebarOpen"></app-sidebar>
+
+<div class="content" [class.sidebar-closed]="!isSidebarOpen">
+  <router-outlet></router-outlet>
+</div>

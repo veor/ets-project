@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
-import { HomeRoutingModule } from './home-routing.module';
+// import { HomeRoutingModule } from './home-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -14,11 +14,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     
   ],
   imports: [
-    CommonModule,
-    HomeRoutingModule,
-    MatTableModule,
-    MatPaginatorModule,
-    ReactiveFormsModule,
+    // CommonModule,
+    // HomeRoutingModule,
+    // MatTableModule,
+    // MatPaginatorModule,
+    // ReactiveFormsModule,
   ]
 })
 export class HomeModule { }

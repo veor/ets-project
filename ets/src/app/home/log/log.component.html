@@ -1,1 +1,348 @@
-<p>log works!</p>
+<h3 class="head-title">Preventive Maintenance Checklist</h3>
+
+<form (ngSubmit)="saveData()">
+    <!-- Client Information -->
+    <div class="client-info">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Accountable Person</mat-label>
+            <input matInput type="text" [(ngModel)]="formData.accountablePerson" name="accountablePerson" required>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="formData.status" name="status" required (selectionChange)="onStatusChange(formData.status)">
+              <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Date</mat-label>
+            <input matInput type="date" [(ngModel)]="formData.date" name="date" required>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Select Department/Office</mat-label>
+              <mat-select [(ngModel)]="formData.department" name="department" required (selectionChange)="onDepartmentChange()">
+                <mat-option *ngFor="let department of departments" [value]="department.office_id">
+                  {{ department.office_name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Select Division</mat-label>
+            <mat-select [(ngModel)]="formData.division" name="division" required>
+              <mat-option *ngFor="let division of filteredDivisions" [value]="division.division_id">
+                {{ division.division_name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Select Designation</mat-label>
+            <mat-select [(ngModel)]="formData.designation" name="designation" required>
+              <mat-option *ngFor="let designation of designations" [value]="designation">{{ designation }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Equipment Type</mat-label>
+            <mat-select [(ngModel)]="formData.equipmentType" name="equipmentType" multiple required>
+              <mat-option *ngFor="let type of equipmentTypes" [value]="type">{{ type }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Select Location</mat-label>
+            <mat-select [(ngModel)]="formData.location" name="location" required>
+              <mat-option *ngFor="let location of locations" [value]="location">{{ location }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>PAR/ICS</mat-label>
+            <input matInput type="text" [(ngModel)]="formData.par" name="par" required>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hardware Information -->
+    <div class="hardware-info">
+      <div class="row">
+        <div class="col-12">
+          <mat-table [dataSource]="hardwareData">
+            <ng-container matColumnDef="hardware">
+              <mat-header-cell *matHeaderCellDef> Hardware </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{ element.hardware }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="brand">
+              <mat-header-cell *matHeaderCellDef> Brand/Specification </mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <div *ngIf="element.hardware !== 'Memory' && element.hardware !== 'Storage' && element.hardware !== 'Display'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Brand</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.brand" name="brand-{{element.hardware}}">
+                  </mat-form-field>
+                </div>
+
+                <!-- Specific Hardware Inputs -->
+                <div *ngIf="element.hardware === 'Memory'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Slot #1</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.slot1" name="slot1">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Slot #2</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.slot2" name="slot2">
+                  </mat-form-field>
+                </div>
+
+                <div *ngIf="element.hardware === 'Storage'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>HDD</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.hddSlot" name="hddSlot">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>SSD</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.ssdSlot" name="ssdSlot">
+                  </mat-form-field>
+                </div>
+
+                <div *ngIf="element.hardware === 'Display'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Monitor</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.monitorSlot" name="monitorSlot">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Graphics Card</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.gpuSlot" name="gpuSlot">
+                  </mat-form-field>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="serial">
+              <mat-header-cell *matHeaderCellDef> Serial Number </mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <div *ngIf="element.hardware !== 'Memory' && element.hardware !== 'Storage' && element.hardware !== 'Display'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Serial</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.serial" name="serial-{{element.hardware}}">
+                  </mat-form-field>
+                </div>
+
+                <div *ngIf="element.hardware === 'Memory'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Slot #1 Serial</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.Serialslot1" name="Serialslot1">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Slot #2 Serial</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.Serialslot2" name="Serialslot2">
+                  </mat-form-field>
+                </div>
+
+                <div *ngIf="element.hardware === 'Storage'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>HDD Serial</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.hddSerial" name="hddSerial">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>SSD Serial</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.ssdSerial" name="ssdSerial">
+                  </mat-form-field>
+                </div>
+
+                <div *ngIf="element.hardware === 'Display'">
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Monitor Serial</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.monitorSerial" name="monitorSerial">
+                  </mat-form-field>
+                  <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>GPU Serial</mat-label>
+                    <input matInput type="text" [(ngModel)]="element.gpuSerial" name="gpuSerial">
+                  </mat-form-field>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+        </div>
+      </div>
+    </div>
+  <br>
+    <!-- Software Information -->
+    <div class="software-info">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Operating System</mat-label>
+            <mat-select [(ngModel)]="formData.operatingSystem" name="operatingSystem" required>
+              <mat-option *ngFor="let os of operatingSystems" [value]="os">
+                {{ os }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Computer Name/Device Name</mat-label>
+            <input matInput type="text" [(ngModel)]="formData.computerName" name="computerName" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Productivity Suite</mat-label>
+            <mat-select [(ngModel)]="formData.productivitySuite" name="productivitySuite" required>
+              <mat-option *ngFor="let suite of productivitySuites" [value]="suite">
+                {{ suite }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Endpoint Point</mat-label>
+            <mat-select [(ngModel)]="formData.endpointPoint" name="endpointPoint" required>
+              <mat-option *ngFor="let option of endpointOptions" [value]="option">{{ option }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- Network Information -->
+    <div class="network-info">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>IP Address</mat-label>
+            <input matInput type="text" [(ngModel)]="formData.ipAddress" name="ipAddress" required>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-checkbox [(ngModel)]="formData.withInternet" name="withInternet">With Internet</mat-checkbox>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-checkbox [(ngModel)]="formData.wired" name="wired">Wired</mat-checkbox>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>MAC Address</mat-label>
+            <input matInput type="text" [(ngModel)]="formData.macAddress" name="macAddress" required>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-checkbox [(ngModel)]="formData.withoutInternet" name="withoutInternet">Without Internet</mat-checkbox>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <mat-checkbox [(ngModel)]="formData.wireless" name="wireless">Wireless</mat-checkbox>
+        </div>
+      </div>
+    </div>
+
+  <!-- Maintenance Checklist -->
+  <div class="maintenance-list">
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th style="text-align: center;">#</th>
+                <th style="text-align: center;">Task</th>
+                <th style="text-align: center;">Checkbox <i>(if applicable)</i></th>
+                <th style="text-align: center;">Findings/Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let task of maintenanceTasks; let i = index">
+                <th>{{i + 1}}</th>
+                <td>{{task.name}}</td>
+                <td>
+                  <mat-checkbox [(ngModel)]="task.completed" name="completed-{{i}}">Completed</mat-checkbox>
+                </td>
+                <td><input type="text" matInput [(ngModel)]="task.remarks" name="remarks-{{i}}" class="form-control"></td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+
+
+    <!-- Recommendation Section -->
+    <div class="recommendation-section">
+      <div class="row">
+        <div class="col-12">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Recommendation</mat-label>
+            <textarea matInput [(ngModel)]="formData.recommendation" name="recommendation" rows="4" required></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+  <!-- Acknowledge and Signatures Section -->
+  <div class="acknowledge-signatures-section">
+    <div class="row">
+      <div class="col-12">
+        <mat-label class="form-label">
+          {{ statusMessage }}
+        </mat-label>
+      </div>
+    </div>
+
+
+  </div>
+  <br>
+  <!-- Save Button -->
+  <div class="row">
+    <div class="col-12">
+      <button
+      type="submit"
+      class=" w-100 btn btn-success action-btn"
+      [disabled]="isSaving"
+    >
+        <ng-container *ngIf="!isSaving; else saving">
+          Save
+        </ng-container>
+        <ng-template #saving>
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Saving...
+        </ng-template>
+      </button>
+    </div>
+  </div>
+  <!-- Add Record Button -->
+  <div class="row">
+    <div class="col-12">
+        <button type="button" class="w-100 btn btn-secondary" id="" (click)="openDialog()">Add Record</button>
+    </div>
+  </div>
+</form>
+
+
+
+

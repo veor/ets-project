@@ -1,0 +1,38 @@
+<div mat-dialog-content class="dialog-body">
+<h2 mat-dialog-title class="dialog-title">
+  Request Details
+</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <span class="label">Name</span>
+      <span class="value">{{ data.name }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="label">Contact No</span>
+      <span class="value">{{ data.contact_no }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="label">Office</span>
+      <span class="value">{{ data.office_value }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="label">Date of Request</span>
+      <span class="value">{{ data.date_of_request }}</span>
+    </div>
+
+    <div class="info-item full-width issue-div">
+      <span class="label">Issue Request</span>
+      <span class="value">{{ data.issue_request }}</span>
+    </div>
+  </div>
+
+</div>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-flat-button color="primary" (click)="dialogRef.close()">
+    Close
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,23 @@
+<div mat-dialog-content class="confirm-dialog-container">
+  <div class="confirm-content">
+    <h2 mat-dialog-title class="confirm-title">Confirm Action</h2>
+    <p>Are you sure you want to accept this job request?</p>
+
+    <mat-form-field appearance="outline" style="width: 100%; margin-top: 1rem;">
+      <mat-label>Assign Technical Staff</mat-label>
+      <mat-select [(ngModel)]="data.selectedPersonnelId">
+        <mat-option value="" disabled>Select Personnel</mat-option>
+        <mat-option *ngFor="let personnel of data.personnelNames" [value]="personnel.personnel_id">
+          {{ personnel.personnel_name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-dialog-actions align="end" class="confirm-actions">
+    <button mat-stroked-button mat-dialog-close class="btn-cancel">No</button>
+    <button mat-raised-button color="primary" (click)="dialogRef.close({ confirm: true, personnelId: data.selectedPersonnelId })">
+      Yes
+    </button>
+  </mat-dialog-actions>
+</div>

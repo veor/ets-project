@@ -16,13 +16,25 @@ class Divisions extends \Phalcon\Mvc\Model
     public $division_name;
 
     /**
+     *
+     * @var integer
+     */
+    public $office_id;
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("etsdb");
+        /* --- PRODUCTION --- */
+        // $this->setSchema("qsadmin_etsdb");
         $this->setSource("divisions");
+    
+        $this->hasMany('division_id', 'ItrmServiceReport', 'division_id', ['alias' => 'ItrmServiceReport']);
         $this->hasMany('division_id', 'Personnels', 'division_id', ['alias' => 'Personnels']);
+        $this->hasMany('division_id', 'Users', 'division_id', ['alias' => 'Users']);
+        $this->belongsTo('office_id', '\Office', 'office_id', ['alias' => 'Office']);
     }
 
     /**

@@ -16,7 +16,7 @@ export class LoginGuard implements CanMatch {
     route:Route,
     segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/']); // Redirect to the dashboard or home route
+      this.router.navigate(['/']); 
       return false;
     }
     return true;

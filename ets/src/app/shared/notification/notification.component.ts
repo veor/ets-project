@@ -10,13 +10,24 @@ import { CommonModule } from '@angular/common';
 })
 export class NotificationComponent implements OnInit{
 
-  notification: { message: string; type: 'success' | 'error' | 'warning' } | null = null; 
+  notification: { message: string; type: 'success' | 'error' | 'warning' | 'info' } | null = null; 
 
   constructor(private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.notificationService.notification$.subscribe(
-      (notification) => (this.notification = notification)
+      (notification) => {
+        this.notification = notification;
+        if (notification) {
+          setTimeout(() => {
+            this.closeNotification();
+          }, 5000);
+        }
+      }
     );
+  }
+
+  closeNotification(): void {
+    this.notification = null; 
   }
 }

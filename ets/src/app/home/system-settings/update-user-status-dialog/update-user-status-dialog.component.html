@@ -1,0 +1,26 @@
+<div class="dialog-header">
+  <mat-icon [class.activate-icon]="data.action === 'activate'" 
+            [class.deactivate-icon]="data.action === 'deactivate'">
+  </mat-icon>
+</div>
+
+<mat-dialog-content>
+  <p class="confirmation-message">
+    Are you sure you want to <strong>{{ data.action }}</strong> this user?
+  </p>
+  <div class="user-info">
+    <span><strong>User:</strong> {{ data.userName }}</span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    Cancel
+  </button>
+  <button mat-raised-button 
+          [color]="data.action === 'activate' ? 'primary' : 'warn'"
+          (click)="onConfirm()">
+    <mat-icon>{{ data.action === 'activate' ? 'check' : 'block' }}</mat-icon>
+    {{ data.action | titlecase }}
+  </button>
+</mat-dialog-actions>

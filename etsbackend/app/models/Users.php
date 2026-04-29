@@ -46,11 +46,25 @@ class Users extends \Phalcon\Mvc\Model
     public $permissions;
 
     /**
+     *
+     * @var integer
+     */
+    public $isActive;
+
+    /**
+     *
+     * @var integer
+     */
+    public $islocked;
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
     {
         $this->setSchema("etsdb");
+        /* --- PRODUCTION --- */
+        // $this->setSchema("qsadmin_etsdb");
         $this->setSource("users");
         $this->hasMany('id_number', 'ItrmServiceReport', 'personnel_id', ['alias' => 'ItrmServiceReport']);
         $this->belongsTo('division_id', '\Divisions', 'division_id', ['alias' => 'Divisions']);

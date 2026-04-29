@@ -1,0 +1,336 @@
+.pending-request-header {
+  margin: 20px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+/* Filters row */
+.filter-row {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface);
+  margin-bottom: 16px;
+  border-radius: 6px;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+}
+
+.filter-item {
+  min-width: 200px;
+  flex: 1;
+}
+
+/* Material Form Field Styling */
+::ng-deep .filter-item .mat-mdc-text-field-wrapper {
+  background: var(--content-bg) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-form-field-focus-overlay {
+  background-color: transparent !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select {
+  color: var(--text) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select-value {
+  color: var(--text) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select-placeholder {
+  color: var(--text-muted) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-select-arrow {
+  color: var(--text) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-floating-label {
+  color: var(--text-muted) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+  color: var(--accent) !important;
+}
+
+/* Input field styling */
+::ng-deep .filter-item .mat-mdc-input-element {
+  color: var(--text) !important;
+  caret-color: var(--accent) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-input-element::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.7;
+}
+
+/* Material icon in search field */
+::ng-deep .filter-item .mat-icon {
+  color: var(--text-muted) !important;
+}
+
+/* Outline borders */
+::ng-deep .filter-item .mat-mdc-notched-outline .mat-mdc-notched-outline-leading,
+::ng-deep .filter-item .mat-mdc-notched-outline .mat-mdc-notched-outline-notch,
+::ng-deep .filter-item .mat-mdc-notched-outline .mat-mdc-notched-outline-trailing {
+  border-color: var(--border) !important;
+}
+
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-leading,
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-notch,
+::ng-deep .filter-item .mat-mdc-form-field.mat-focused .mat-mdc-notched-outline .mat-mdc-notched-outline-trailing {
+  border-color: var(--accent) !important;
+}
+
+/* Table Container */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Table Styling */
+.job-request-task {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.main-table-head {
+  background: var(--content-bg);
+  color: var(--text);
+  padding: 12px;
+  text-align: center;
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+}
+
+.main-table-row-data {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* Remove border from last row */
+.job-request-task tbody tr:last-child .main-table-row-data {
+  border-bottom: none;
+}
+
+/* Status Chip */
+.status-chip {
+  color: #fff !important;
+  font-weight: 500;
+}
+
+.mat-chip.mat-primary {
+  background-color: #0d6efd !important;
+}
+
+.mat-chip.mat-warn {
+  background-color: #dc3545 !important;
+}
+
+/* Actions Container */
+.actions-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Base button */
+.actions-container button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 8px;
+  text-transform: none;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+/* Icons */
+.actions-container mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+/* Approve */
+.btn-approve {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
+
+.btn-approve:hover {
+  filter: brightness(1.08);
+}
+
+.btn-approve:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Cancel (soft outline) */
+.btn-cancel {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: var(--content-bg);
+}
+
+/* Dark mode fine-tuning */
+.dark-mode .btn-cancel {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+/* No Data Message */
+.no-data-message {
+  text-align: center;
+  margin-top: 20px;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 1rem;
+}
+
+/* Paginator Styling */
+::ng-deep .mat-mdc-paginator {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-top: 16px;
+}
+
+::ng-deep .mat-mdc-paginator-page-size-label,
+::ng-deep .mat-mdc-paginator-range-label {
+  color: var(--text) !important;
+}
+
+::ng-deep .mat-mdc-paginator-range-actions {
+  color: var(--text) !important;
+}
+
+::ng-deep .mat-mdc-paginator .mat-mdc-icon-button {
+  color: var(--text) !important;
+}
+
+::ng-deep .mat-mdc-paginator .mat-mdc-icon-button:disabled {
+  color: var(--text-muted) !important;
+}
+
+::ng-deep .mat-mdc-paginator .mat-mdc-select {
+  color: var(--text) !important;
+}
+
+::ng-deep .mat-mdc-paginator .mat-mdc-select-value {
+  color: var(--text) !important;
+}
+
+::ng-deep .mat-mdc-paginator .mat-mdc-select-arrow {
+  color: var(--text) !important;
+}
+
+/* Dark Mode Specific Overrides */
+.dark-mode .pending-request-header {
+  color: var(--text);
+}
+
+.dark-mode .filter-row {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.dark-mode .job-request-task {
+  background-color: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .main-table-head {
+  background: var(--content-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .main-table-row-data {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.dark-mode .no-data-message {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
+  
+  .filter-item {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .pending-request-header {
+    font-size: 20px;
+    margin: 16px 0;
+  }
+
+  .main-table-head,
+  .main-table-row-data {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .actions-container {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .actions-container button {
+      width: 100%;
+    justify-content: center;
+  }
+
+  /* Make table scrollable on mobile */
+  .table-container {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pending-request-header {
+    font-size: 18px;
+  }
+
+  .filter-row {
+    padding: 12px;
+    gap: 12px;
+  }
+}

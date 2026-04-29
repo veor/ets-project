@@ -1,0 +1,592 @@
+<div class="device-page">
+
+  <!-- Header -->
+  <div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Add Device Information</h2>
+  </div>
+  
+  <form (ngSubmit)="saveData()" #deviceForm="ngForm">
+
+      <!-- Basic Information -->
+    <div class="section-header">Basic Information</div>
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-md-6">
+        <label class="form-label">Accountable Person</label>
+        <input type="text" class="form-control" [(ngModel)]="formData.accountablePerson" name="accountablePerson" required>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Assigned User</label>
+        <input type="text" class="form-control" [(ngModel)]="formData.endUser" name="endUser" required>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Designation</label>
+        <input type="text" class="form-control" [(ngModel)]="formData.designation" name="designation">
+      </div>
+      <div class="col-12 col-md-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Equipment Type</mat-label>
+          <mat-select [(ngModel)]="formData.equipmentType" name="equipmentType" multiple>
+            <mat-option *ngFor="let type of equipmentTypes" [value]="type">{{ type }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Property Number (ICS/PAR)</label>
+        <input type="text" class="form-control" [(ngModel)]="formData.par" name="par">
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Computer/Device Name</label>
+        <input type="text" class="form-control" [(ngModel)]="formData.computerName" name="computerName">
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Department/Office</label>
+        <select class="form-select" [(ngModel)]="formData.department" name="department" (change)="onDepartmentChange()">
+          <option value="" disabled selected>Select department</option>
+          <option *ngFor="let dept of departments" [value]="dept.office_id">{{ dept.office_value }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Division</label>
+        <select class="form-select" [(ngModel)]="formData.division" name="division">
+          <option value="" disabled selected>Select division</option>
+          <option *ngFor="let div of filteredDivisions" [value]="div.division_id">{{ div.division_name }}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-select" [(ngModel)]="formData.status" name="status">
+          <option selected disabled>Select status</option>
+          <option>Servicable</option>
+          <option>Unservicable</option>
+          <option>Disposal</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Hardware Information -->
+    <div class="section-header">Hardware Information</div>
+    <div class="row g-3 mb-4">
+
+      <!-- COMPUTER (Desktop / Laptop) -->
+      <ng-container *ngIf="isComputer">
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Motherboard</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. ASUS Prime B450M"
+                  name="motherboardBrand"
+                  [(ngModel)]="formData.hardwareInformation.motherboard.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="motherboardSerial"
+                  [(ngModel)]="formData.hardwareInformation.motherboard.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Processor</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. Intel i7 11700"
+                  name="processorBrand"
+                  [(ngModel)]="formData.hardwareInformation.processor.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="processorSerial"
+                  [(ngModel)]="formData.hardwareInformation.processor.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Dynamic Memory Slots ── -->
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Memory Slots</span>
+            <button
+              type="button"
+              class="btn-add-ram"
+              (click)="addMemorySlot()"
+              [disabled]="formData.hardwareInformation.memorySlots.length >= maxMemorySlots"
+            >
+              <i class="bi bi-plus-circle me-1"></i>
+              Add RAM Slot
+            </button>
+          </div>
+
+          <div
+            *ngFor="let slot of formData.hardwareInformation.memorySlots; let i = index"
+            class="memory-slot-row"
+          >
+            <div class="slot-index">Slot #{{ i + 1 }}</div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. Kingston 8GB DDR4"
+                  [name]="'memBrand' + i"
+                  [(ngModel)]="slot.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  [name]="'memSerial' + i"
+                  [(ngModel)]="slot.serial"
+                >
+              </div>
+            </div>
+            <button
+              *ngIf="formData.hardwareInformation.memorySlots.length > 1"
+              type="button"
+              class="btn-remove-ram"
+              (click)="removeMemorySlot(i)"
+              title="Remove slot"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Hard Disk Drives</span>
+            <button
+              type="button"
+              class="btn-add-ram"
+              (click)="addHddSlot()"
+              [disabled]="formData.hardwareInformation.hddSlots.length >= maxStorageSlots"
+            >
+              <i class="bi bi-plus-circle me-1"></i>
+              Add HDD
+            </button>
+          </div>
+
+          <div
+            *ngFor="let slot of formData.hardwareInformation.hddSlots; let i = index"
+            class="memory-slot-row"
+          >
+            <div class="slot-index">HDD #{{ i + 1 }}</div>
+
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [name]="'hddBrand' + i"
+                  [(ngModel)]="slot.brand"
+                >
+              </div>
+
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [name]="'hddSerial' + i"
+                  [(ngModel)]="slot.serial"
+                >
+              </div>
+            </div>
+
+            <button
+              *ngIf="formData.hardwareInformation.hddSlots.length > 1"
+              type="button"
+              class="btn-remove-ram"
+              (click)="removeHddSlot(i)"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Solid State Drives</span>
+            <button
+              type="button"
+              class="btn-add-ram"
+              (click)="addSsdSlot()"
+              [disabled]="formData.hardwareInformation.ssdSlots.length >= maxStorageSlots"
+            >
+              <i class="bi bi-plus-circle me-1"></i>
+              Add SSD
+            </button>
+          </div>
+
+          <div
+            *ngFor="let slot of formData.hardwareInformation.ssdSlots; let i = index"
+            class="memory-slot-row"
+          >
+            <div class="slot-index">SSD #{{ i + 1 }}</div>
+
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [name]="'ssdBrand' + i"
+                  [(ngModel)]="slot.brand"
+                >
+              </div>
+
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [name]="'ssdSerial' + i"
+                  [(ngModel)]="slot.serial"
+                >
+              </div>
+            </div>
+
+            <button
+              *ngIf="formData.hardwareInformation.ssdSlots.length > 1"
+              type="button"
+              class="btn-remove-ram"
+              (click)="removeSsdSlot(i)"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Monitor</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. Dell"
+                  name="monitorBrand"
+                  [(ngModel)]="formData.hardwareInformation.monitor.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="monitorSerial"
+                  [(ngModel)]="formData.hardwareInformation.monitor.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Graphics Card</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. Gigabyte"
+                  name="gpuBrand"
+                  [(ngModel)]="formData.hardwareInformation.gpu.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="gpuSerial"
+                  [(ngModel)]="formData.hardwareInformation.gpu.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- UPS -->
+      <ng-container *ngIf="isUPS">
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>UPS</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. APC"
+                  name="upsBrand"
+                  [(ngModel)]="formData.hardwareInformation.ups.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="upsSerial"
+                  [(ngModel)]="formData.hardwareInformation.ups.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- PRINTER -->
+      <ng-container *ngIf="isPrinter">
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Printer</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. APC"
+                  name="printerBrand"
+                  [(ngModel)]="formData.hardwareInformation.printer.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="printerSerial"
+                  [(ngModel)]="formData.hardwareInformation.printer.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- NETWORK EQUIPMENT -->
+      <ng-container *ngIf="isNetworkEquipment">
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Data Cabinet</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. Vertiv"
+                  name="dataCabinetBrand"
+                  [(ngModel)]="formData.hardwareInformation.dataCabinet.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="dataCabinetSerial"
+                  [(ngModel)]="formData.hardwareInformation.dataCabinet.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="memory-section-label">
+            <span>Network Switch</span>
+          </div>
+          <div class="memory-slot-row">
+            <div class="slot-index"></div>
+            <div class="slot-inputs">
+              <div class="slot-field">
+                <label class="form-label">Brand / Specification</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. Cisco"
+                  name="switchBrand"
+                  [(ngModel)]="formData.hardwareInformation.networkSwitch.brand"
+                >
+              </div>
+              <div class="slot-field">
+                <label class="form-label">Serial No.</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Serial number"
+                  name="switchSerial"
+                  [(ngModel)]="formData.hardwareInformation.networkSwitch.serial"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+
+    <!-- Software Information -->
+    <ng-container *ngIf="isComputer || isPrinter">
+      <div class="section-header">Software Information</div>
+      <div class="row g-3 mb-4">
+
+        <ng-container *ngIf="isComputer">
+          <div class="col-md-6">
+            <label class="form-label">Computer Name</label>
+            <input type="text" class="form-control" name="computerNameSoftware" [(ngModel)]="formData.softwareInformation.computerName" placeholder="Enter Computer Name">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Operating System</label>
+            <input type="text" class="form-control" name="operatingSystem" [(ngModel)]="formData.softwareInformation.operatingSystem" placeholder="e.g. Windows 10 Pro">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">OS License Key</label>
+            <input type="text" class="form-control" name="osLicenseKey" [(ngModel)]="formData.softwareInformation.osLicenseKey" placeholder="Enter OS license key">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Productivity Suite</label>
+            <input type="text" class="form-control" name="productivitySuite" [(ngModel)]="formData.softwareInformation.productivitySuite" placeholder="e.g. Microsoft Office 2021">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Productivity Suite License Key</label>
+            <input type="text" class="form-control" name="productivityLicenseKey" [(ngModel)]="formData.softwareInformation.productivityLicenseKey" placeholder="Enter Office license key">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Endpoint Protection</label>
+            <input type="text" class="form-control" name="endpointProtection" [(ngModel)]="formData.softwareInformation.endpointProtection" placeholder="e.g. Windows Defender, Sophos">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Bit Locker Key</label>
+            <input type="text" class="form-control" name="bitLockerKey" [(ngModel)]="formData.softwareInformation.bitLockerKey" placeholder="Enter bit locker key">
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="isPrinter">
+          <div class="col-md-6">
+            <label class="form-label">Device Name</label>
+            <input type="text" class="form-control" [(ngModel)]="formData.softwareInformation.deviceName" name="printerDeviceName">
+          </div>
+        </ng-container>
+
+      </div>
+    </ng-container>
+
+    <!-- Network Information -->
+    <ng-container *ngIf="isComputer">
+      <div class="section-header">Network Information</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">IP Address</label>
+          <input type="text" class="form-control" name="ipAddress" [(ngModel)]="formData.networkInformation.ipAddress" placeholder="e.g. 192.168.1.10">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">MAC Address</label>
+          <input type="text" class="form-control" name="macAddress" [(ngModel)]="formData.networkInformation.macAddress" placeholder="e.g. AA:BB:CC:DD:EE:FF">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Internet Access</label>
+          <select class="form-select" [(ngModel)]="formData.networkInformation.internetAccess" name="internetAccess">
+            <option value="" disabled selected>Select option</option>
+            <option value="With Internet">With Internet</option>
+            <option value="Without Internet">Without Internet</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Connection Type</label>
+          <select class="form-select" [(ngModel)]="formData.networkInformation.connectionType" name="connectionType">
+            <option value="" disabled selected>Select type</option>
+            <option value="Wired">Wired</option>
+            <option value="Wireless">Wireless</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Internet Access Permissions</label>
+          <select class="form-select" [(ngModel)]="formData.networkInformation.internetPermission" name="internetPermission">
+            <option value="" disabled>Select permission</option>
+            <option value="Basic Connect">Basic Connect</option>
+            <option value="With Facebook Access">With Facebook Access</option>
+            <option value="With YouTube Access">With YouTube Access</option>
+            <option value="With Social Media Access">With Social Media Access</option>
+            <option value="Full Access">Full Access</option>
+            <option value="Restricted Access">Restricted Access</option>
+          </select>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Actions -->
+    <div class="form-actions mt-4 d-flex justify-content-end gap-2">
+      <button type="submit" class="btn btn-success" [disabled]="isSavingDevice">
+        <span *ngIf="isSavingDevice" class="spinner-border spinner-border-sm me-2"></span>
+        Save Device
+      </button>
+    </div>
+
+  </form>
+
+</div>

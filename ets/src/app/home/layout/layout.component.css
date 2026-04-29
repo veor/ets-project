@@ -1,0 +1,33 @@
+.content {
+  margin-left: 260px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+  background: var(--content-bg);
+  color: var(--text);
+}
+
+.content.sidebar-closed {
+  margin-left: 70px;
+}
+
+@media (max-width: 769px) {
+  .content,
+  .content.sidebar-closed {
+    margin-left: 0;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 64px);
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+  }
+
+  .dark-mode .overlay {
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+}

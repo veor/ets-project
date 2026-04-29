@@ -1,0 +1,153 @@
+<div class="checklist-wrapper">
+
+  <!-- Dialog Title -->
+  <div class="dialog-title">
+    <div>
+      <span class="title-label">Maintenance Checklist</span>
+      <span class="ref-pill">{{ data.refNumber }}</span>
+    </div>
+    <button class="btn-close-dialog" (click)="onClose()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <div class="dialog-content">
+
+    <!-- Log Meta Info -->
+    <div class="log-meta row g-2 mb-4">
+      <div class="col-6 col-md-3">
+        <span class="meta-label">Date</span>
+        <span class="meta-value">{{ data.date | date: 'MMM dd, yyyy' }}</span>
+      </div>
+      <div class="col-6 col-md-3">
+        <span class="meta-label">Assigned IT Staff</span>
+        <span class="meta-value">{{ data.assignedStaff }}</span>
+      </div>
+      <div class="col-6 col-md-3">
+        <span class="meta-label">Issue / Problem</span>
+        <span class="meta-value">{{ data.issue }}</span>
+      </div>
+    </div>
+
+    <!-- Checklist Section -->
+    <div class="section-header">
+      <i class="bi bi-check2-square me-2"></i>Desktop / Laptop Maintenance Checklist
+    </div>
+
+    <div class="table-responsive">
+<div class="alert alert-warning mb-3" *ngIf="isReadOnly">
+  <i class="bi bi-lock me-1"></i>
+  This is an archived checklist (read-only - {{ data.date | date:'yyyy' }})
+</div>
+      <table class="table checklist-table">
+        <thead>
+          <tr>
+            <th class="col-no">No.</th>
+            <th class="col-task">Task</th>
+            <th class="col-check">Done</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of desktopTasks; let i = index" [class.row-done]="t.done">
+            <td class="col-no text-center">{{ i + 1 }}</td>
+            <td class="col-task">
+              <span [class.task-done]="t.done">{{ t.task }}</span>
+            </td>
+            <td class="col-check text-center">
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="t.done" (change)="onTaskChange()" [disabled]="isReadOnly">
+                <span class="checkmark"></span>
+              </label>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="progress-row">
+              <div class="d-flex align-items-center gap-2">
+                <div class="progress flex-grow-1">
+                  <div
+                    class="progress-bar"
+                    [style.width.%]="progressPercent"
+                    [class.bg-success]="progressPercent === 100"
+                  ></div>
+                </div>
+                <span class="progress-label">{{ doneTasks }} / {{ desktopTasks.length }} done</span>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Global Findings & Recommendation -->
+    <div class="section-header mt-4">
+      <i class="bi bi-journal-text me-2"></i>Findings & Recommendations
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-12 col-md-6">
+        <label class="form-label">Service/s Rendered</label>
+        <textarea
+          class="form-control"
+          rows="4"
+          [(ngModel)]="data.services"
+          [readonly]="isReadOnly">
+        </textarea>
+      </div>
+<div class="col-12 col-md-6">
+  <label class="form-label">Action Taken</label>
+  <textarea
+    class="form-control"
+    rows="4"
+    [(ngModel)]="data.actionTaken"
+    [readonly]="isReadOnly">
+  </textarea>
+</div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Findings / Remarks</label>
+        <textarea
+          class="form-control"
+          rows="4"
+          [(ngModel)]="globalFindings"
+          [readonly]="isReadOnly"
+          placeholder="This is a sample remarks">
+        </textarea>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Recommendation</label>
+        <textarea
+          class="form-control"
+          rows="4"
+          [(ngModel)]="globalRecommendation"
+          [readonly]="isReadOnly"
+          placeholder="You are reading a sample findings">
+        </textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Dialog Actions -->
+  <div class="dialog-actions">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge" [class.badge-complete]="progressPercent === 100" [class.badge-pending]="progressPercent < 100">
+        <i class="bi" [class.bi-check-circle-fill]="progressPercent === 100" [class.bi-hourglass-split]="progressPercent < 100"></i>
+        {{ progressPercent === 100 ? 'All tasks complete' : progressPercent + '% complete' }}
+      </span>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="onClose()">Cancel</button>
+      <button class="btn btn-save" (click)="onSave()" [disabled]="isSaving" [disabled]="isSaving || isReadOnly">
+        <ng-container *ngIf="isSaving; else saveText">
+          <span class="spinner-border spinner-border-sm me-1"></span> Saving...
+        </ng-container>
+        <ng-template #saveText>
+          <i class="bi bi-floppy me-1"></i> Save Checklist
+        </ng-template>
+      </button>
+    </div>
+  </div>
+
+</div>

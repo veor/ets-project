@@ -1,0 +1,47 @@
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="assets/ets logo2.png" alt="Logo" class="logo" />
+
+    <button class="hamburger" (click)="toggleMenu()">☰</button>
+  </div>
+
+  <div class="nav-right" [class.open]="isMenuOpen">
+    <!-- Theme toggle -->
+    <button
+      class="theme-toggle"
+      (click)="toggleTheme()"
+      aria-label="Toggle theme"
+    >
+      <span class="material-symbols-outlined">
+        {{ isDarkMode ? 'light_mode' : 'dark_mode' }}
+      </span>
+    </button>
+
+    <!-- User Dropdown -->
+    <div class="user-menu">
+      <span class="user-name" (click)="toggleUserMenu()">
+        {{ userInfo.name }}
+      </span>
+      <span class="caret" (click)="toggleUserMenu()">▾</span>
+
+      <ul class="dropdown" *ngIf="isUserMenuOpen">
+        <li *ngIf="showSettings">
+          <a routerLink="system-settings" (click)="isUserMenuOpen = false">
+            System Settings
+          </a>
+        </li>
+        <li *ngIf="hasChangePasswordPermission() && showChangePassword">
+          <a routerLink="change-password" (click)="changePassword(); isUserMenuOpen = false">
+            Change Password
+          </a>
+        </li>
+
+        <li class="divider"></li>
+        <li>
+          <button class="logout" (click)="logout()">Logout</button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>

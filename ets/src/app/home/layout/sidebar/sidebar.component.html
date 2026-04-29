@@ -1,0 +1,61 @@
+<aside class="sidebar" [class.closed]="!isOpen">
+
+  <ul class="menu">
+
+    <li routerLink="/dashboard" routerLinkActive="active" *ngIf="showDashboard">
+      Dashboard
+    </li>
+
+    <!-- Preventive Maintenance Dropdown -->
+    <li class="dropdown" *ngIf="showPM">
+      <div class="dropdown-title" (click)="togglePM()">
+        Preventive Maintenance
+        <span class="arrow" [class.open]="pmOpen">▾</span>
+      </div>
+
+      <ul class="submenu" *ngIf="pmOpen">
+        <li routerLink="/it-equipment" routerLinkActive="active" *ngIf="showRegisterDevice">
+          IT Equipment 
+        </li>
+        <!-- <li routerLink="/maintenance-logs" routerLinkActive="active" *ngIf="showRegisterDevice">
+          Maintenance Logs
+        </li> -->
+      </ul>
+    </li>
+
+    <li routerLink="/authorize/support-request" routerLinkActive="active" *ngIf="showSupportRequest">
+      Office Approval
+    </li>
+
+    <li routerLink="/authorize/office-request" routerLinkActive="active" *ngIf="showDashboard">
+      ICT Service Monitoring
+    </li>
+
+    <li routerLink="/authorize/monitor" routerLinkActive="active" *ngIf="showMonitor">
+      Department Audit
+    </li>
+
+    <li routerLink="/authorize/task" routerLinkActive="active" *ngIf="showTask">
+      Assigned Ticket
+    </li>
+
+    <!-- Preventive Maintenance Dropdown -->
+    <!-- <li class="dropdown" *ngIf="showPM">
+      <div class="dropdown-title" (click)="togglePM()">
+        Preventive Maintenance
+        <span class="arrow" [class.open]="pmOpen">▾</span>
+      </div>
+
+      <ul class="submenu" *ngIf="pmOpen">
+        <li routerLink="/device-record" routerLinkActive="active" *ngIf="showDeviceRecord">
+          Device Record
+        </li>
+        <li routerLink="/maintenance-log" routerLinkActive="active" *ngIf="showMaintenanceLog">
+          Maintenance Log
+        </li>
+      </ul>
+    </li> -->
+
+  </ul>
+
+</aside>

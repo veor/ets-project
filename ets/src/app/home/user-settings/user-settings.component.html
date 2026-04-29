@@ -1,556 +1,1047 @@
 
+  <app-loader [isLoading]="isLoadingFetch"></app-loader>
 
-<div *ngIf="showAccountSettingsSection"> 
-  <div *ngIf="isLoadingFetch" class="spinner-container">
-    <div class="loader"></div>
-    <p>Loading data...</p>
-  </div>
-  <div class="top-section">
-    <section>
-      <p style="text-align: center; font-weight: bold; font-size: 20px; background-color: #3f3f3f; padding: 10px; color: #fff; border-radius: 4px;">Account Settings</p>
-      <form [formGroup]="myAccountForm" class="settings-form">
-        <div class="form-column">
-          <label>ID No.</label>
-          <input formControlName="idNumber" type="text" readonly />
-          <label>Name</label>
-          <input formControlName="name" type="text" />
-          <label>Designation</label>
-          <input formControlName="designation" type="text" />
+<!-- Authenticated User -->
+<div *ngIf="showAccountSection" class="">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white border-bottom">
+      <h2 class="mb-0 fw-semibold">Account Section</h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="myAccountForm" class="row g-4">
+        <!-- Left Column -->
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <input formControlName="idNumber" type="text" class="form-control" id="idNo" placeholder="ID No." readonly>
+            <label for="idNo">ID No.</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input formControlName="name" type="text" class="form-control" id="name" placeholder="Name">
+            <label for="name">Name</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input formControlName="designation" type="text" class="form-control" id="designation" placeholder="Designation">
+            <label for="designation">Designation</label>
+          </div>
         </div>
-        <!-- <div class="form-column"> -->
-        <div>
-          <label>Department</label>
-          <select formControlName="office">
-            <option *ngFor="let office of offices" [value]="office.office_id">
-              {{ office.office_name }}
-            </option>
-          </select>
+        <!-- Right Column -->
+        <div class="col-md-6">
+          <div class="form-floating mb-3">
+            <select formControlName="office" class="form-select" id="office" (change)="onOfficeChange($event)">
+              <option *ngFor="let office of offices" [value]="office.office_id">
+                {{ office.office_name }}
+              </option>
+            </select>
+            <label for="office">Office</label>
+          </div>
+          <div class="form-floating mb-3">
+            <select formControlName="division" class="form-select" id="division">
+              <option *ngFor="let division of divisions" [value]="division.division_id">
+                {{ division.division_name }}
+              </option>
+            </select>
+            <label for="division">Division</label>
+          </div>
+        </div>
+        <!-- Button Actions -->
+        <div class="col-12 text-end">
+          <div class="btn-group gap-2">
+            <button type="button" class="btn btn-outline-success btn-sm" (click)="saveChanges()" [disabled]="isSaving" *ngIf="showCurrUserSaveBtn">
+              <ng-container *ngIf="!isSaving; else saving">
+                Save Changes
+              </ng-container>
+              <ng-template #saving>
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Processing...
+              </ng-template>
+            </button>
 
-          <label>Division</label>
-          <select formControlName="division">
-            <option *ngFor="let division of divisions" [value]="division.division_id">
-              {{ division.division_name }}
-            </option>
-          </select>
-        </div>
-        <div class="form-column full-width">
-          <button type="button" (click)="saveChanges()" [disabled]="isSaving">
-            <span *ngIf="isSaving" class="button-spinner"></span>
-            <span *ngIf="!isSaving">Save Changes</span>
-          </button>
-          <button type="button" (click)="openChangePasswordDialog()" *ngIf="showChangePasswordSection">Change Password</button>
-          <button type="button" (click)="openPermissionsDialog()" *ngIf="showPermissionsSection">Manage Permissions</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="openChangePasswordDialog()" *ngIf="showCurrUserChangePassBtn" >
+              Change Password
+            </button>
+
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="openPermissionsDialog()" *ngIf="showCurrUserManagePermsBtn">
+              Manage Permissions
+            </button>
+          </div>
         </div>
       </form>
-    </section>
+    </div>
   </div>
 </div>
-
-<div class="user-management-container" *ngIf="showUserManagement" >
-  <!-- Existing Users Section -->
-  <div class="flex-sections-I">
-    <section>
-      <p style="text-align: center; font-weight: bold; font-size: 20px; background-color: #3f3f3f; padding: 10px; color: #fff; border-radius: 4px;">Manage User</p>
-      <!-- Add New User and Personnel Button -->
-      <div class="add-user-btn-container">
-        <button (click)="openAddUserModal()" class="open-addusermodal-btn" *ngIf="showAddUser">Add User +</button>
-        <button (click)="openAddPersonnelModal()" class="open-addpersonnelmodal-btn" *ngIf="showAddPersonnel">Add Personnel +</button>
-      </div>
-      
-      <div *ngIf="isLoadingFetch" class="spinner-container">
-        <div class="loader"></div>
-        <p>Loading data...</p>
-      </div>
-      <div class="table-container">
-      <table *ngIf="!isLoadingFetch" class="custom-table">
-        <thead>
-          <tr>
-            <th>ID No.</th>
-            <th>Name of the User</th>
-            <th>Designation</th>
-            <th>Office</th>
-            <th>Division</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of getPaginatedUsers()">
-            <td>{{ user.id_number }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.designation }}</td>
-            <td>{{ user.office }}</td> 
-            <td>{{ user.division }}</td>
-            <td class="actions-column">
-              <a (click)="openUserEditModal(user)" class="edit-btn">
-                Edit
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
-  
-      <!-- Pagination Controls -->
-      <div class="pagination">
-        <button class="pagination-buttons" (click)="changePage('prev')" [disabled]="currentPage === 1">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#FFFFFF">
-            <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/>
-          </svg>
-        </button>
-        <span>Page {{ currentPage }}</span>
-        <button class="pagination-buttons" (click)="changePage('next')" [disabled]="(currentPage * rowsPerPage) >= users.length">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#FFFFFF">
-            <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/>
-          </svg>
-        </button>
-      </div>
-    </section>
-  </div>
-  
-  <!-- Add New User Modal -->
-  <div *ngIf="isAddUserModalOpen" class="modal-overlay" (click)="closeAddUserModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <span class="close" (click)="closeAddUserModal()">×</span>
-        <h3>Add New User</h3>
+<!-- Change Password Modal -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  role="dialog"
+  *ngIf="isPasswordModalVisible"
+  (click)="closeChangePasswordDialog()"
+>
+  <div
+    class="modal-dialog modal-dialog-centered"
+    role="document"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-content shadow">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">Change Password</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Close"
+          (click)="closeChangePasswordDialog()"
+        ></button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="addUserForm">
-          <div class="form-fields">
-            <div class="user-info-fields">
-              <input formControlName="id_number" type="text" placeholder="ID No." />
-              <input formControlName="password" type="password" placeholder="Password" />
-              <select formControlName="division" class="userSelect">
-                <option value="" disabled>Select Division</option>
-                <option *ngFor="let division of divisions" [value]="division.division_id">
-                  {{ division.division_name }}
-                </option>
-              </select>
-            </div>
-            <div class="user-info-fields">
-              <input formControlName="name" type="text" placeholder="Name"/>
-              <input formControlName="designation" type="text" placeholder="Designation"/>
-              <select formControlName="office" class="userSelect">
-                <option value="" disabled>Select Department</option>
-                <option *ngFor="let office of offices" [value]="office.office_id">
-                  {{ office.office_name }}
-                </option>
-              </select>
+        <form [formGroup]="passwordForm">
+          <div class="mb-3">
+            <label class="form-label">Current Password</label>
+            <div class="input-group">
+              <input
+                [type]="showCurrentPassword ? 'text' : 'password'"
+                formControlName="currentPassword"
+                class="form-control"
+                placeholder="Enter current password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                (click)="showCurrentPassword = !showCurrentPassword"
+              >
+                <i [ngClass]="showCurrentPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+              </button>
             </div>
           </div>
-          <!-- Permissions Section -->
-          <div class="newuser-perms-container">
-            <div class="newuser-perms-header">
-              <h4>Add Permissions</h4>
+
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <div class="input-group">
+              <input
+                [type]="showNewPassword ? 'text' : 'password'"
+                formControlName="newPassword"
+                class="form-control"
+                placeholder="Enter new password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                (click)="showNewPassword = !showNewPassword"
+              >
+                <i [ngClass]="showNewPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+              </button>
             </div>
-            <div class="newuser-perms-column-container">
-              <!-- Administrator Permissions -->
-              <div class="newuser-perms-column">
-                <h5>Administrator</h5>
-                <label>
-                  <input type="checkbox" [checked]="selectedAddPermissions.includes(1.6)" (change)="toggleUserPermission(1.6)" />
-                  Enable Administrator
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Confirm New Password</label>
+            <div class="input-group">
+              <input
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                class="form-control"
+                placeholder="Re-enter new password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-dark"
+                (click)="showConfirmPassword = !showConfirmPassword"
+              >
+                <i [ngClass]="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="closeChangePasswordDialog()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-dark btn-sm"
+          (click)="changePassword()"
+          [disabled]="isChangingPassword"
+        >
+          <ng-container *ngIf="!isChangingPassword; else saving">
+            Change Password
+          </ng-container>
+          <ng-template #saving>
+            <span
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Processing...
+          </ng-template>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Permissions Modal -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  role="dialog"
+  *ngIf="isPermissionsModalVisible"
+  (click)="closePermissionsDialog()"
+>
+  <div
+    class="modal-dialog modal-lg modal-dialog-centered"
+    role="document"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-content shadow border-0 rounded-4">
+      <!-- Modal Header -->
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title">
+          <i class="bi bi-shield-lock-fill me-2"></i> Manage Permissions
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Close"
+          (click)="closePermissionsDialog()"
+        ></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body px-4 py-3">
+        <div class="row">
+          <div class="col-12">
+            <div
+              *ngFor="let permission of allPermissions"
+              class="mb-3 border rounded p-3 bg-light"
+            >
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [checked]="selectedPermissions.includes(permission.id)"
+                  (change)="togglePermission(permission.id, permission.children)"
+                  id="perm-{{ permission.id }}"
+                />
+                <label class="form-check-label fw-bold" for="perm-{{ permission.id }}">
+                  {{ permission.label }}
                 </label>
-                <div class="newuser-sub-perms">
-                  <label *ngFor="let adminPermission of adminSubPermissions">
-                    <input
-                      type="checkbox"
-                      [checked]="selectedAddPermissions.includes(adminPermission.id)"
-                      (change)="toggleSubPermission(adminPermission.id)"
-                    />
-                    {{ adminPermission.label }}
+              </div>
+
+              <div
+                *ngIf="permission.children"
+                class="ms-4 mt-2 border-start ps-3"
+              >
+                <div
+                  class="form-check"
+                  *ngFor="let child of permission.children"
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [checked]="selectedPermissions.includes(child.id)"
+                    (change)="togglePermission(child.id)"
+                    id="perm-child-{{ child.id }}"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="perm-child-{{ child.id }}"
+                  >
+                    {{ child.label }}
                   </label>
                 </div>
               </div>
-  
-              <!-- Other Permissions -->
-              <div class="newuser-perms-column">
-                <h5>Other Permissions</h5>
-                <label>
-                  <input type="checkbox" [checked]="selectedAddPermissions.includes(0)" (change)="toggleUserPermission(0)" />
-                  Technical Support
-                </label>
-                <label>
-                  <input type="checkbox" [checked]="selectedAddPermissions.includes(2.1)" (change)="toggleUserPermission(2.1)" />
-                  Monitoring
-                </label>
-                <label>
-                  <input type="checkbox" [checked]="selectedAddPermissions.includes(3.1)" (change)="toggleUserPermission(3.1)" />
-                  IT Supervisor
-                </label>
-                <label>
-                  <input type="checkbox" [checked]="selectedAddPermissions.includes(4.1)" (change)="toggleUserPermission(4.1)" />
-                  Office Supervisor
-                </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="closePermissionsDialog()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-dark btn-sm"
+          (click)="savePermissions()"
+          [disabled]="isAddingPerms"
+        >
+          <ng-container *ngIf="!isAddingPerms; else savingPerms">
+            Add Permissions
+          </ng-container>
+          <ng-template #savingPerms>
+            <span
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Saving...
+          </ng-template>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Existing User Table -->
+<div class="" *ngIf="showUserSection">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h2 class="fw-semibold mb-0">User Section</h2>
+      <div *ngIf="showAddUserBtn || showAddTechnicalStaffBtn">
+        <div class="btn-group">
+          <button *ngIf="showAddUserBtn" class="btn btn-outline-primary btn-sm" (click)="openAddUserModal()">Add User +</button>
+          <button *ngIf="showAddTechnicalStaffBtn" class="btn btn-outline-primary btn-sm" (click)="openAddPersonnelModal()">Add Technical Staff +</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- User Table -->
+      <div class="table-responsive">
+        <table *ngIf="!isLoadingFetch" class="table table-bordered table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">ID No.</th>
+              <th scope="col">Name of the User</th>
+              <th scope="col">Designation</th>
+              <th scope="col">Office</th>
+              <th scope="col">Division</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of getPaginatedUsers()">
+              <td>{{ user.id_number }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.designation }}</td>
+              <td>{{ user.office }}</td>
+              <td>{{ user.division }}</td>
+              <td class="">
+                <button class="btn btn-outline-secondary btn-sm" style="margin-right: 10px;" (click)="openUserEditModal(user)" *ngIf="showEditUserBtn">
+                  Edit
+                </button>
+                <!-- Activate button -->
+                <button
+                  *ngIf="showActivateUserBtn && (user.isActive == 0 || user.is_active == 0)"
+                  class="btn btn-outline-success btn-sm"
+                  style="margin-right: 10px;"
+                  (click)="updateUserStatus(user, 1)"
+                >
+                  Activate
+                </button>
+
+                <!-- Deactivate button -->
+                <button
+                  *ngIf="showActivateUserBtn && (user.isActive == 1 || user.is_active == 1)"
+                  class="btn btn-outline-danger btn-sm"
+                  style="margin-right: 10px;"
+                  (click)="updateUserStatus(user, 0)"
+                >
+                  Deactivate
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <small class="text-muted">Page {{ currentPage }}</small>
+        <div class="btn-group">
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            (click)="changePage('prev')"
+            [disabled]="currentPage === 1"
+          >
+            <i class="bi bi-chevron-left"></i> Previous
+          </button>
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            (click)="changePage('next')"
+            [disabled]="(currentPage * rowsPerPage) >= users.length"
+          >
+            Next <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Add User Modal -->
+<div
+  *ngIf="isAddUserModalOpen"
+  class="modal d-block fade show"
+  tabindex="-1"
+  style="background-color: rgba(0,0,0,0.5);"
+  (click)="closeAddUserModal()"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      
+      <!-- Modal Header -->
+      <div class="modal-header bg-success text-white rounded-top-4">
+        <h5 class="modal-title">
+          <i class="bi bi-person-plus-fill me-2"></i> Add New User
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeAddUserModal()" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body px-4 py-3">
+        <form [formGroup]="addUserForm">
+          <div class="row g-3">
+            <!-- Left Column -->
+            <div class="col-md-6">
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="name" formControlName="name" placeholder="Name" />
+                <label for="name">Name</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="designation" formControlName="designation" placeholder="Designation" />
+                <label for="designation">Designation</label>
+              </div>
+              <div class="form-floating mb-3">
+                <select class="form-select" id="office" formControlName="office" (change)="onAddUserOfficeChange($event)">
+                  <option value="" disabled>Select Office</option>
+                  <option *ngFor="let office of offices" [value]="office.office_id">{{ office.office_name }}</option>
+                </select>
+                <label for="office">Office</label>
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="id_number" formControlName="id_number" placeholder="ID No." />
+                <label for="id_number">ID No.</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password" />
+                <label for="password">Password</label>
+              </div>
+              <!-- Error messages for password -->
+              <div
+              class="text-danger mb-3 ms-1"
+              *ngIf="addUserForm.get('password')?.touched && addUserForm.get('password')?.invalid"
+              >
+              <div *ngIf="addUserForm.get('password')?.errors?.['required']">
+                Password is required.
+              </div>
+              <div *ngIf="addUserForm.get('password')?.errors?.['minlength']">
+                Password must be at least 8 characters long.
+              </div>
+              <div *ngIf="addUserForm.get('password')?.errors?.['pattern']">
+                Password must contain at least one uppercase letter.
+              </div>
+              </div>
+              <div class="form-floating mb-3">
+                <select class="form-select" id="division" formControlName="division">
+                  <option value="" disabled>Select Division</option>
+                  <option *ngFor="let division of divisions" [value]="division.division_id">{{ division.division_name }}</option>
+                </select>
+                <label for="division">Division</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Permissions Section -->
+          <hr class="my-4" />
+          <h5 class="mb-3">Permissions</h5>
+          <div class="row">
+            <div class="col-12">
+              <div *ngFor="let permission of allPermissions" class="mb-3 border rounded p-3 bg-light">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [checked]="selectedAddUserPermissions.includes(permission.id)"
+                    (change)="toggleAddUserPermission(permission.id, permission.children)"
+                    id="add-perm-{{ permission.id }}"
+                  />
+                  <label class="form-check-label fw-bold" for="add-perm-{{ permission.id }}">
+                    {{ permission.label }}
+                  </label>
+                </div>
+
+                <div *ngIf="permission.children" class="ms-4 mt-2 border-start ps-3">
+                  <div class="form-check" *ngFor="let child of permission.children">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [checked]="selectedAddUserPermissions.includes(child.id)"
+                      (change)="toggleAddUserPermission(child.id)"
+                      id="add-perm-child-{{ child.id }}"
+                    />
+                    <label class="form-check-label" for="add-perm-child-{{ child.id }}">
+                      {{ child.label }}
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </form>
       </div>
+
+      <!-- Modal Footer -->
       <div class="modal-footer">
-        <button class="save-btn" (click)="registerUser()" [disabled]="isRegistering">
-          <span *ngIf="isRegistering" class="button-spinner-I"></span>
+        <button class="btn btn-success" (click)="registerUser()" [disabled]="isRegistering">
+          <span *ngIf="isRegistering" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           <span *ngIf="!isRegistering">Save Changes</span>
         </button>
+        <button class="btn btn-outline-secondary" (click)="closeAddUserModal()">Cancel</button>
       </div>
+
     </div>
   </div>
-  
+</div>
+<!-- Add Technical Modal -->
+<div *ngIf="isAddPersonnelModalOpen" class="modal d-block fade show" tabindex="-1" style="background-color: rgba(0,0,0,0.5);" (click)="closeAddPersonnelModal()">
+  <div class="modal-dialog modal-md modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content rounded-4 shadow-lg border-0">
 
-  <!-- Add New Personnel Modal -->
-  <div *ngIf="isAddPersonnelModalOpen" class="modal-overlay" (click)="closeAddPersonnelModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header-personnel">
+      <!-- Modal Header -->
+      <div class="modal-header bg-success text-white rounded-top-4">
+        <h5 class="modal-title">
+          <i class="bi bi-person-fill-gear me-2"></i> Add New Technical
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeAddPersonnelModal()" aria-label="Close"></button>
       </div>
-      <form [formGroup]="addPersonnelForm">
-        <div class="form-group">
-          <input formControlName="personnel_id" type="text" placeholder="Personnel ID No."/>
-  
-          <input formControlName="personnel_name" type="text" placeholder="Name of Personnel"/>
-  
-          <select formControlName="division" class="userSelect">
-            <option value="" disabled>Select Division</option>
-            <option *ngFor="let division of divisions" [value]="division.division_id">
-              {{ division.division_name }}
-            </option>
-          </select>
-        </div>
-      </form>
-  
-      <button type="button" class="add-user-button" (click)="saveAsPersonnel()" [disabled]="isAddingPersonnel">
-        <span *ngIf="isAddingPersonnel" class="button-spinner"></span>
-        <span *ngIf="!isAddingPersonnel">Save Personnel</span>
-      </button>
-      <button type="button" class="add-user-button" (click)="closeAddPersonnelModal()">Cancel</button>
-    </div>
-  </div>
-</div>
 
-<div class="modal-overlay" *ngIf="isUserEditModalOpen" (click)="closeUserEditModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <form (ngSubmit)="updateUser()">
-      <label class="editName">Name</label>
-      <input
-       id="editUserName"
-       [(ngModel)]="selectedUser.name"
-       name="editUserName"
-       required
-       />
-       <label class="editDesignation">Designation</label>
-       <input
-         id="editUserDesignation"
-         [(ngModel)]="selectedUser.designation"
-         name="editUserDesignation"
-         readonly
-       />      
-       <h3>Manage Permissions</h3>
-       <div class="permission">
-         <div *ngFor="let permission of allPermissions">
-           <label>
-             <input 
-               type="checkbox"
-               [checked]="selectedPermissions.includes(permission.id)"
-               (change)="toggleSelectedUserPermission(permission.id, permission.children)" 
-             />
-             {{ permission.label }}
-           </label>
-           
-           <!-- Nested Permissions -->
-           <div class="nested-permission" *ngIf="permission.children?.length">
-             <label *ngFor="let child of permission.children">
-               <input 
-                 type="checkbox" 
-                 [checked]="selectedPermissions.includes(child.id)"
-                 (change)="toggleSelectedUserPermission(child.id)"
-               />
-               {{ child.label }}
-             </label>
-           </div>
-         </div>
-       </div>
-
-      <button type="submit" class="submit-btn" [disabled]="isChangingPassword">
-        <span *ngIf="isChangingPassword" class="spinner"></span>
-        {{ isChangingPassword ? 'Updating...' : 'Save Changes' }}
-      </button>
-    </form>
-  </div>
-</div>
-
-<div class="office-management-container" *ngIf="showOfficeManagement">
-  <div class="flex-sections">
-      <section>
-        <p style="text-align: center; font-weight: bold; font-size: 20px; background-color: #3f3f3f; padding: 10px; color: #fff; border-radius: 4px;">Manage Department</p>
-          <!-- Add New Office Button -->
-        <div class="add-user-btn-container">
-          <button (click)="openModal()" class="open-modal-btn">Add Department +</button>
-        </div>
-        <div *ngIf="isLoadingFetch" class="spinner-container">
-          <div class="loader"></div>
-          <p>Loading data...</p>
-        </div>
-        <div class="table-container">
-            <table *ngIf="!isLoadingFetch" class="custom-table-I">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Office</th>
-                  <th>Office Acronym</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let office of getPaginatedOffices()">
-                  <td>{{ office.office_id }}</td>
-                  <td>{{ office.office_name }}</td>
-                  <td>{{ office.office_value }}</td>
-                  <td class="actions-column">
-                    <a (click)="openEditModal(office)" class="edit-btn">
-                      Edit
-                    </a>
-                  </td>
-                </tr>
-              </tbody>              
-            </table>
-        </div>
-        <!-- Pagination Controls -->
-        <div class="pagination">
-          <button class="pagination-buttons" (click)="changeDeptPage('prev')" [disabled]="currentDeptPage === 1">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#FFFFFF">
-              <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/>
-            </svg>
-          </button>
-          <span>Page {{ currentDeptPage }}</span>
-          <button class="pagination-buttons" (click)="changeDeptPage('next')" [disabled]="(currentDeptPage * rowsPerDeptPage) >= departments.length">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#FFFFFF">
-              <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/>
-            </svg>
-          </button>
-        </div>
-      </section>
-    </div>
-</div>
-
-<div class="division-management-container" *ngIf="showOfficeManagement">
-  <div class="flex-sections">
-      <section>
-          <!-- Add New Office Button -->
-        <div class="add-user-btn-container">
-          <button (click)="openDivisionModal()" class="open-modal-btn">Add Division +</button>
-        </div>
-        <div *ngIf="isLoadingFetch" class="spinner-container">
-          <div class="loader"></div>
-          <p>Loading data...</p>
-        </div>
-        <div class="table-container">
-            <table *ngIf="!isLoadingFetch" class="custom-table-I">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Division</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let division of getPaginatedDivisions()">
-                  <td>{{ division.division_id }}</td>
-                  <td>{{ division.division_name }}</td>
-                  <td class="actions-column">
-                    <a (click)="openEditDivisionModal(division)" class="edit-btn">
-                      Edit
-                    </a>
-                  </td>
-                </tr>
-              </tbody>              
-            </table>
-        </div>
-      <!-- No Divisions Found Message -->
-      <p *ngIf="!isLoadingFetch && divisions.length === 0">No divisions available.</p>
-
-        <!-- Pagination Controls -->
-        <div class="pagination">
-          <button class="pagination-buttons" (click)="changeDivPage('prev')" [disabled]="currentDivPage === 1">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#FFFFFF">
-              <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/>
-            </svg>
-          </button>
-          <span>Page {{ currentDivPage }}</span>
-          <button class="pagination-buttons" (click)="changeDivPage('next')" [disabled]="(currentDivPage * rowsPerDivPage) >= divisions.length">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#FFFFFF">
-              <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/>
-            </svg>
-          </button>
-        </div>
-      </section>
-    </div>
-</div>
-
-  <!-- Change Password Modal -->
-  <div class="modal" *ngIf="isPasswordModalVisible" (click)="closeChangePasswordDialog()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <span class="close" (click)="closeChangePasswordDialog()">×</span>
-      <h2>Change Password</h2>
-      <form [formGroup]="passwordForm">
-        <div class="form-column">
-          <input formControlName="currentPassword" type="password" placeholder="Current Password" />
-          <input formControlName="newPassword" type="password" placeholder="New Password"/>
-        </div>
-        <div class="form-column">
-          <input formControlName="confirmPassword" type="password" placeholder="Confirm New Password"/>
-        </div>
-        <div class="form-column full-width">
-          <button type="button" (click)="changePassword()" [disabled]="isChangingPassword">
-            <span *ngIf="isChangingPassword" class="button-spinner"></span>
-            <span *ngIf="!isChangingPassword">Change Password</span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Permissions Modal -->
-  <div class="modal-I" *ngIf="isPermissionsModalVisible" (click)="closePermissionsDialog()">
-    <div class="modal-I-content" (click)="$event.stopPropagation()">
-      <span class="close" (click)="closePermissionsDialog()">×</span>
-      <h2>Manage Permissions</h2>
-      <div class="permissions">
-        <div *ngFor="let permission of allPermissions">
-          <label>
+      <!-- Modal Body -->
+      <div class="modal-body px-4 py-3">
+        <form [formGroup]="addPersonnelForm">
+          <div class="form-floating mb-3">
             <input
-              type="checkbox"
-              [checked]="selectedPermissions.includes(permission.id)"
-              (change)="togglePermission(permission.id, permission.children)"
+              type="text"
+              class="form-control"
+              id="personnel_id"
+              formControlName="personnel_id"
+              placeholder="Personnel ID No."
             />
-            {{ permission.label }}
-          </label>
+            <label for="personnel_id">Personnel ID No.</label>
+          </div>
 
-          <div *ngIf="permission.children" class="nested-permissions">
-            <label *ngFor="let child of permission.children">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="personnel_name"
+              formControlName="personnel_name"
+              placeholder="Name of Technical"
+            />
+            <label for="personnel_name">Name of Technical</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <select class="form-select" id="division" formControlName="division">
+              <option value="" disabled>Select Division</option>
+              <option *ngFor="let division of allDivs" [value]="division.division_id">{{ division.division_name }}</option>
+            </select>
+            <label for="division">Division</label>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="saveAsPersonnel()" [disabled]="isAddingPersonnel">
+          <span *ngIf="isAddingPersonnel" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span *ngIf="!isAddingPersonnel">Save Personnel</span>
+        </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="closeAddPersonnelModal()">Cancel</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!-- Edit User Modal -->
+<div
+  *ngIf="isUserEditModalOpen"
+  class="modal d-block fade show"
+  tabindex="-1"
+  style="background-color: rgba(0, 0, 0, 0.5);"
+  (click)="closeUserEditModal()"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      
+      <!-- Header -->
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title">
+          <i class="bi bi-person-gear me-2"></i> Edit User
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeUserEditModal()" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body px-4 py-3">
+        <form (ngSubmit)="updateUser()">
+          <div class="row g-3">
+            <!-- Name -->
+            <div class="col-md-6">
+              <label for="editUserName" class="form-label">Name</label>
               <input
-                type="checkbox"
-                [checked]="selectedPermissions.includes(child.id)"
-                (change)="togglePermission(child.id)"
+                id="editUserName"
+                type="text"
+                [(ngModel)]="selectedUser.name"
+                name="editUserName"
+                class="form-control"
+                required
               />
-              {{ child.label }}
-            </label>
+            </div>
+
+            <!-- Designation -->
+            <div class="col-md-6">
+              <label for="editUserDesignation" class="form-label">Designation</label>
+              <input
+                id="editUserDesignation"
+                type="text"
+                [(ngModel)]="selectedUser.designation"
+                name="editUserDesignation"
+                class="form-control"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="row g-3 mt-2">
+            <!-- Office -->
+            <div class="col-md-6">
+              <label for="office" class="form-label">Office</label>
+              <select
+                [(ngModel)]="selectedUser.office_id"
+                name="office"
+                id="office"
+                class="form-select"
+                (change)="onEditOfficeChange(selectedUser.office_id)"
+              >
+                <option *ngFor="let office of offices" [value]="office.office_id">
+                  {{ office.office_name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Division -->
+            <div class="col-md-6">
+              <label for="division" class="form-label">Division</label>
+              <select
+                [(ngModel)]="selectedUser.division_id"
+                name="division"
+                id="division"
+                class="form-select"
+              >
+                <option *ngFor="let division of divisions" [value]="division.division_id">
+                  {{ division.division_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Permissions -->
+          <div class="mt-4">
+            <h5 class="mb-3">Manage Permissions</h5>
+
+            <div *ngIf="isLoadingPermissions" class="text-center my-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading permissions...</span>
+              </div>
+              <p class="mt-2">Loading permissions...</p>
+            </div>
+
+            <div *ngIf="!isLoadingPermissions">
+              <div class="form-check ms-2" *ngFor="let perm of allPermissions">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [id]="'editParentPerm' + perm.id"
+                  [checked]="editableSelectedPerms.includes(perm.id)"
+                  (change)="toggleSelectedUserPermission(perm.id, perm.children)"
+                />
+                <label class="form-check-label fw-bold" [for]="'editParentPerm' + perm.id">
+                  {{ perm.label }}
+                </label>
+
+                <!-- Children Permissions -->
+                <div class="ms-4 mt-1" *ngIf="perm.children">
+                  <div class="form-check" *ngFor="let child of perm.children">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [id]="'editChildPerm' + child.id"
+                      [checked]="editableSelectedPerms.includes(child.id)"
+                      (change)="toggleSelectedUserPermission(child.id)"
+                    />
+                    <label class="form-check-label" [for]="'editChildPerm' + child.id">
+                      {{ child.label }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="text-end mt-4">
+            <button
+              type="submit"
+              class="btn btn-dark px-4"
+              [disabled]="isChangingPassword"
+            >
+              <span
+                *ngIf="isChangingPassword"
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ isChangingPassword ? 'Updating...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+<!-- Existing Department/Office Table -->
+<div class="" *ngIf="showDepartmentSection">
+  <div class="card shadow-sm border-o">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h2 class="fw-semibold mb-0">Department Section</h2>
+      <div>
+        <div class="btn-group">
+          <button class="btn btn-outline-primary btn-sm" (click)="openModal()" *ngIf="showAddDepartmentBtn">Add Department +</button>
+          <button class="btn btn-outline-primary btn-sm" (click)="openAddDivisionModal()">Add Division +</button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table *ngIf="!isLoadingFetch" class="table table-bordered table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Office</th>
+              <th scope="col">Office Acronym</th>
+              <th scope="col">Division</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let office of getPaginatedOffices()">
+              <td>{{ office.office_id }}</td>
+              <td>{{ office.office_name }}</td>
+              <td>{{ office.office_value }}</td>
+              <td>
+                <select *ngIf="allDivs.length > 0" class="form-select form-select-sm" [(ngModel)]="office.selectedDivisionId">
+                  <option *ngFor="let division of getDivisionsByOfficeId(office.office_id)" [value]="division.division_id">
+                    {{ division.division_name }}
+                  </option>                  
+                </select>
+              </td>
+              <td class="text-center">
+                <button (click)="openEditModal(office)" class="btn btn-outline-warning btn-sm" *ngIf="showEditDepartmentBtn">
+                  Edit
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div> 
+    </div>
+  </div>
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <small class="text-muted">Page {{ currentDeptPage }}</small>
+    <div class="btn-group">
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        (click)="changeDeptPage('prev')"
+        [disabled]="currentDeptPage === 1"
+      >
+        <i class="bi bi-chevron-left"></i> Previous
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        (click)="changeDeptPage('next')"
+        [disabled]="(currentDeptPage * rowsPerDeptPage) >= users.length"
+      >
+        Next <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+<!-- Add New Office Modal -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  *ngIf="isModalOpen"
+  (click)="closeModal()"
+  style="background-color: rgba(0, 0, 0, 0.5);"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-success text-white rounded-top-4">
+        <h5 class="modal-title fw-semibold">
+          <i class="bi bi-geo-alt-fill me-2"></i> Add New Office
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Close"
+          (click)="closeModal()"
+        ></button>
+      </div>
+
+      <form (ngSubmit)="addOffice()">
+        <div class="modal-body px-4 py-3">
+          <div class="row g-3">
+            <!-- Office Name -->
+            <div class="col-md-12">
+              <label for="officeName" class="form-label">Office Name</label>
+              <input
+                type="text"
+                id="officeName"
+                name="officeName"
+                class="form-control"
+                placeholder="Enter full office name"
+                [(ngModel)]="officeName"
+                (keyup)="officeName = officeName.toUpperCase()"
+                [disabled]="isChangingPassword"
+                required
+              />
+            </div>
+
+            <!-- Office Acronym -->
+            <div class="col-md-12">
+              <label for="officeValue" class="form-label">Office Acronym</label>
+              <input
+                type="text"
+                id="officeValue"
+                name="officeValue"
+                class="form-control"
+                placeholder="Enter office acronym"
+                [(ngModel)]="officeValue"
+                (keyup)="officeValue = officeValue.toUpperCase()"
+                [disabled]="isChangingPassword"
+                required
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <button type="button" (click)="savePermissions()" [disabled]="isAddingPerms">
-        <span *ngIf="isAddingPerms" class="button-spinner"></span>
-        <span *ngIf="!isAddingPerms">Add Permissions</span>
-      </button>
+
+        <div class="modal-footer px-4 py-3 border-0">
+          <button
+            type="submit"
+            class="btn btn-success px-4"
+            [disabled]="isChangingPassword"
+          >
+            <span
+              *ngIf="isChangingPassword"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            {{ isChangingPassword ? 'Adding...' : 'Save Office' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Cancel</button>
+        </div>
+      </form>
     </div>
   </div>
-
-<!-- Add New Office Modal -->
-<div *ngIf="isModalOpen" class="modal-overlay" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h3>Add New Office</h3>
-    <form (ngSubmit)="addOffice()">
-      <input
-        id="officeName"
-        [(ngModel)]="officeName"
-        name="officeName"
-        required
-        (keyup)="officeName = officeName.toUpperCase()"
-        [disabled]="isChangingPassword"
-        placeholder="Office"
-      />
-      <input
-        id="OfficeValue"
-        [(ngModel)]="officeValue"
-        name="officeValue"
-        required
-        (keyup)="officeValue = officeValue.toUpperCase()"
-        [disabled]="isChangingPassword"
-        placeholder="Office Value"
-      />
-
-      <button type="submit" class="submit-btn" [disabled]="isChangingPassword">
-        <span *ngIf="isChangingPassword" class="spinner"></span>
-        {{ isChangingPassword ? 'Adding...' : 'Save' }}
-      </button>
-      <button type="button" (click)="closeModal()">Cancel</button>
-    </form>
-  </div>
 </div>
-
-<!-- Edit Office Modal -->
-<div *ngIf="isEditModalOpen" class="modal-overlay" (click)="closeEditModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <form (ngSubmit)="updateOffice()">
-      <label for="editOfficeName">Edit Department</label>
-      <input
-        id="editOfficeName"
-        [(ngModel)]="selectedOffice.office_name"
-        name="editOfficeName"
-        required
-        placeholder="Office Name"
-      />
-      
-      <input
-        id="editOfficeValue"
-        [(ngModel)]="selectedOffice.office_value"  
-        name="editOfficeValue"
-        required
-        placeholder="Office Value"
-      />
-      
-      <button type="submit" class="submit-btn" [disabled]="isChangingPassword">
-        <span *ngIf="isChangingPassword" class="spinner"></span>
-        {{ isChangingPassword ? 'Updating...' : 'Save Changes' }}
-      </button>
-      <button type="button" (click)="closeEditModal()">Cancel</button>
-    </form>
-  </div>
-</div>
-
 <!-- Add New Division Modal -->
-<div *ngIf="isDivisionModalOpen" class="modal-overlay" (click)="closeDivisionModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h3>Add New Division</h3>
-    <form (ngSubmit)="addDivision()">
-      <input
-        id="divisionName"
-        [(ngModel)]="divisionName"
-        name="divisionName"
-        required
-        (keyup)="divisionName = divisionName.toUpperCase()"
-        [disabled]="isChangingPassword"
-        placeholder="Division"
-      />
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  *ngIf="isDivisionModalOpen"
+  (click)="closeAddDivisionModal()"
+  style="background-color: rgba(0, 0, 0, 0.5);"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-success text-white rounded-top-4">
+        <h5 class="modal-title fw-semibold">
+          <i class="bi bi-building-add me-2"></i> Add New Division
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Close"
+          (click)="closeAddDivisionModal()"
+        ></button>
+      </div>
 
-      <button type="submit" class="submit-btn" [disabled]="isChangingPassword">
-        <span *ngIf="isChangingPassword" class="spinner"></span>
-        {{ isChangingPassword ? 'Adding...' : 'Save' }}
-      </button>
-      <button type="button" (click)="closeDivisionModal()">Cancel</button>
-    </form>
+      <form (ngSubmit)="addDivision()">
+        <div class="modal-body px-4 py-3">
+          <div class="row g-3">
+            <!-- Division Name -->
+            <div class="col-md-12">
+              <label for="divisionName" class="form-label">Division Name</label>
+              <input
+                type="text"
+                id="divisionName"
+                name="divisionName"
+                class="form-control"
+                [(ngModel)]="divisionName"
+                placeholder="Enter division name"
+                required
+              />
+            </div>
+
+            <!-- Office Selection -->
+            <div class="col-md-12">
+              <label for="officeSelect" class="form-label">Select Office</label>
+              <select
+                id="officeSelect"
+                name="officeSelect"
+                class="form-select"
+                [(ngModel)]="selectedOfficeId"
+                required
+              >
+                <option value="" disabled>Select an Office</option>
+                <option *ngFor="let office of offices" [value]="office.office_id">
+                  {{ office.office_name }} ({{ office.office_value }})
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 py-3 border-0">
+          <button
+            type="submit"
+            class="btn btn-success px-4"
+            [disabled]="isChangingPassword"
+          >
+            <span
+              *ngIf="isChangingPassword"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            {{ isChangingPassword ? 'Adding...' : 'Save Division' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="closeAddDivisionModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
+<!-- Edit Office Modal -->
+<div
+  *ngIf="isEditModalOpen"
+  class="modal d-block fade show"
+  tabindex="-1"
+  style="background-color: rgba(0, 0, 0, 0.5);"
+  (click)="closeEditModal()"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title">
+          <i class="bi bi-pencil-square me-2"></i> Edit Office
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeEditModal()" aria-label="Close"></button>
+      </div>
 
-<!-- Edit Division Modal -->
-<div *ngIf="isEditDivisionModalOpen" class="modal-overlay" (click)="closeDivisionModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <form (ngSubmit)="updateDivision()">
-      <label for="editDivisionName">Edit Division</label>
-      <input
-        id="editDivisionName"
-        [(ngModel)]="selectedDivision.division_name"
-        name="editDivisionName"
-        required
-        placeholder="Office Name"
-      />
-      
-      <button type="submit" class="submit-btn" [disabled]="isChangingPassword">
-        <span *ngIf="isChangingPassword" class="spinner"></span>
-        {{ isChangingPassword ? 'Updating...' : 'Save Changes' }}
-      </button>
-      <button type="button" (click)="closeDivisionModal()">Cancel</button>
-    </form>
+      <form (ngSubmit)="updateOffice()">
+        <div class="modal-body px-4 py-3">
+          <div class="row g-3">
+            <!-- Office Name -->
+            <div class="col-md-12">
+              <label for="editOfficeName" class="form-label">Office Name</label>
+              <input
+                type="text"
+                id="editOfficeName"
+                name="editOfficeName"
+                class="form-control"
+                placeholder="Enter office name"
+                [(ngModel)]="selectedOffice.office_name"
+                required
+              />
+            </div>
+
+            <!-- Office Acronym -->
+            <div class="col-md-12">
+              <label for="editOfficeValue" class="form-label">Office Acronym</label>
+              <input
+                type="text"
+                id="editOfficeValue"
+                name="editOfficeValue"
+                class="form-control"
+                placeholder="Enter office acronym"
+                [(ngModel)]="selectedOffice.office_value"
+                required
+              />
+            </div>
+
+            <!-- Division (Optional Display Field) -->
+            <div class="col-md-12">
+              <label for="editSelectedDivision" class="form-label">Division</label>
+              <input
+                type="text"
+                id="editSelectedDivision"
+                name="editSelectedDivision"
+                class="form-control"
+                [(ngModel)]="selectedOffice.selectedDivisionName"
+                placeholder="Division name (optional)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 py-3 border-0">
+          <button
+            type="submit"
+            class="btn btn-dark px-4"
+            [disabled]="isChangingPassword"
+          >
+            <span
+              *ngIf="isChangingPassword"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            {{ isChangingPassword ? 'Updating...' : 'Save Changes' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 

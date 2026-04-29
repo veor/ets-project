@@ -1,0 +1,115 @@
+.confirmation-dialog {
+  padding: 24px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  min-width: 340px;
+}
+
+/* Title */
+.confirmation-dialog h4 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Message text */
+.confirmation-dialog p {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+/* Date label */
+.date-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Date input */
+.date-input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--content-bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+/* Focus state */
+.date-input:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+
+/* Actions */
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Base button */
+.dialog-actions button {
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Cancel  */
+.btn-cancel {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: var(--content-bg);
+}
+
+/* Approve  */
+.btn-confirm {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-confirm:hover {
+  filter: brightness(1.1);
+}
+
+/* Dark mode tuning */
+.dark-mode .confirmation-dialog {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.dark-mode .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Dark mode date input */
+.dark-mode .date-input {
+  background: var(--content-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Calendar icon (Chrome / Edge) */
+.dark-mode .date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.8;
+  cursor: pointer;
+}
+

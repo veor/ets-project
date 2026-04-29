@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Edit User Permissions</h2>
+
+<div *ngIf="loading" class="dialog-loading">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
+
+<form *ngIf="!loading" [formGroup]="permForm">
+  <div mat-dialog-content class="dialog-content">
+    <div formArrayName="perms">
+      <div *ngFor="let parent of permsArray.controls; let i = index"
+           [formGroupName]="i" class="parent-item">
+
+        <mat-checkbox formControlName="allowed" class="parent-checkbox">
+          {{ parent.value.label }}
+        </mat-checkbox>
+
+        <div formArrayName="children" class="children-box">
+          <div *ngFor="let child of getChildrenArray(i).controls; let j = index"
+               [formGroupName]="j" class="child-item">
+
+            <mat-checkbox formControlName="allowed">
+              {{ child.value.label }}
+            </mat-checkbox>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="save()">Save</button>
+  </div>
+</form>

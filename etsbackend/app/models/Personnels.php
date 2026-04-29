@@ -33,6 +33,8 @@ class Personnels extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->setSchema("etsdb");
+        /* --- PRODUCTION --- */
+        // $this->setSchema("qsadmin_etsdb");
         $this->setSource("personnels");
         $this->belongsTo('division_id', '\Divisions', 'division_id', ['alias' => 'Divisions']);
     }
