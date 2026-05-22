@@ -1,0 +1,226 @@
+.dialog-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.template-info-card {
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.info-row {
+  display: flex;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  width: 140px;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.info-value {
+  flex: 1;
+}
+
+.section-header {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-card {
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: #fff;
+}
+
+.task-number {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.task-content {
+  flex: 1;
+}
+
+.task-description {
+  line-height: 1.5;
+  color: #212529;
+}
+
+/* ================================
+   Dialog Title
+=================================== */
+.dialog-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text, #1f2937);
+  display: flex;
+  align-items: center;
+}
+
+/* ================================
+   Template Info Card
+=================================== */
+.template-info-card {
+  background: var(--content-bg, #f7f9fb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, #6b7280);
+}
+
+.info-value {
+  font-weight: 600;
+  color: var(--text, #1f2937);
+}
+
+/* ================================
+   Section Header
+=================================== */
+.section-header {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #6b7280);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+/* ================================
+   Task List
+=================================== */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--content-bg, #f7f9fb);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  transition: background 0.15s;
+}
+
+.task-card:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.task-number {
+  min-width: 24px;
+  height: 24px;
+  background: var(--accent, #1976d2);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.task-description {
+  font-size: 0.875rem;
+  color: var(--text, #1f2937);
+  line-height: 1.5;
+}
+
+/* ================================
+   Dark Mode
+=================================== */
+:host-context(.dark-mode) .dialog-title {
+  color: var(--text);
+}
+
+:host-context(.dark-mode) .template-info-card {
+  background: var(--content-bg);
+  border-color: var(--border);
+}
+
+:host-context(.dark-mode) .info-row {
+  border-bottom-color: var(--border);
+}
+
+:host-context(.dark-mode) .info-label {
+  color: var(--text-muted);
+}
+
+:host-context(.dark-mode) .info-value {
+  color: var(--text);
+}
+
+:host-context(.dark-mode) .section-header {
+  color: var(--text-muted);
+}
+
+:host-context(.dark-mode) .task-card {
+  background: var(--content-bg);
+  border-color: var(--border);
+}
+
+:host-context(.dark-mode) .task-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:host-context(.dark-mode) .task-description {
+  color: var(--text);
+}

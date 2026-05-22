@@ -118,7 +118,7 @@
     </div>
 
     <!-- Hardware Information -->
-  <ng-container *ngIf="!isBranded || isClone">
+  <ng-container *ngIf="isComputer || isPrinter || isNetworkEquipment">
     <div class="section-header">
       Hardware Information
       <span *ngIf="isBranded" class="text-muted">(Optional for branded units)</span>

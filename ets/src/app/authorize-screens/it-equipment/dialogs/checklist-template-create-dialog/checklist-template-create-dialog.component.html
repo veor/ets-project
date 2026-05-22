@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>
+  New Checklist Template
+</h2>
+
+<mat-dialog-content>
+
+  <div class="mb-3">
+    <label>Template Name</label>
+    <input class="form-control"
+      [(ngModel)]="template.template_name">
+  </div>
+
+  <div class="mb-3">
+    <label>Equipment Type</label>
+    <input class="form-control"
+      [(ngModel)]="template.equipment_type">
+  </div>
+
+  <div class="mb-3">
+    <label>Version Year</label>
+    <input type="number"
+      class="form-control"
+      [(ngModel)]="template.version_year">
+  </div>
+
+  <hr>
+
+  <h5>Tasks</h5>
+
+  <div *ngFor="let t of template.tasks; let i = index"
+       class="mb-2">
+
+    <div class="input-group">
+
+      <input class="form-control"
+        [(ngModel)]="t.task_description"
+        placeholder="Task description">
+
+      <button class="btn btn-danger"
+        (click)="removeTask(i)">
+        X
+      </button>
+
+    </div>
+  </div>
+
+  <button class="btn btn-secondary btn-sm mt-2"
+    (click)="addTask()">
+    + Add Task
+  </button>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button class="btn btn-outline-secondary"
+    (click)="close()">
+    Cancel
+  </button>
+
+  <button class="btn btn-primary"
+    (click)="save()">
+    Save
+  </button>
+
+</mat-dialog-actions>

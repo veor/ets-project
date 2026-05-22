@@ -9,6 +9,10 @@ $baseUri='/ets/etsbackend';
 /* --- PRODUCTION --- */
 // $baseUri='https://ets.quezonsystems.com/';
 
+    ////////////////////////
+    /// Users 
+    //////////////////////// 
+
 /* ================= FETCH DIVISION (DROPDOWN SELECT) --- */
     $router->add($baseUri . '/divisions', [
     /* --- PRODUCTION --- */
@@ -41,18 +45,20 @@ $baseUri='/ets/etsbackend';
         'action' => 'getAllOffices',
     ]);
 
+    ////////////////////////
+    /// System
+    //////////////////////// 
+
     $router->add($baseUri . '/updateDivision', [
     // $router->add($baseUri . 'etsbackend/system/updateDivision', [
         'controller' => 'system',
         'action'     => 'updateDivision'
     ]);
-
     // $router->add($baseUri . 'etsbackend/system/addOffice', [
     $router->add($baseUri . '/addOffice', [
         'controller' => 'system',
         'action'     => 'addOffice'
     ]);
-
 /* ================= CREATE NEW USER --- */
     $router->add($baseUri . '/addUser', [
     /* --- PRODUCTION --- */
@@ -60,14 +66,12 @@ $baseUri='/ets/etsbackend';
         'controller' => 'system',
         'action'     => 'addUser',
     ]);
-
 /* ================= GET ALL DIVISIONS --- */
     $router->add($baseUri . '/getAllDivisions', [
     // $router->add($baseUri . 'etsbackend/system/getAllDivisions', [
         'controller' => 'system',
         'action'     => 'getAllDivisions'
     ]);
-
 /* ================= ADD PERSONNEL --- */
     $router->add($baseUri . '/addPersonnel', [
     // $router->add($baseUri . 'etsbackend/system/addPersonnel', [
@@ -81,7 +85,6 @@ $baseUri='/ets/etsbackend';
         'action'     => 'getUserById',
         'id'         => 1
     ]);
-
 
     $router->add($baseUri . '/getUserInfo', [
     // $router->add($baseUri . 'etsbackend/system/getUserInfo', [
@@ -108,5 +111,53 @@ $baseUri='/ets/etsbackend';
         'controller' => 'system',
         'action'     => 'getAllOffices'
     ]);
+
+    ////////////////////////
+    /// PMS
+    //////////////////////// 
+
+/* ================= For getting the personnels for maintenance logs --- */
+    $router->add($baseUri . '/getITStaff', [
+    // $router->add($baseUri . 'etsbackend/pms/getITStaff', [
+        'controller' => 'pms',
+        'action'     => 'getITStaff'
+    ]);
+/* ================= For view checklist template dialog  --- */
+    $router->add(
+        $baseUri . '/getChecklistTemplateDetails/{id}',
+        // $baseUri . 'etsbackend/pms/getChecklistTemplateDetails/{id}',
+        [
+            'controller' => 'pms',
+            'action' => 'getChecklistTemplateDetails',
+            'id' => 1
+        ]
+    );
+/* ================= For creating new checklist template  --- */
+    $router->add(
+        $baseUri . '/createChecklistTemplate',
+        // $baseUri . 'etsbackend/pms/createChecklistTemplate',
+        [
+            'controller' => 'pms',
+            'action' => 'createChecklistTemplate'
+        ]
+    );
+/* ================= Equipment Types for IT Equipment  --- */
+    $router->add($baseUri . '/getEquipmentTypes', [
+    // $router->add($baseUri . 'etsbackend/pms/getEquipmentTypes', [
+        'controller' => 'pms',
+        'action'     => 'getEquipmentTypes'
+    ]);
+
+/* ================= Get Maintenance Log Detail --- */
+$router->add($baseUri . '/pms/getMaintenanceLogDetail', [
+    'controller' => 'pms',
+    'action'     => 'getMaintenanceLogDetail'
+]);
+/* ================= Print PM Checklist PDF --- */
+$router->add($baseUri . '/pms/printMaintenanceChecklist/{id}', [
+    'controller' => 'pms',
+    'action'     => 'printMaintenanceChecklist',
+    'id'         => 1
+]);
 
 $router->handle($_SERVER['REQUEST_URI']);

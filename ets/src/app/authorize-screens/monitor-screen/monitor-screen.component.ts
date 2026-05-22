@@ -398,14 +398,12 @@ filterReports(): void {
           this.reportDetails[controlNo] = response.data;
         } else {
           console.error('Error fetching report details:', response.message);
-          // this.notificationService.showNotification('Failed to fetch report details', 'error');
           this.toast.show('Failed to fetch report details', 'error');
         }
         this.loadingDetails.delete(controlNo);
       },
       (error) => {
         console.error('Error fetching report details:', error);
-        // this.notificationService.showNotification('Error loading report details', 'error');
         this.toast.show('Error loading report details', 'error');
         this.loadingDetails.delete(controlNo);
       }
@@ -445,7 +443,6 @@ filterReports(): void {
               this.approvingReports.delete(id);
               
               if (response.status === 'success') {
-                // this.notificationService.showNotification('Ticket approved successfully!', 'success');
                 this.toast.show('Ticket approved successfully!', 'success');
                 const report = this.reports.find(r => r.id === id);
                 if (report) {
@@ -453,14 +450,12 @@ filterReports(): void {
                 }
                 this.fetchAcceptedReports();
               } else {
-                // this.notificationService.showNotification(response.message || 'Approval failed', 'error');
                 this.toast.show(response.message || 'Approval failed', 'error');
               }
             },
             (error) => {
               this.approvingReports.delete(id);
               console.error('Error approving report:', error);
-              // this.notificationService.showNotification('Error approving report', 'error');
               this.toast.show('Error approving report', 'error');
             }
           );
@@ -506,20 +501,11 @@ filterReports(): void {
         // Save file
         XLSX.writeFile(wb, fileName);
         
-        // Show success notification
-        // this.notificationService.showNotification(
-        //   `Excel file "${fileName}" downloaded successfully!`, 
-        //   'success'
-        // );
         this.toast.show(`Excel file "${fileName}" downloaded successfully!`, 
           'success');
         
       } catch (error) {
         console.error('Error generating Excel file:', error);
-        // this.notificationService.showNotification(
-        //   'Error generating Excel file', 
-        //   'error'
-        // );
         this.toast.show(          'Error generating Excel file', 
           'error');
       }

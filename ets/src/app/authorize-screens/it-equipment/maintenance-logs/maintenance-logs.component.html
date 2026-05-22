@@ -1,131 +1,181 @@
+<div class="container mt-4">
 <div class="container mt-4 maintenance-logs-container">
-
-  <!-- Page Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-    <h3 class="mb-0">Maintenance Logs</h3>
-    <!-- <button class="btn btn-add-device" (click)="openAddDeviceDialog()">
-      <i class="bi bi-plus-lg me-1"></i> Add Device
-    </button> -->
-  </div>
-
-  <!-- Filters Card -->
   <div class="card mb-4">
-    <div class="card-header">Filters &amp; Search</div>
+    <div class="card-header">
+      Filters & Search
+    </div>
+
     <div class="card-body row g-3 align-items-end">
 
-      <!-- Date Range -->
+      <!-- Date From -->
       <div class="col-12 col-md-3">
         <label class="form-label">Date From</label>
-        <input type="date" class="form-control" [(ngModel)]="filters.dateFrom" (change)="applyFilters()">
+        <input
+          type="date"
+          class="form-control"
+          [(ngModel)]="filters.dateFrom"
+        >
       </div>
+
+      <!-- Date To -->
       <div class="col-12 col-md-3">
         <label class="form-label">Date To</label>
-        <input type="date" class="form-control" [(ngModel)]="filters.dateTo" (change)="applyFilters()">
+        <input
+          type="date"
+          class="form-control"
+          [(ngModel)]="filters.dateTo"
+        >
       </div>
 
       <!-- Search -->
       <div class="col-12 col-md-4">
         <label class="form-label">Search</label>
+
         <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-search"></i></span>
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
+          </span>
+
           <input
             type="text"
             class="form-control"
-            placeholder="Search by ref #, issue, staff..."
+            placeholder="Search ref #, issue, staff..."
             [(ngModel)]="filters.search"
-            (input)="applyFilters()"
+            (keyup.enter)="applyFilters()"
           >
         </div>
       </div>
 
-      <!-- Filter by Assigned IT Staff -->
-      <div class="col-12 col-md-2">
-        <label class="form-label">IT Staff</label>
-        <select class="form-select" [(ngModel)]="filters.staff" (change)="applyFilters()">
-          <option value="">All Staff</option>
-          <option *ngFor="let staff of uniqueStaff" [value]="staff">{{ staff }}</option>
-        </select>
+    <!-- Staff -->
+    <div class="col-12 col-md-2">
+      <label class="form-label">IT Staff</label>
+
+      <select
+        class="form-select"
+        [(ngModel)]="filters.staff"
+      >
+        <option value="" disabled selected>Select Staff</option>
+
+        <option *ngFor="let staff of staffList" [value]="staff.id">
+          {{ staff.name }}
+        </option>
+
+      </select>
+    </div>
+
+      <!-- Buttons -->
+      <div class="col-12 d-flex justify-content-end gap-2">
+
+        <button
+          class="btn btn-primary btn-sm"
+          (click)="applyFilters()"
+        >
+          <i class="bi bi-search me-1"></i>
+          Search
+        </button>
+
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="clearFilters()"
+        >
+          <i class="bi bi-x-circle me-1"></i>
+          Clear
+        </button>
+
       </div>
 
-      <!-- Clear Filters -->
-      <div class="col-12 d-flex justify-content-end">
-        <button class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
-          <i class="bi bi-x-circle me-1"></i> Clear Filters
-        </button>
-      </div>
     </div>
   </div>
 
-  <!-- Table Card -->
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+
       <span>Maintenance Records</span>
+
       <div class="d-flex align-items-center gap-2">
-        <label class="form-label mb-0 text-muted small">Rows per page:</label>
-        <select class="form-select form-select-sm w-auto" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+
+        <label class="form-label mb-0 text-muted small">
+          Rows per page:
+        </label>
+
+        <select
+          class="form-select form-select-sm w-auto"
+          [(ngModel)]="pageSize"
+          (change)="onPageSizeChange()"
+        >
           <option [value]="5">5</option>
           <option [value]="10">10</option>
           <option [value]="25">25</option>
           <option [value]="50">50</option>
         </select>
-        <span class="text-muted small">{{ paginationInfo }}</span>
+
+        <span class="text-muted small">
+          {{ paginationInfo }}
+        </span>
+
       </div>
     </div>
 
-    <div class="card-body p-0">
-      <div class="table-responsive">
+    <div class="card-body p-0 position-relative">
+      <!-- Loader Overlay -->
+      <div
+        *ngIf="isLoadingLogs"
+        class="table-loader-overlay"
+      >
+        <app-loader
+          [isLoading]="isLoadingLogs"
+          color="primary"
+        ></app-loader>
+      </div>
+      <div
+        class="table-responsive"
+        [class.table-loading]="isLoadingLogs"
+      >
         <table class="table table-hover mb-0 maintenance-table">
           <thead>
             <tr>
-              <th class="sortable-col" (click)="sort('date')">
-                Date
-                <span class="sort-icon">{{ getSortIcon('date') }}</span>
+              <th (click)="sort('date')" class="sortable-col">
+                Date <span>{{ getSortIcon('date') }}</span>
               </th>
-              <th class="sortable-col" (click)="sort('refNumber')">
-                Ref. #
-                <span class="sort-icon">{{ getSortIcon('refNumber') }}</span>
+              <th (click)="sort('refNumber')" class="sortable-col">
+                Ref # <span>{{ getSortIcon('refNumber') }}</span>
               </th>
-              <th class="sortable-col" (click)="sort('issue')">
-                Issues / Problem
-                <span class="sort-icon">{{ getSortIcon('issue') }}</span>
+              <th (click)="sort('issue')" class="sortable-col">
+                Issue <span>{{ getSortIcon('issue') }}</span>
               </th>
-              <th class="sortable-col" (click)="sort('services')">
-                Service/s Rendered
-                <span class="sort-icon">{{ getSortIcon('services') }}</span>
+              <th (click)="sort('assignedStaff')" class="sortable-col">
+                Assigned Staff <span>{{ getSortIcon('assignedStaff') }}</span>
               </th>
-              <th class="sortable-col" (click)="sort('assignedStaff')">
-                Assigned IT Staff
-                <span class="sort-icon">{{ getSortIcon('assignedStaff') }}</span>
+              <th (click)="sort('actionTaken')" class="sortable-col">
+                Action Taken <span>{{ getSortIcon('actionTaken') }}</span>
               </th>
-              <th class="sortable-col" (click)="sort('actionTaken')">
-                Action Taken
-                <span class="sort-icon">{{ getSortIcon('actionTaken') }}</span>
+              <th (click)="sort('remarks')" class="sortable-col">
+                Remarks <span>{{ getSortIcon('remarks') }}</span>
               </th>
-              <th class="sortable-col" (click)="sort('remarks')">
-                Remarks / Recommendation
-                <span class="sort-icon">{{ getSortIcon('remarks') }}</span>
-              </th>
+              <th>Source</th>
             </tr>
           </thead>
+
           <tbody>
-            <tr *ngFor="let log of pagedLogs">
-              <td>{{ log.date | date: 'MMM dd, yyyy' }}</td>
-              <td>
-                <span class="ref-link" (click)="openChecklist(log)">
-                  {{ log.refNumber }}
-                </span>
-              </td>
+            <tr *ngFor="let log of logs" (click)="openDetail(log)" style="cursor:pointer;">
+              <td>{{ log.date | date:'MMM dd, yyyy' }}</td>
+              <td>{{ log.refNumber }}</td>
               <td>{{ log.issue }}</td>
-              <td>{{ log.services }}</td>
               <td>{{ log.assignedStaff }}</td>
               <td>{{ log.actionTaken }}</td>
               <td>{{ log.remarks }}</td>
+              <td>
+                <span *ngIf="log.source === 'checklist_log'" class="badge bg-success">
+                  Preventive Maintenance
+                </span>
+                <span *ngIf="log.source === 'service_report'" class="badge bg-primary">
+                  E-Ticket
+                </span>
+              </td>
             </tr>
-
-            <!-- Empty State -->
-            <tr *ngIf="pagedLogs.length === 0">
-              <td colspan="6" class="text-center empty-state py-5">
-                <i class="bi bi-clipboard2-x fs-1 d-block mb-2"></i>
+            <tr *ngIf="!isLoadingLogs && logs.length === 0">
+              <td colspan="7" class="text-center py-5">
+                <i class="bi bi-clipboard-x fs-1 d-block mb-2"></i>
                 <span class="text-muted">No maintenance logs found.</span>
               </td>
             </tr>
@@ -134,32 +184,45 @@
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2" *ngIf="filteredLogs.length > 0">
-      <span class="text-muted small">{{ paginationInfo }}</span>
+    <div
+      class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2"
+      *ngIf="totalRecords > 0"
+    >
+      <span class="text-muted small">
+        {{ paginationInfo }}
+      </span>
       <nav>
         <ul class="pagination pagination-sm mb-0">
+
           <li class="page-item" [class.disabled]="currentPage === 1">
             <button class="page-link" (click)="goToPage(1)">«</button>
           </li>
+
           <li class="page-item" [class.disabled]="currentPage === 1">
             <button class="page-link" (click)="goToPage(currentPage - 1)">‹</button>
           </li>
+
           <li
             class="page-item"
             *ngFor="let page of visiblePages"
             [class.active]="page === currentPage"
           >
-            <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            <button class="page-link" (click)="goToPage(page)">
+              {{ page }}
+            </button>
           </li>
+
           <li class="page-item" [class.disabled]="currentPage === totalPages">
             <button class="page-link" (click)="goToPage(currentPage + 1)">›</button>
           </li>
+
           <li class="page-item" [class.disabled]="currentPage === totalPages">
             <button class="page-link" (click)="goToPage(totalPages)">»</button>
           </li>
+
         </ul>
       </nav>
     </div>
+
   </div>
 </div>

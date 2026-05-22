@@ -1,17 +1,21 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { PmService } from '../../../services/pm.service';
+import { LoaderComponent } from '../../../shared/loader/loader.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MaintenanceChecklistDialogComponent } from '../maintenance-checklist-dialog/maintenance-checklist-dialog.component';
+import { MaintenanceLogDetailDialogComponent } from '../dialogs/maintenance-log-detail-dialog/maintenance-log-detail-dialog.component';
 
 export interface MaintenanceLog {
+  id: number;
   date: string;
   refNumber: string;
   issue: string;
-  services: string;
   assignedStaff: string;
   actionTaken: string;
   remarks: string;
+  servicesRendered?: string;
+  source?: string;
 }
 
 @Component({
@@ -21,144 +25,138 @@ export interface MaintenanceLog {
     CommonModule,
     FormsModule,
     DatePipe,
+    LoaderComponent
   ],
   templateUrl: './maintenance-logs.component.html',
   styleUrl: './maintenance-logs.component.css'
 })
 export class MaintenanceLogsComponent implements OnInit {
 
-  logs: MaintenanceLog[] = [
-    {
-      date: '2025-04-10',
-      refNumber: 'ITRM-2025-001',
-      issue: 'System optimization required',
-      services: 'Basic Troubleshooting (1), Data Backup (1)',
-      assignedStaff: 'Juan Dela Cruz',
-      actionTaken: 'Full desktop maintenance',
-      remarks: 'Completed successfully'
-    },
-    {
-      date: '2026-04-11',
-      refNumber: 'APM-2026-002',
-      issue: 'Printer not printing properly',
-      services: 'Basic Troubleshooting (1)',
-      assignedStaff: 'Maria Santos',
-      actionTaken: 'Printer cleaning & calibration',
-      remarks: 'Resolved after nozzle cleaning'
-    },
-    {
-      date: '2026-04-12',
-      refNumber: 'ITRM-2026-003',
-      issue: 'Network downtime in office',
-      services: 'Basic Troubleshooting (1)',
-      assignedStaff: 'Pedro Reyes',
-      actionTaken: 'Switch inspection & cable fix',
-      remarks: 'Loose cable replaced'
-    },
-    {
-      date: '2027-04-13',
-      refNumber: 'APM-2027-004',
-      issue: 'Power backup failure',
-      services: 'Basic Troubleshooting (1), Data Backup (1)',
-      assignedStaff: 'John Cruz',
-      actionTaken: 'UPS inspection',
-      remarks: 'Battery replaced'
-    }
-  ];
+  isLoadingLogs = false;
+  logs: MaintenanceLog[] = [];
+  staffList: any[] = [];
+  
+  filters = {
+    dateFrom: '',
+    dateTo: '',
+    search: '',
+    staff: ''
+  };
 
-  filteredLogs: MaintenanceLog[] = [];
-  pagedLogs: MaintenanceLog[] = [];
-
-  filters = { dateFrom: '', dateTo: '', search: '', staff: '' };
-
-  sortColumn: keyof MaintenanceLog | '' = '';
+  sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
 
   currentPage = 1;
   pageSize = 10;
   totalPages = 1;
+  totalRecords = 0;
 
-  constructor(private dialog: MatDialog) {}
-
-  get uniqueStaff(): string[] {
-    return [...new Set(this.logs.map(l => l.assignedStaff).filter(Boolean))].sort();
-  }
-
-  get paginationInfo(): string {
-    if (this.filteredLogs.length === 0) return 'No records';
-    const start = (this.currentPage - 1) * this.pageSize + 1;
-    const end = Math.min(this.currentPage * this.pageSize, this.filteredLogs.length);
-    return `${start}–${end} of ${this.filteredLogs.length}`;
-  }
-
-  get visiblePages(): number[] {
-    const pages: number[] = [];
-    const range = 2;
-    const start = Math.max(1, this.currentPage - range);
-    const end = Math.min(this.totalPages, this.currentPage + range);
-    for (let i = start; i <= end; i++) pages.push(i);
-    return pages;
-  }
+  constructor(
+    private pmService: PmService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-    this.applyFilters();
+    this.loadITStaff();
+    this.loadMaintenanceLogs();
   }
 
-  openChecklist(log: MaintenanceLog): void {
-    this.dialog.open(MaintenanceChecklistDialogComponent, {
-      width: '1100px',
-      maxWidth: '98vw',
-      maxHeight: '90vh',
-      data: { ...log, year: new Date(log.date).getFullYear() },
-      panelClass: 'checklist-dialog',
+  loadMaintenanceLogs(): void {
+
+    this.isLoadingLogs = true;
+
+    const params: any = {
+      page: this.currentPage,
+      limit: this.pageSize
+    };
+
+    if (this.filters.dateFrom) params.dateFrom = this.filters.dateFrom;
+    if (this.filters.dateTo) params.dateTo = this.filters.dateTo;
+    if (this.filters.search?.trim()) params.search = this.filters.search.trim();
+    if (this.filters.staff) params.staff = this.filters.staff;
+
+    if (this.sortColumn) {
+      params.sortColumn = this.sortColumn;
+      params.sortDirection = this.sortDirection;
+    }
+
+    this.pmService.getMaintenanceLogs(params).subscribe({
+      next: (res: any) => {
+
+        if (res.status === 'success') {
+          this.logs = res.data || [];
+          this.totalRecords = res.pagination?.totalRecords || 0;
+          this.totalPages = res.pagination?.totalPages || 1;
+          this.currentPage = res.pagination?.currentPage || 1;
+        }
+
+        this.isLoadingLogs = false;
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.isLoadingLogs = false;
+      }
     });
   }
 
   applyFilters(): void {
-    let result = [...this.logs];
+    const hasFilters =
+      this.filters.dateFrom ||
+      this.filters.dateTo ||
+      this.filters.search?.trim() ||
+      this.filters.staff;
 
-    if (this.filters.dateFrom) result = result.filter(l => l.date >= this.filters.dateFrom);
-    if (this.filters.dateTo)   result = result.filter(l => l.date <= this.filters.dateTo);
-
-    if (this.filters.search.trim()) {
-      const term = this.filters.search.toLowerCase();
-      result = result.filter(l =>
-        l.refNumber.toLowerCase().includes(term)    ||
-        l.issue.toLowerCase().includes(term)        ||
-        l.services.toLowerCase().includes(term)     ||
-        l.assignedStaff.toLowerCase().includes(term)||
-        l.actionTaken.toLowerCase().includes(term)  ||
-        l.remarks.toLowerCase().includes(term)
-      );
+    if (!hasFilters) {
+      this.logs = [];
+      this.totalRecords = 0;
+      this.totalPages = 1;
+      return;
     }
 
-    if (this.filters.staff) result = result.filter(l => l.assignedStaff === this.filters.staff);
+    this.currentPage = 1;
+    this.loadMaintenanceLogs();
+  }
 
-    if (this.sortColumn) {
-      const col = this.sortColumn;
-      const dir = this.sortDirection === 'asc' ? 1 : -1;
-      result.sort((a, b) => {
-        const av = (a[col] ?? '').toString().toLowerCase();
-        const bv = (b[col] ?? '').toString().toLowerCase();
-        return av < bv ? -dir : av > bv ? dir : 0;
-      });
+  clearFilters(): void {
+
+    this.filters = {
+      dateFrom: '',
+      dateTo: '',
+      search: '',
+      staff: ''
+    };
+
+    this.currentPage = 1;
+    this.sortColumn = '';
+    this.sortDirection = 'asc';
+
+    this.loadMaintenanceLogs();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+
+    this.currentPage = page;
+    this.loadMaintenanceLogs();
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1;
+    this.loadMaintenanceLogs();
+  }
+
+  sort(column: string): void {
+
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
     }
 
-    this.filteredLogs = result;
-    this.totalPages = Math.max(1, Math.ceil(result.length / this.pageSize));
-    if (this.currentPage > this.totalPages) this.currentPage = 1;
-    this.updatePage();
-  }
-
-  updatePage(): void {
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.pagedLogs = this.filteredLogs.slice(start, start + this.pageSize);
-  }
-
-  sort(column: keyof MaintenanceLog): void {
-    this.sortDirection = this.sortColumn === column && this.sortDirection === 'asc' ? 'desc' : 'asc';
-    this.sortColumn = column;
-    this.applyFilters();
+    this.currentPage = 1;
+    this.loadMaintenanceLogs();
   }
 
   getSortIcon(column: string): string {
@@ -166,22 +164,52 @@ export class MaintenanceLogsComponent implements OnInit {
     return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 
-  goToPage(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
-    this.currentPage = page;
-    this.updatePage();
+  get paginationInfo(): string {
+
+    if (this.totalRecords === 0) return 'No records';
+
+    const start = (this.currentPage - 1) * this.pageSize + 1;
+    const end = Math.min(this.currentPage * this.pageSize, this.totalRecords);
+
+    return `${start}–${end} of ${this.totalRecords}`;
   }
 
-  onPageSizeChange(): void {
-    this.currentPage = 1;
-    this.applyFilters();
+  get visiblePages(): number[] {
+
+    const pages: number[] = [];
+    const range = 2;
+
+    const start = Math.max(1, this.currentPage - range);
+    const end = Math.min(this.totalPages, this.currentPage + range);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 
-  clearFilters(): void {
-    this.filters = { dateFrom: '', dateTo: '', search: '', staff: '' };
-    this.sortColumn = '';
-    this.sortDirection = 'asc';
-    this.currentPage = 1;
-    this.applyFilters();
+  loadITStaff(): void {
+
+    this.pmService.getITStaff().subscribe({
+      next: (res: any) => {
+
+        if (res.status === 'success') {
+          this.staffList = res.data || [];
+        }
+
+      },
+      error: (err) => console.error(err)
+    });
+
+  }
+
+  openDetail(log: MaintenanceLog): void {
+    const rawId = String(log.id).replace('sr_', '').replace('cl_', '');
+    this.dialog.open(MaintenanceLogDetailDialogComponent, {
+      data: { id: rawId, source: log.source },
+      maxWidth: '95vw',
+      maxHeight: '90vh'
+    });
   }
 }

@@ -31,7 +31,6 @@ return new \Phalcon\Config([
         'tcpdfDir'       => APP_PATH . '/library/tcpdf/',
         'cacheDir'       => BASE_PATH . '/cache/',
         'baseUri'        => '/ets/',
-        // 'baseUri'        => 'https://ets.quezonsystems.com/',
     ],
     'jwt' => [
         'secret' => 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456789012345678901234567890abcdef1234567890abcdef',

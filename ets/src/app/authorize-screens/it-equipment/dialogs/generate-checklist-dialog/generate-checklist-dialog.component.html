@@ -1,0 +1,98 @@
+<div class="generate-dialog">
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <h5 class="mb-0">Generate a Checklist</h5>
+
+    <button
+      type="button"
+      class="btn-close"
+      (click)="close()">
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="dialog-body">
+
+    <!-- Equipment Type -->
+    <div class="mb-3">
+      <label class="form-label">
+        Select Equipment Type
+      </label>
+
+      <select
+        class="form-select"
+        [(ngModel)]="selectedEquipmentType"
+        (change)="onEquipmentTypeChange()"
+      >
+        <option value="" disabled selected>
+          Select Equipment Type
+        </option>
+
+        <option
+          *ngFor="let type of equipmentTypes"
+          [value]="type"
+        >
+          {{ type }}
+        </option>
+
+      </select>
+    </div>
+
+    <!-- Checklist Year -->
+    <div class="mb-3">
+      <label class="form-label">
+        Select Checklist Year Template
+      </label>
+
+      <select
+        class="form-select"
+        [(ngModel)]="selectedYear"
+        [disabled]="!selectedEquipmentType"
+      >
+        <option value="" disabled selected>
+          Select Checklist Year
+        </option>
+
+        <option
+          *ngFor="let year of checklistYears"
+          [value]="year.version_year"
+        >
+          {{ year.version_year }}
+        </option>
+
+      </select>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="dialog-footer">
+
+    <button
+      class="btn btn-outline-secondary"
+      (click)="close()"
+    >
+      Cancel
+    </button>
+
+    <button
+      class="btn btn-primary"
+      (click)="generateChecklist()"
+      [disabled]="
+        !selectedEquipmentType ||
+        !selectedYear ||
+        isLoading
+      "
+    >
+      <span
+        *ngIf="isLoading"
+        class="spinner-border spinner-border-sm me-1">
+      </span>
+
+      Generate Checklist
+    </button>
+
+  </div>
+
+</div>

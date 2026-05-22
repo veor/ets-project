@@ -54,9 +54,9 @@ export class EditUserPermsDialogComponent implements OnInit {
       { id: '5.5', label: 'All Data' },
 
     ]},
-    { id: '3.6', label: 'Register Device'},
+    // { id: '3.6', label: 'Register Device'},
     { id: '4.1', label: 'Preventive Maintenance', children: [
-      // { id: '4.3', label: 'Maintenance Log' },
+      { id: '4.3', label: 'Maintenance Log' },
       { id: '4.2', label: 'Device Record' },
     ]},
       { id: '5.1', label: 'Office Request' },

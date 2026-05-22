@@ -5,58 +5,6 @@ declare(strict_types=1);
 class AuthController extends \Phalcon\Mvc\Controller
 {
 
-    public function indexAction()
-    {
-
-    }
-    // public function loginAction()
-    // {   
-    //     $this->view->disable();
-    //     $rawData = $this->request->getJsonRawBody(true);
-        
-    //     $factory = new FilterFactory();
-    //     $locator = $factory->newInstance();
-    
-    //     $id_number = $locator->sanitize($rawData['id_number'], ['int']);
-    //     $password = $locator->sanitize($rawData['password'], ['string']);
-    
-    //     $response_array = ['status' => 'fail', 'message' => 'Invalid credentials.'];
-    
-    //     $user = Users::findFirstByIdNumber($id_number);
-    
-    //     if ($user) {
-    //         if ((int)$user->islocked === 1) {
-    //             $response_array = [
-    //                 'status' => 'fail',
-    //                 'message' => 'Sorry, but your account has been deactivated.'
-    //             ];
-    //         } elseif ($this->security->checkHash($password, $user->password)) {
-    //             $sessionToken = bin2hex(random_bytes(64));
-
-    //             $this->session->set('auth', [
-    //                 'token' => $sessionToken,
-    //                 'id' => $user->id_number,
-    //                 'name' => $user->name,
-    //                 'permissions' => json_decode($user->permissions), 
-    //                 'division_id' => $user->division_id,
-    //                 'office_id' => $user->office_id, 
-    //             ]);
-    //             $user->last_login = date('Y-m-d H:i:s');
-    //             $user->save();
-    //             $response_array = [
-    //                 'status' => 'success',
-    //                 'message' => 'Login successful.',
-    //                 'token' => $sessionToken,
-    //                 'permissions' => $this->session->get('auth')['permissions'],
-    //                 'isActive' => $user->isActive
-    //             ];
-    //         }
-    //     }
-        
-    //         $this->response->setJsonContent($response_array);
-    //         return $this->response->send();
-    // }
-
     public function loginAction()
     {
         try {

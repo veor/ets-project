@@ -131,7 +131,305 @@ body {
 }
 
 
+/* ================================
+   Dark Mode – Cards & Filters
+=================================== */
+.dark-mode .card {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+.dark-mode .card-header {
+  background-color: var(--content-bg);
+  border-bottom-color: var(--border);
+  color: var(--text);
+}
+.dark-mode .card-footer {
+  background-color: var(--content-bg);
+  border-top-color: var(--border);
+  color: var(--text-muted);
+}
+.dark-mode .card-body {
+  background-color: var(--surface);
+  color: var(--text);
+}
 
+/* ================================
+   Dark Mode – Table
+=================================== */
+.dark-mode .equipment-table {
+  color: var(--text);
+  background-color: var(--surface);
+}
+.dark-mode .equipment-table thead {
+  background-color: var(--content-bg);
+}
+.dark-mode .equipment-table thead th {
+  background-color: var(--content-bg);
+  color: var(--text-muted);
+  border-bottom-color: var(--border);
+}
+.dark-mode .equipment-table tbody td {
+  border-bottom-color: var(--border);
+  color: var(--text);
+}
+.dark-mode .equipment-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+.dark-mode .sortable-col:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+/* Override Bootstrap table CSS variables */
+.dark-mode .table,
+.dark-mode .table > :not(caption) > * > * {
+  --bs-table-bg: var(--surface);
+  --bs-table-color: var(--text);
+  --bs-table-border-color: var(--border);
+  background-color: var(--surface);
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+.dark-mode .table-hover > tbody > tr:hover > * {
+  --bs-table-accent-bg: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+.dark-mode .table-responsive {
+  background-color: var(--surface);
+}
+
+/* ================================
+   Dark Mode – Status Badges
+=================================== */
+.dark-mode .badge-servicable {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+}
+.dark-mode .badge-unservicable {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+.dark-mode .badge-disposal {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+}
+
+/* ================================
+   Dark Mode – Form Controls
+=================================== */
+.dark-mode .form-select,
+.dark-mode .form-control {
+  background-color: var(--content-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+.dark-mode .form-select:focus,
+.dark-mode .form-control:focus {
+  background-color: var(--content-bg);
+  border-color: var(--accent);
+  color: var(--text);
+  box-shadow: 0 0 0 0.2rem rgba(100, 181, 246, 0.25);
+}
+.dark-mode .input-group-text {
+  background-color: var(--content-bg);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+.dark-mode .form-label {
+  color: var(--text-muted);
+}
+
+/* ================================
+   Dark Mode – Pagination
+=================================== */
+.dark-mode .page-link {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--accent);
+}
+.dark-mode .page-link:hover {
+  background-color: var(--content-bg);
+  border-color: var(--border);
+  color: var(--accent);
+}
+.dark-mode .page-item.active .page-link {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.dark-mode .page-item.disabled .page-link {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* ================================
+   Dark Mode – Buttons
+=================================== */
+.dark-mode .btn-outline-secondary {
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+.dark-mode .btn-outline-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* ================================
+   Dark Mode – Tab Nav
+=================================== */
+.dark-mode .nav-tabs {
+  border-bottom-color: var(--border);
+}
+.dark-mode .nav-tabs .nav-link {
+  color: var(--text-muted);
+}
+.dark-mode .nav-tabs .nav-link:hover {
+  color: var(--accent);
+  background-color: rgba(100, 181, 246, 0.07);
+}
+.dark-mode .nav-tabs .nav-link.active {
+  color: var(--accent);
+  background-color: var(--surface);
+  border-color: var(--border) var(--border) var(--surface);
+}
+.dark-mode .tab-content-wrapper {
+  border-color: var(--border);
+  background-color: var(--surface);
+}
+
+/* ================================
+   Dark Mode – Misc
+=================================== */
+.dark-mode .text-muted {
+  color: var(--text-muted) !important;
+}
+.dark-mode h3 {
+  color: var(--text);
+}
+
+
+/* ================================
+   Dialog – Base Style
+=================================== */
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border);
+  border-radius: 10px !important;
+}
+
+.mat-mdc-dialog-container h2[mat-dialog-title],
+.mat-mdc-dialog-container .mat-mdc-dialog-title {
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+
+.mat-mdc-dialog-content {
+  padding-top: 1rem !important;
+}
+
+.mat-mdc-dialog-content label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.mat-mdc-dialog-content h5 {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.mat-mdc-dialog-content hr {
+  border-color: var(--border);
+  margin: 1rem 0;
+}
+
+.mat-mdc-dialog-actions {
+  border-top: 1px solid var(--border) !important;
+  padding: 0.75rem 1rem !important;
+  gap: 0.5rem;
+}
+
+/* ================================
+   Dialog – Dark Mode Overrides
+=================================== */
+.dark-mode .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border);
+}
+
+.dark-mode .mat-mdc-dialog-container h2[mat-dialog-title],
+.dark-mode .mat-mdc-dialog-container .mat-mdc-dialog-title {
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+/* MDC dialog title caret/close icon color fix */
+.dark-mode .mat-mdc-dialog-title::before {
+  color: var(--text);
+}
+
+.dark-mode .mat-mdc-dialog-content label {
+  color: var(--text-muted);
+}
+
+.dark-mode .mat-mdc-dialog-content h5 {
+  color: var(--text-muted);
+}
+
+.dark-mode .mat-mdc-dialog-content hr {
+  border-color: var(--border);
+}
+
+.dark-mode .mat-mdc-dialog-actions {
+  border-top-color: var(--border) !important;
+  background-color: var(--content-bg);
+}
+
+/* Form controls inside dialog */
+.dark-mode .mat-mdc-dialog-content .form-control {
+  background-color: var(--content-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.dark-mode .mat-mdc-dialog-content .form-control:focus {
+  background-color: var(--content-bg);
+  border-color: var(--accent);
+  color: var(--text);
+  box-shadow: 0 0 0 0.2rem rgba(100, 181, 246, 0.2);
+}
+
+.dark-mode .mat-mdc-dialog-content .form-control::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Input group inside dialog (task rows) */
+.dark-mode .mat-mdc-dialog-content .input-group .form-control {
+  background-color: var(--content-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* Backdrop */
+.dark-mode .cdk-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
 
 
 

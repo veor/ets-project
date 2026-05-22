@@ -4,8 +4,14 @@ import { MaintenanceLogsComponent } from '../it-equipment/maintenance-logs/maint
 import { MatDialog } from '@angular/material/dialog';
 import { RegisterDeviceComponent } from './register-device/register-device.component';
 import { FormsModule } from '@angular/forms';
+import { PmService } from '../../services/pm.service';
+import { ChecklistRecordsComponent } from './checklist-records/checklist-records.component';
+import { MaintenanceChecklistDialogComponent } from './dialogs/maintenance-checklist-dialog/maintenance-checklist-dialog.component';
+import { GenerateChecklistDialogComponent } from './dialogs/generate-checklist-dialog/generate-checklist-dialog.component';
+import { LoaderComponent } from '../../shared/loader/loader.component';
 
 export interface EquipmentRecord {
+  id?: number;
   computerName: string;
   endUser: string;
   accountablePerson: string;
@@ -14,6 +20,7 @@ export interface EquipmentRecord {
   equipmentType: string[];
   par: string;
   status: string;
+  hasChecklist?: boolean;
 }
 
 @Component({
@@ -22,14 +29,19 @@ export interface EquipmentRecord {
   imports: [
     CommonModule,
     FormsModule,
-    MaintenanceLogsComponent
+    MaintenanceLogsComponent,
+    ChecklistRecordsComponent,
+    LoaderComponent
   ],
   templateUrl: './it-equipment.component.html',
   styleUrl: './it-equipment.component.css'
 })
 export class ItEquipmentComponent {
-  activeTab: 'equipment' | 'logs' = 'equipment';
+  isLoadingChecklist = false;
+  activeTab: 'equipment' | 'logs' | 'checklists' = 'equipment';
+  hasActiveFilter = false;
 
+  equipmentTypesList: string[] = [];
   equipment: EquipmentRecord[] = []; 
   filteredEquipment: EquipmentRecord[] = [];
   pagedEquipment: EquipmentRecord[] = [];
@@ -42,16 +54,44 @@ export class ItEquipmentComponent {
   currentPage = 1;
   pageSize = 10;
   totalPages = 1;
-
-  constructor(private dialog: MatDialog) {}
+  
+  constructor(private dialog: MatDialog, private pmService: PmService) {}
 
   ngOnInit(): void {
-    this.applyFilters();
+    this.loadEquipmentTypes();
+    this.hasActiveFilter = false;
+    this.equipment = [];
+    this.filteredEquipment = [];
+    this.pagedEquipment = [];
   }
 
-  get uniqueEquipmentTypes(): string[] {
-    const types = this.equipment.flatMap(e => e.equipmentType ?? []);
-    return [...new Set(types)].sort();
+  loadEquipment(): void {
+    const params = {
+      search: this.filters.search,
+      equipmentType: this.filters.equipmentType,
+      status: this.filters.status,
+      page: this.currentPage,
+      limit: this.pageSize,
+      sortColumn: this.sortColumn,
+      sortDirection: this.sortDirection
+    };
+
+    this.pmService.getEquipmentList(params).subscribe({
+      next: (res: any) => {
+        this.equipment = res.data || [];
+        this.filteredEquipment = res.data || [];
+        this.totalPages = res.pagination?.totalPages || 1;
+        this.pagedEquipment = res.data || [];
+      }
+    });
+  }
+
+  loadEquipmentTypes(): void {
+    this.pmService.getEquipmentTypes().subscribe({
+      next: (res: any) => {
+        this.equipmentTypesList = res.data || [];
+      }
+    });
   }
 
   get paginationInfo(): string {
@@ -71,40 +111,46 @@ export class ItEquipmentComponent {
   }
 
   applyFilters(): void {
-    let result = [...this.equipment];
+    this.isLoadingChecklist = true
+    this.hasActiveFilter =
+      !!this.filters.search.trim() ||
+      !!this.filters.equipmentType ||
+      !!this.filters.status;
 
-    if (this.filters.equipmentType)
-      result = result.filter(e => e.equipmentType?.includes(this.filters.equipmentType));
-
-    if (this.filters.status)
-      result = result.filter(e => e.status === this.filters.status);
-
-    if (this.filters.search.trim()) {
-      const term = this.filters.search.toLowerCase();
-      result = result.filter(e =>
-        e.computerName?.toLowerCase().includes(term)       ||
-        e.endUser?.toLowerCase().includes(term)            ||
-        e.accountablePerson?.toLowerCase().includes(term)  ||
-        e.par?.toLowerCase().includes(term)                ||
-        e.department?.toLowerCase().includes(term)         ||
-        e.equipmentType?.join(' ').toLowerCase().includes(term)
-      );
+    if (!this.hasActiveFilter) {
+      this.equipment = [];
+      this.filteredEquipment = [];
+      this.pagedEquipment = [];
+      this.totalPages = 1;
+      this.isLoadingChecklist = false;
+      return;
     }
 
-    if (this.sortColumn) {
-      const col = this.sortColumn;
-      const dir = this.sortDirection === 'asc' ? 1 : -1;
-      result.sort((a, b) => {
-        const av = (a[col] ?? '').toString().toLowerCase();
-        const bv = (b[col] ?? '').toString().toLowerCase();
-        return av < bv ? -dir : av > bv ? dir : 0;
-      });
-    }
+    const params = {
+      search: this.filters.search,
+      equipmentType: this.filters.equipmentType,
+      status: this.filters.status,
+      page: this.currentPage,
+      limit: this.pageSize,
+      sortColumn: this.sortColumn,
+      sortDirection: this.sortDirection
+    };
 
-    this.filteredEquipment = result;
-    this.totalPages = Math.max(1, Math.ceil(result.length / this.pageSize));
-    if (this.currentPage > this.totalPages) this.currentPage = 1;
-    this.updatePage();
+    this.pmService.getEquipmentList(params).subscribe({
+      next: (res: any) => {
+        this.isLoadingChecklist = false;
+        this.equipment = res.data || [];
+        this.filteredEquipment = res.data || [];
+        this.totalPages = res.pagination?.totalPages || 1;
+        this.currentPage = 1;
+        this.updatePage();
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.isLoadingChecklist = false;
+      }
+    });
   }
 
   updatePage(): void {
@@ -153,6 +199,120 @@ export class ItEquipmentComponent {
     ref.afterClosed().subscribe(result => {
       if (result === 'saved') this.applyFilters(); 
     });
+  }
+
+  openGenerateChecklist(row: EquipmentRecord): void {
+    this.isLoadingChecklist = true;
+    const dialogRef = this.dialog.open(GenerateChecklistDialogComponent, {
+      width: '900px',
+      maxWidth: '98vw',
+      maxHeight: '90vh',
+      panelClass: 'checklist-dialog',
+      data: {
+        equipment: row
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.isLoadingChecklist = false;
+
+      if (result?.status === 'success') {
+        // reopen final checklist dialog (from equipment context)
+        this.dialog.open(MaintenanceChecklistDialogComponent, {
+          width: '1100px',
+          maxWidth: '98vw',
+          maxHeight: '90vh',
+          panelClass: 'checklist-dialog',
+          data: {
+            equipment: row,
+            templateId: result.template.id,
+            templateName: result.template.template_name,
+            equipmentType: result.template.equipment_type,
+            versionYear: result.template.version_year,
+            tasks: result.data
+          }
+        });
+      }
+    });
+  }
+
+  openChecklist(row: EquipmentRecord): void {
+    if (row.hasChecklist) {
+      this.isLoadingChecklist = true;
+      this.pmService
+        .getSavedChecklist(row.id!)
+        .subscribe({
+          next: (res: any) => {
+            this.isLoadingChecklist = false;
+            if (res.status !== 'success') {
+              return;
+            }
+            this.dialog.open(
+              MaintenanceChecklistDialogComponent,
+              {
+                width: '1100px',
+                maxWidth: '98vw',
+                maxHeight: '90vh',
+                panelClass: 'checklist-dialog',
+                data: {
+                  isReadOnly: true,
+                  equipment: {
+                    id: res.data.equipment_id,
+                    computerName:
+                      res.data.device_name,
+                    accountablePerson:
+                      res.data.accountable_person,
+                    par:
+                      res.data.par_ics
+                  },
+                  templateId:
+                    res.data.template_id,
+                  templateName:
+                    res.data.template_name,
+                  equipmentType:
+                    res.data.equipment_type,
+                  versionYear:
+                    res.data.version_year,
+                  findings:
+                    res.data.findings,
+                  recommendation:
+                    res.data.recommendation,
+                  tasks:
+                    res.data.tasks,
+                      signature: res.data.signature,
+  approved_by: res.data.approved_by,
+  verified_by: res.data.verified_by,
+  noted_by: res.data.noted_by,
+  checklistLogId: res.data.id,
+                }
+              });
+          },
+          error: () => {
+            this.isLoadingChecklist = false;
+          }
+        });
+      return;
+    }
+
+    const dialogRef = this.dialog.open(
+      GenerateChecklistDialogComponent,
+      {
+        width: '900px',
+        maxWidth: '98vw',
+        maxHeight: '90vh',
+        panelClass: 'checklist-dialog',
+        data: {
+          equipment: row
+        }
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((saved) => {
+      if (saved) {
+        this.applyFilters();
+      }
+    });
+
   }
 }
 

@@ -1,4 +1,42 @@
-/* Tabs */
+/* ================================
+   Filters Layout
+=================================== */
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+}
+
+.filter-item--sm {
+  min-width: 110px;
+  max-width: 140px;
+}
+
+.filter-item--grow {
+  flex: 1;
+  min-width: 220px;
+}
+
+.filter-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.filter-select {
+  font-size: 0.88rem;
+}
+
+/* ================================
+   Tabs
+=================================== */
 .nav-tabs {
   border-bottom: 2px solid var(--border, #dee2e6);
 }
@@ -33,7 +71,9 @@
   background: var(--surface, #fff);
 }
 
-/* Status badges */
+/* ================================
+   Status Badges
+=================================== */
 .status-badge {
   display: inline-block;
   padding: 0.25em 0.65em;
@@ -57,14 +97,29 @@
   color: #92400e;
 }
 
-/* Table */
-.equipment-table {
+/* ================================
+   Equipment Type Badge
+=================================== */
+.badge-equipment-type {
+  display: inline-block;
+  padding: 0.25em 0.65em;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* ================================
+   Table
+=================================== */
+.checklist-table {
   color: var(--text);
   font-size: 0.9rem;
   width: 100%;
 }
 
-.equipment-table thead th {
+.checklist-table thead th {
   color: var(--text);
   font-weight: 600;
   font-size: 0.82rem;
@@ -76,28 +131,27 @@
   user-select: none;
 }
 
-.equipment-table tbody td {
+.checklist-table tbody td {
   padding: 0.7rem 1rem;
   vertical-align: middle;
   border-bottom: 1px solid var(--border, #dee2e6);
 }
 
-.equipment-table tbody tr:hover {
+.checklist-table tbody tr:hover {
   background: rgba(0, 0, 0, 0.03);
 }
 
-.sortable-col {
+.clickable-row {
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.sortable-col:hover {
-  background: rgba(0, 0, 0, 0.04);
+.clickable-row:hover {
+  background-color: rgba(0,0,0,0.04);
 }
 
-.sort-icon {
-  font-size: 0.75rem;
-  margin-left: 4px;
-  opacity: 0.6;
+.clickable-row:active {
+  transform: scale(0.998);
 }
 
 .empty-state {
@@ -121,9 +175,6 @@
   pointer-events: none;
   opacity: 0.6;
 }
-
-
-
 
 /* ================================
    Dark Mode – Cards & Filters
@@ -170,58 +221,45 @@
   color: var(--text-muted);
 }
 
-.dark-mode .form-label {
+.dark-mode .form-label,
+.dark-mode .filter-label {
   color: var(--text-muted);
 }
 
 /* ================================
    Dark Mode – Table
 =================================== */
-.dark-mode .equipment-table {
+.dark-mode .checklist-table {
   color: var(--text);
 }
 
-.dark-mode .equipment-table thead th {
+.dark-mode .checklist-table thead th {
   background-color: var(--content-bg);
   color: var(--text-muted);
   border-bottom-color: var(--border);
 }
 
-.dark-mode .equipment-table tbody td {
+.dark-mode .checklist-table tbody td {
   border-bottom-color: var(--border);
   color: var(--text);
 }
 
-.dark-mode .equipment-table tbody tr:hover {
+.dark-mode .checklist-table tbody tr:hover {
   background-color: rgba(255, 255, 255, 0.04);
 }
 
-.dark-mode .sortable-col:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Override Bootstrap's default striped/hover table backgrounds */
+/* Override Bootstrap's default hover table backgrounds */
 .dark-mode .table-hover > tbody > tr:hover > * {
   --bs-table-accent-bg: rgba(255, 255, 255, 0.04);
   color: var(--text);
 }
 
 /* ================================
-   Dark Mode – Status Badges
+   Dark Mode – Equipment Type Badge
 =================================== */
-.dark-mode .badge-servicable {
-  background: rgba(16, 185, 129, 0.15);
-  color: #6ee7b7;
-}
-
-.dark-mode .badge-unservicable {
-  background: rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
-}
-
-.dark-mode .badge-disposal {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fcd34d;
+.dark-mode .badge-equipment-type {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
 }
 
 /* ================================
@@ -242,7 +280,8 @@
 .dark-mode .page-item.active .page-link {
   background-color: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: #0d1117;
+  font-weight: 600;
 }
 
 .dark-mode .page-item.disabled .page-link {
@@ -301,6 +340,17 @@
 
 .dark-mode h3 {
   color: var(--text);
+}
+
+/* ================================
+   Dark Mode – Empty State
+=================================== */
+.dark-mode .empty-state {
+  color: var(--text-muted);
+}
+
+.dark-mode .empty-state .bi {
+  opacity: 0.3;
 }
 
 .dark-mode .table-loader-overlay {

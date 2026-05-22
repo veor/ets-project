@@ -1,0 +1,111 @@
+<h2 mat-dialog-title class="dialog-title">
+  <i class="bi bi-card-checklist me-2"></i>
+  Checklist Template Details
+</h2>
+
+<mat-dialog-content>
+
+  <!-- Loading -->
+  <div
+    *ngIf="isLoading"
+    class="text-center py-5"
+  >
+    <div
+      class="spinner-border text-primary"
+      role="status"
+    ></div>
+
+    <p class="mt-3 text-muted">
+      Loading checklist details...
+    </p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && templateData">
+
+    <!-- Template Information -->
+    <div class="template-info-card">
+
+      <div class="info-row">
+        <span class="info-label">
+          Template Name
+        </span>
+
+        <span class="info-value">
+          {{ templateData.template_name }}
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">
+          Equipment Type
+        </span>
+
+        <span class="info-value">
+          {{ templateData.equipment_type }}
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">
+          Version Year
+        </span>
+
+        <span class="info-value">
+          {{ templateData.version_year }}
+        </span>
+      </div>
+
+    </div>
+
+    <!-- Checklist Tasks -->
+    <div class="mt-4">
+
+      <div class="section-header">
+        <i class="bi bi-list-check me-2"></i>
+        Checklist Tasks
+      </div>
+
+      <div class="task-list">
+
+        <div
+          class="task-card"
+          *ngFor="
+            let task of templateData.tasks;
+            let i = index
+          "
+        >
+
+          <div class="task-number">
+            {{ i + 1 }}
+          </div>
+
+          <div class="task-content">
+
+            <div class="task-description">
+              {{ task.task_description }}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button
+    class="btn btn-outline-secondary"
+    (click)="close()"
+  >
+    <i class="bi bi-x-circle me-1"></i>
+    Close
+  </button>
+
+</mat-dialog-actions>

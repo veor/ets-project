@@ -1,0 +1,282 @@
+<div class="dialog-detail-wrapper">
+
+  <!-- Header -->
+  <div class="dialog-detail-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+    <div class="d-flex align-items-center gap-2">
+      <span *ngIf="source === 'service_report'" class="badge bg-primary">E-Ticket</span>
+      <span *ngIf="source === 'checklist_log'" class="badge bg-success">Preventive Maintenance</span>
+      <h5 class="mb-0">Log Detail</h5>
+    </div>
+    <button class="btn btn-sm btn-outline-secondary" (click)="onClose()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+    <div class="mt-2 text-muted small">Loading...</div>
+  </div>
+
+  <!-- E-Ticket Detail -->
+  <div *ngIf="!isLoading && detail && source === 'service_report'" class="dialog-detail-body px-4 py-3">
+
+    <div class="row g-3 mb-3">
+      <div class="col-6 col-md-3">
+        <div class="detail-label">Control No.</div>
+        <div class="detail-value">{{ detail.control_no || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="detail-label">Date Started</div>
+        <div class="detail-value">{{ detail.date_started | date:'MMM dd, yyyy' }}</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="detail-label">Property No.</div>
+        <div class="detail-value">{{ detail.property_no || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="detail-label">Process Time</div>
+        <div class="detail-value">{{ detail.process_time || '—' }}</div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="detail-label">Assigned Personnel</div>
+        <div class="detail-value">{{ detail.personnel_name || '—' }}</div>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="section-label mb-2"><i class="bi bi-tools me-1"></i>Services Rendered</div>
+    <div *ngIf="detail.services?.length; else noServices">
+      <table class="table table-sm table-bordered mb-3">
+        <thead class="table-light">
+          <tr>
+            <th>Service</th>
+            <th>Level</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of detail.services">
+            <td>{{ s.name }}</td>
+            <td>{{ s.level || '—' }}</td>
+            <td>{{ s.quantity || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noServices>
+      <p class="text-muted small mb-3">No services recorded.</p>
+    </ng-template>
+
+    <!-- Action & Remarks -->
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="section-label mb-1"><i class="bi bi-wrench me-1"></i>Action Taken</div>
+        <div class="detail-block">{{ detail.action_taken || '—' }}</div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="section-label mb-1"><i class="bi bi-chat-text me-1"></i>Remarks</div>
+        <div class="detail-block">{{ detail.remarks || '—' }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Preventive Maintenance Detail -->
+  <div *ngIf="!isLoading && detail && source === 'checklist_log'" class="dialog-detail-body px-4 py-3">
+
+    <!-- Equipment Info -->
+    <div class="section-label mb-2"><i class="bi bi-pc-display me-1"></i>Equipment Information</div>
+    <div class="row g-2 mb-3">
+      <div class="col-6 col-md-4">
+        <div class="detail-label">Accountable Person</div>
+        <div class="detail-value">{{ detail.accountable_person || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="detail-label">End User</div>
+        <div class="detail-value">{{ detail.end_user || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="detail-label">Property No. (PAR/ICS)</div>
+        <div class="detail-value">{{ detail.par_ics || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="detail-label">Equipment Type</div>
+        <div class="detail-value">{{ detail.equipment_type?.join(', ') || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="detail-label">Designation</div>
+        <div class="detail-value">{{ detail.designation || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="detail-label">Division</div>
+        <div class="detail-value">{{ detail.division || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="detail-label">Department</div>
+        <div class="detail-value">{{ detail.department || '—' }}</div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="detail-label">Date Performed</div>
+        <div class="detail-value">{{ detail.created_at | date:'MMM dd, yyyy' }}</div>
+      </div>
+    </div>
+
+    <!-- Sign-off -->
+    <div class="row g-2 mb-3">
+      <div class="col-4">
+        <div class="detail-label">Approved By</div>
+        <div class="detail-value">{{ detail.approved_by || '—' }}</div>
+      </div>
+      <div class="col-4">
+        <div class="detail-label">Verified By</div>
+        <div class="detail-value">{{ detail.verified_by || '—' }}</div>
+      </div>
+      <div class="col-4">
+        <div class="detail-label">Noted By</div>
+        <div class="detail-value">{{ detail.noted_by || '—' }}</div>
+      </div>
+    </div>
+
+    <!-- Findings & Recommendation -->
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-6">
+        <div class="section-label mb-1"><i class="bi bi-journal-text me-1"></i>Findings</div>
+        <div class="detail-block">{{ detail.findings || '—' }}</div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="section-label mb-1"><i class="bi bi-lightbulb me-1"></i>Recommendation</div>
+        <div class="detail-block">{{ detail.recommendation || '—' }}</div>
+      </div>
+    </div>
+
+    <!-- Checklist Tasks -->
+    <div class="section-label mb-2 mt-3">
+        <i class="bi bi-check2-square me-1"></i>Checklist Tasks
+    </div>
+    <div *ngIf="detail.tasks?.length; else noTasks" class="table-responsive mb-3">
+    <table class="table table-sm table-bordered checklist-detail-table">
+        <thead class="table-light">
+        <tr>
+            <th style="width:50px;" class="text-center">No.</th>
+            <th>Task</th>
+            <th style="width:80px;" class="text-center">Done</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let t of detail.tasks; let i = index" [class.table-success]="t.done">
+            <td class="text-center">{{ i + 1 }}</td>
+            <td [class.text-decoration-line-through]="t.done" [class.text-muted]="t.done">
+            {{ t.task }}
+            </td>
+            <td class="text-center">
+            <i *ngIf="t.done" class="bi bi-check-circle-fill text-success"></i>
+            <i *ngIf="!t.done" class="bi bi-circle text-muted"></i>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3" class="py-2 px-3">
+            <div class="d-flex align-items-center gap-2">
+                <div class="progress flex-grow-1" style="height:8px;">
+                <div
+                    class="progress-bar"
+                    [class.bg-success]="getTaskProgress() === 100"
+                    [class.bg-primary]="getTaskProgress() < 100"
+                    [style.width.%]="getTaskProgress()"
+                ></div>
+                </div>
+                <span class="text-muted small">
+                {{ getDoneTasks() }} / {{ detail.tasks.length }} done ({{ getTaskProgress() }}%)
+                </span>
+            </div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+    </div>
+    <ng-template #noTasks>
+        <p class="text-muted small mb-3">No checklist tasks recorded.</p>
+    </ng-template>
+
+    <!-- Signature -->
+    <div *ngIf="detail.signature" class="mb-3">
+    <div class="section-label mb-2"><i class="bi bi-pen me-1"></i>Signature</div>
+    <img [src]="detail.signature" alt="Signature" class="border rounded p-2" style="max-width:360px; display:block;" />
+    </div>
+
+    <!-- Hardware -->
+    <div *ngIf="getHardwareItems().length > 0">
+      <div class="section-label mb-2"><i class="bi bi-cpu me-1"></i>Hardware</div>
+      <table class="table table-sm table-bordered mb-3">
+        <thead class="table-light">
+          <tr><th>Component</th><th>Brand</th><th>Serial</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let hw of getHardwareItems()">
+            <td>{{ hw.label }}</td><td>{{ hw.brand }}</td><td>{{ hw.serial }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Memory -->
+    <div *ngIf="detail.memory">
+      <div class="section-label mb-2"><i class="bi bi-memory me-1"></i>Memory</div>
+      <div class="row g-2 mb-3">
+        <div *ngFor="let type of ['RAM','HDD','SSD']" class="col-12 col-md-4">
+          <div class="detail-label mb-1">{{ type }}</div>
+          <div *ngIf="detail.memory[type]?.length; else noMem">
+            <div *ngFor="let m of detail.memory[type]" class="small border rounded p-1 mb-1">
+              {{ m.brand || '—' }} / {{ m.serial || '—' }}
+            </div>
+          </div>
+          <ng-template #noMem><div class="text-muted small">—</div></ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Software -->
+    <div *ngIf="detail.software">
+      <div class="section-label mb-2"><i class="bi bi-windows me-1"></i>Software</div>
+      <div class="row g-2 mb-3">
+        <div class="col-6 col-md-4"><div class="detail-label">Computer Name</div><div class="detail-value">{{ detail.software.computer_name || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">Operating System</div><div class="detail-value">{{ detail.software.operating_system || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">OS License Key</div><div class="detail-value">{{ detail.software.os_license_key || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">Productivity Suite</div><div class="detail-value">{{ detail.software.productivity_suite || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">Productivity License</div><div class="detail-value">{{ detail.software.productivity_license_key || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">Endpoint Protection</div><div class="detail-value">{{ detail.software.endpoint_protection || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">BitLocker Key</div><div class="detail-value">{{ detail.software.bitlocker_key || '—' }}</div></div>
+      </div>
+    </div>
+
+    <!-- Network -->
+    <div *ngIf="detail.network">
+      <div class="section-label mb-2"><i class="bi bi-diagram-3 me-1"></i>Network</div>
+      <div class="row g-2">
+        <div class="col-6 col-md-4"><div class="detail-label">IP Address</div><div class="detail-value">{{ detail.network.ip_address || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">MAC Address</div><div class="detail-value">{{ detail.network.mac_address || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">Internet Access</div><div class="detail-value">{{ detail.network.internet_access || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">Connection Type</div><div class="detail-value">{{ detail.network.connection_type || '—' }}</div></div>
+        <div class="col-6 col-md-4"><div class="detail-label">Internet Permission</div><div class="detail-value">{{ detail.network.internet_permission || '—' }}</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="dialog-detail-footer px-4 py-3 border-top d-flex justify-content-between align-items-center">
+    <button
+        *ngIf="source === 'checklist_log'"
+        class="btn btn-outline-primary btn-sm"
+        (click)="onPrint()"
+    >
+        <i class="bi bi-printer me-1"></i> Print PDF
+    </button>
+    <div class="ms-auto">
+        <button class="btn btn-outline-secondary btn-sm" (click)="onClose()">Close</button>
+    </div>
+    </div>
+
+</div>

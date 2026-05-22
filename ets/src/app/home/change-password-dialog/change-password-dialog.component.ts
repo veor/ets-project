@@ -28,13 +28,11 @@ export class ChangePasswordDialogComponent {
     private authService: AuthService,  
     private http: HttpClient,
     private toast: SnackBarService,
-    // private notificationService: NotificationService,
   ) {}
 
   onSubmit() {
     if (this.newPassword !== this.confirmPassword) {
       this.errorMessage = 'New passwords do not match.';
-      // this.notificationService.showNotification('Password do not match.', 'error');
       this.toast.show('Password do not match.', 'error');
       return;
     }
@@ -46,19 +44,16 @@ export class ChangePasswordDialogComponent {
       .subscribe(
         response => {
           if (response.status === 'success') {
-            // this.notificationService.showNotification('Password changed successfully', 'success');
             this.toast.show('Password changed successfully', 'success');
             this.dialogRef.close(true); 
           } else if (response.status === 'fail' && response.message === 'Current password is incorrect.') {
             this.errorMessage = 'Invalid current password.';
-            // this.notificationService.showNotification('Invalid current password.', 'error');
             this.toast.show('Invalid current password.', 'error');
           } else {
             this.errorMessage = response.message;
           }
         },
         error => {
-          // this.notificationService.showNotification('Error changing password. Please try again later', 'error');
           this.toast.show('Error changing password. Please try again later', 'error');
           this.errorMessage = 'Error changing password. Please try again later.';
         }

@@ -1,0 +1,279 @@
+  <div class="card mb-4">
+  <div class="card-header">
+    <i class="bi bi-funnel me-1"></i>
+    Filters &amp; Search
+  </div>
+
+  <div class="card-body">
+    <div class="filters-row">
+
+      <!-- Year -->
+      <div class="filter-item filter-item--sm">
+        <label class="filter-label">Year</label>
+
+        <select
+          class="form-select filter-select"
+          [(ngModel)]="checklistFilters.year"
+        >
+          <option value="">All Years</option>
+
+          <option
+            *ngFor="let y of availableYears"
+            [value]="y"
+          >
+            {{ y }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Equipment Type -->
+      <div class="filter-item">
+        <label class="filter-label">
+          Equipment Type
+        </label>
+
+        <select
+          class="form-select filter-select"
+          [(ngModel)]="checklistFilters.equipmentType"
+        >
+          <option value="">All Types</option>
+
+          <option
+            *ngFor="let type of uniqueChecklistEquipmentTypes"
+            [value]="type"
+          >
+            {{ type }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Search -->
+      <div class="filter-item filter-item--grow">
+        <label class="filter-label">Search</label>
+
+        <div class="input-group">
+
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
+          </span>
+
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by template name, equipment type, year..."
+            [(ngModel)]="checklistFilters.search"
+            (keyup.enter)="applyChecklistFilters()"
+          />
+
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div
+        class="filter-item"
+        style="
+          justify-content: flex-end;
+          flex-direction: row;
+          align-items: flex-end;
+          gap: 10px;
+        "
+      >
+        <button
+          class="btn btn-primary btn-sm"
+          (click)="applyChecklistFilters()"
+        >
+          <i class="bi bi-search me-1"></i>
+          Search
+        </button>
+
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="clearChecklistFilters()"
+        >
+          <i class="bi bi-x-circle me-1"></i>
+          Clear
+        </button>
+
+        <button
+          class="btn btn-primary btn-sm"
+          (click)="openCreateChecklistDialog()"
+        >
+          <i class="bi bi-plus-circle me-1"></i>
+          New Checklist Template
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- Table Card -->
+<div class="card">
+
+  <div
+    class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2"
+  >
+    <span>Checklist Records</span>
+    <div class="d-flex align-items-center gap-2">
+      <label class="form-label mb-0 text-muted small">
+        Rows per page:
+      </label>
+
+      <select
+        class="form-select form-select-sm w-auto"
+        [(ngModel)]="checklistPageSize"
+        (change)="onChecklistPageSizeChange()"
+      >
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+      </select>
+
+      <span class="text-muted small">
+        {{ checklistPaginationInfo }}
+      </span>
+
+    </div>
+  </div>
+  <div class="card-body p-0 position-relative">
+    <div
+      *ngIf="isLoadingChecklist"
+      class="table-loader-overlay"
+    >
+      <app-loader
+        [isLoading]="isLoadingChecklist"
+        color="primary"
+      ></app-loader>
+    </div>
+
+    <div
+      class="table-responsive"
+      [class.table-loading]="isLoadingChecklist"
+    >
+
+      <table class="table table-hover mb-0 checklist-table">
+        <thead>
+          <tr>
+            <th>Template Name</th>
+            <th>Version Year</th>
+            <th>Equipment Type</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let item of pagedChecklistRecords"
+            class="clickable-row"
+            (click)="openChecklistDialog(item)"
+          >
+            <td>{{ item.templateName }}</td>
+            <td>{{ item.year }}</td>
+            <td>
+              <span class="status-badge badge-equipment-type">
+                {{ item.equipmentType }}
+              </span>
+            </td>
+          </tr>
+
+          <!-- Empty State -->
+          <tr
+            *ngIf="
+              !isLoadingChecklist &&
+              hasSearched &&
+              pagedChecklistRecords.length === 0
+            "
+          >
+            <td
+              colspan="3"
+              class="text-center empty-state py-5"
+            >
+              <i class="bi bi-card-checklist fs-1 d-block mb-2"></i>
+
+              <span class="text-muted">
+                No checklist templates found.
+              </span>
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div
+    class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2"
+    *ngIf="totalRecords > 0"
+  >
+    <span class="text-muted small">
+      {{ checklistPaginationInfo }}
+    </span>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li
+          class="page-item"
+          [class.disabled]="checklistCurrentPage === 1"
+        >
+          <button
+            class="page-link"
+            (click)="goToChecklistPage(1)"
+          >
+            «
+          </button>
+        </li>
+
+        <li
+          class="page-item"
+          [class.disabled]="checklistCurrentPage === 1"
+        >
+          <button
+            class="page-link"
+            (click)="goToChecklistPage(checklistCurrentPage - 1)"
+          >
+            ‹
+          </button>
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of visibleChecklistPages"
+          [class.active]="page === checklistCurrentPage"
+        >
+          <button
+            class="page-link"
+            (click)="goToChecklistPage(page)"
+          >
+            {{ page }}
+          </button>
+
+        </li>
+        <li
+          class="page-item"
+          [class.disabled]="checklistCurrentPage === checklistTotalPages"
+        >
+          <button
+            class="page-link"
+            (click)="goToChecklistPage(checklistCurrentPage + 1)"
+          >
+            ›
+          </button>
+        </li>
+
+        <li
+          class="page-item"
+          [class.disabled]="checklistCurrentPage === checklistTotalPages"
+        >
+          <button
+            class="page-link"
+            (click)="goToChecklistPage(checklistTotalPages)"
+          >
+            »
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

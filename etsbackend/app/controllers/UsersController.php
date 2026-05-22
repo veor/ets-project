@@ -215,7 +215,7 @@ class UsersController extends \Phalcon\Mvc\Controller
 
 
     /*                                                                    */ 
-    /*    Incoming Request: Office Request | Approval Request | Monitor   */
+    /*    Office Approval | ICT Service Monitoring | Department Audit   */
     /*                                                                    */
 
     // fetch reports with column accept value of "1" from itrm_service_report to monitor 
@@ -909,7 +909,7 @@ class UsersController extends \Phalcon\Mvc\Controller
 
 
     /*                  */ 
-    /*    Job Request   */
+    /*    Assigned Ticket   */
     /*                  */
     // fetch data job request for current user
     public function fetchReportsForCurrentUserAction()

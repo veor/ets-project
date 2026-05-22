@@ -65,7 +65,6 @@ export class RequestDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<RequestDialogComponent>, 
     private clientService: ClientService, 
     private toast: SnackBarService
-    // private notificationService: NotificationService
   ) {
     this.dialogRef.disableClose = true;
   }

@@ -9,7 +9,7 @@
         type="button"
         role="tab"
       >
-        <i class="bi bi-pc-display me-1"></i> List of IT Equipment
+        <i class="bi bi-pc-display me-1"></i> IT Equipment
       </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -21,6 +21,17 @@
         role="tab"
       >
         <i class="bi bi-journal-text me-1"></i> Maintenance Logs
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        [class.active]="activeTab === 'checklists'"
+        (click)="activeTab = 'checklists'"
+        type="button"
+        role="tab"
+      >
+        <i class="bi bi-card-checklist me-1"></i> Checklist Record
       </button>
     </li>
   </ul>
@@ -40,43 +51,54 @@
 
       <!-- Filters Card -->
       <div class="card mb-4">
-        <div class="card-header">Filters &amp; Search</div>
+        <div class="card-header mb-5">Filters &amp; Search</div>
         <div class="card-body row g-3 align-items-end">
 
           <!-- Equipment Type -->
           <div class="col-12 col-md-3">
             <label class="form-label">Equipment Type</label>
-            <select class="form-select" [(ngModel)]="filters.equipmentType" (change)="applyFilters()">
-              <option value="">All Types</option>
-              <option *ngFor="let type of uniqueEquipmentTypes" [value]="type">{{ type }}</option>
+            <select class="form-select" [(ngModel)]="filters.equipmentType">
+              <option value="">Select Equipment Type</option>
+              <option *ngFor="let type of equipmentTypesList" [value]="type">{{ type }}</option>
             </select>
           </div>
 
           <!-- Status -->
           <div class="col-12 col-md-2">
             <label class="form-label">Status</label>
-            <select class="form-select" [(ngModel)]="filters.status" (change)="applyFilters()">
+            <select class="form-select" [(ngModel)]="filters.status">
               <option value="">All Status</option>
               <option>Servicable</option>
               <option>Unservicable</option>
-              <option>Disposal</option>
+              <!-- <option>Disposal</option> -->
             </select>
           </div>
 
-          <!-- Search -->
-          <div class="col-12 col-md-4">
-            <label class="form-label">Search</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Search by name, user, PAR #..."
-                [(ngModel)]="filters.search"
-                (input)="applyFilters()"
-              >
-            </div>
+        <!-- Search -->
+        <div class="col-12 col-md-4">
+          <label class="form-label">Search</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search by device name, user, PAR #..."
+              [(ngModel)]="filters.search"
+              (keyup.enter)="applyFilters()"
+            >
+
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="applyFilters()"
+            >
+              Search
+            </button>
           </div>
+        </div>
 
           <!-- Clear -->
           <div class="col-12 d-flex justify-content-end">
@@ -104,60 +126,145 @@
           </div>
         </div>
 
-        <div class="card-body p-0">
-          <div class="table-responsive">
+        <div class="card-body p-0 position-relative">
+
+          <!-- Loader Overlay -->
+          <div
+            *ngIf="isLoadingChecklist"
+            class="table-loader-overlay"
+          >
+            <app-loader
+              [isLoading]="isLoadingChecklist"
+              color="primary"
+            ></app-loader>
+          </div>
+
+          <div
+            class="table-responsive"
+            [class.table-loading]="isLoadingChecklist"
+          >
+
             <table class="table table-hover mb-0 equipment-table">
+
               <thead>
                 <tr>
                   <th class="sortable-col" (click)="sort('computerName')">
-                    Device Name <span class="sort-icon">{{ getSortIcon('computerName') }}</span>
+                    Device Name
+                    <span class="sort-icon">
+                      {{ getSortIcon('computerName') }}
+                    </span>
                   </th>
+
                   <th class="sortable-col" (click)="sort('endUser')">
-                    Assigned User <span class="sort-icon">{{ getSortIcon('endUser') }}</span>
+                    Assigned User
+                    <span class="sort-icon">
+                      {{ getSortIcon('endUser') }}
+                    </span>
                   </th>
+
                   <th class="sortable-col" (click)="sort('accountablePerson')">
-                    Accountable Person <span class="sort-icon">{{ getSortIcon('accountablePerson') }}</span>
+                    Accountable Person
+                    <span class="sort-icon">
+                      {{ getSortIcon('accountablePerson') }}
+                    </span>
                   </th>
+
                   <th class="sortable-col" (click)="sort('department')">
-                    Department <span class="sort-icon">{{ getSortIcon('department') }}</span>
+                    Department
+                    <span class="sort-icon">
+                      {{ getSortIcon('department') }}
+                    </span>
                   </th>
+
                   <th class="sortable-col" (click)="sort('equipmentType')">
-                    Equipment Type <span class="sort-icon">{{ getSortIcon('equipmentType') }}</span>
+                    Equipment Type
+                    <span class="sort-icon">
+                      {{ getSortIcon('equipmentType') }}
+                    </span>
                   </th>
+
                   <th class="sortable-col" (click)="sort('par')">
-                    PAR / ICS # <span class="sort-icon">{{ getSortIcon('par') }}</span>
+                    PAR / ICS #
+                    <span class="sort-icon">
+                      {{ getSortIcon('par') }}
+                    </span>
                   </th>
+
                   <th class="sortable-col" (click)="sort('status')">
-                    Status <span class="sort-icon">{{ getSortIcon('status') }}</span>
+                    Status
+                    <span class="sort-icon">
+                      {{ getSortIcon('status') }}
+                    </span>
+                  </th>
+
+                  <th class="sortable-col">
+                    Action/s
                   </th>
                 </tr>
               </thead>
+
               <tbody>
+
                 <tr *ngFor="let item of pagedEquipment">
                   <td>{{ item.computerName || '—' }}</td>
                   <td>{{ item.endUser }}</td>
                   <td>{{ item.accountablePerson }}</td>
                   <td>{{ item.department }}</td>
-                  <td>{{ item.equipmentType?.join(', ') }}</td>
+                  <td>{{ item.equipmentType.join(', ') }}</td>
                   <td>{{ item.par || '—' }}</td>
+
                   <td>
-                    <span class="status-badge" [ngClass]="{
-                      'badge-servicable':   item.status === 'Servicable',
-                      'badge-unservicable': item.status === 'Unservicable',
-                      'badge-disposal':     item.status === 'Disposal'
-                    }">{{ item.status }}</span>
+                    <span
+                      class="status-badge"
+                      [ngClass]="{
+                        'badge-servicable': item.status === 'Servicable',
+                        'badge-unservicable': item.status === 'Unservicable',
+                        'badge-disposal': item.status === 'Disposal'
+                      }"
+                    >
+                      {{ item.status }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary"
+                      (click)="openChecklist(item)"
+                    >
+                      <i class="bi bi-clipboard-check me-1"></i>
+
+                      {{
+                        item.hasChecklist
+                          ? 'View Checklist'
+                          : 'Generate Checklist'
+                      }}
+                    </button>
                   </td>
                 </tr>
 
                 <!-- Empty State -->
-                <tr *ngIf="pagedEquipment.length === 0">
-                  <td colspan="7" class="text-center empty-state py-5">
-                    <i class="bi bi-pc-display fs-1 d-block mb-2"></i>
-                    <span class="text-muted">No equipment records found.</span>
+                <tr *ngIf="!isLoadingChecklist && !hasActiveFilter">
+                  <td colspan="8" class="text-center empty-state py-5">
+                    <i class="bi bi-search fs-1 d-block mb-2"></i>
+                    <span class="text-muted">
+                      Enter filters or search to display records.
+                    </span>
                   </td>
                 </tr>
+
+                <tr *ngIf="!isLoadingChecklist && hasActiveFilter && pagedEquipment.length === 0">
+                  <td colspan="8" class="text-center empty-state py-5">
+                    <i class="bi bi-pc-display fs-1 d-block mb-2"></i>
+                    <span class="text-muted">
+                      No equipment records found.
+                    </span>
+                  </td>
+                </tr>
+
               </tbody>
+
             </table>
+
           </div>
         </div>
 
@@ -194,6 +301,7 @@
 
     <!-- Maintenance Logs Tab -->
     <app-maintenance-logs *ngIf="activeTab === 'logs'" />
+    <app-checklist-records *ngIf="activeTab === 'checklists'" />
 
   </div>
 </div>

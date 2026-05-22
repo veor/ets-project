@@ -1,20 +1,3 @@
-/* Add Device Button */
-.btn-add-device {
-  background-color: var(--accent, #4299e1);
-  border-color: var(--accent, #4299e1);
-  color: #fff;
-  font-size: 0.9rem;
-  padding: 0.45rem 1rem;
-  border-radius: 6px;
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.btn-add-device:hover {
-  background-color: #57a0d4;
-  border-color: #57a0d4;
-  color: #fff;
-}
-
 /* Container */
 .maintenance-logs-container {
   background: var(--content-bg);
@@ -36,7 +19,6 @@
   border-bottom: 1px solid var(--border);
   padding: 0.75rem 1.25rem;
   color: var(--text);
-  font-weight: 600;
 }
 
 .card-footer {
@@ -186,6 +168,33 @@
 .btn-outline-secondary:hover {
   background: var(--border);
   color: var(--text);
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+  background-color: rgba(0, 123, 255, 0.06);
+}
+
+.table-loader-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(2px);
+}
+
+.table-loading {
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 /* Responsive */

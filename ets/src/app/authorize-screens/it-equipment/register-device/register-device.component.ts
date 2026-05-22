@@ -198,7 +198,7 @@ export class RegisterDeviceComponent implements OnInit {
   // ── Save ────────────────────────────────────────────────
   saveData(): void {
     this.isSavingDevice = true;
-    this.pmService.saveNewDevice(this.formData).subscribe(
+    this.pmService.saveEquipment(this.formData).subscribe(
       (res) => {
         this.isSavingDevice = false;
         if (res.status === 'success') {

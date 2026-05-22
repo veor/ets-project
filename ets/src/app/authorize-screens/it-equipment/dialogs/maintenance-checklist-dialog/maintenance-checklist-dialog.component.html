@@ -1,0 +1,231 @@
+<div class="checklist-wrapper">
+
+  <!-- Dialog Title -->
+  <div class="dialog-title">
+    <button class="btn-close-dialog" (click)="onClose()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <div class="dialog-content">
+
+    <!-- Log Meta Info -->
+    <div class="log-meta row g-2 mb-4">
+      <div class="col-6 col-md-3">
+        <span class="meta-label">Device Name</span>
+        <span class="meta-value">
+          {{ data.equipment?.deviceName || data.equipment?.computerName || 'N/A' }}
+        </span>
+      </div>
+      <div class="col-6 col-md-3">
+        <span class="meta-label">Accountable Person</span>
+        <span class="meta-value">
+          {{ data.equipment?.accountable_person || data.equipment?.accountablePerson || 'N/A' }}
+        </span>
+      </div>
+      <div class="col-6 col-md-3">
+        <span class="meta-label">PAR/ICS</span>
+        <span class="meta-value">
+          {{ data.equipment?.par || data.equipment?.par_ics || 'N/A' }}
+        </span>
+      </div>
+      <div class="col-6 col-md-3">
+        <span class="meta-label">Equipment Type</span>
+        <span class="meta-value">{{ data.equipmentType }}</span>
+      </div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="section-header">
+      <i class="bi bi-check2-square me-2"></i>
+      {{ data.equipmentType }} Maintenance Checklist
+    </div>
+
+    <div class="table-responsive">
+      <div class="alert alert-warning mb-3" *ngIf="isReadOnly">
+        <i class="bi bi-lock me-1"></i>
+        This is an archived checklist (read-only - {{ versionYear }})
+      </div>
+      <table class="table checklist-table">
+        <thead>
+          <tr>
+            <th class="col-no">No.</th>
+            <th class="col-task">Task</th>
+            <th class="col-check">Done</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of checklistTasks; let i = index" [class.row-done]="t.done">
+            <td class="col-no text-center">{{ i + 1 }}</td>
+            <td class="col-task">
+              <span [class.task-done]="t.done">{{ t.task }}</span>
+            </td>
+            <td class="col-check text-center">
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="t.done" (change)="onTaskChange()" [disabled]="isReadOnly">
+                <span class="checkmark"></span>
+              </label>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="progress-row">
+              <div class="d-flex align-items-center gap-2">
+                <div class="progress flex-grow-1">
+                  <div
+                    class="progress-bar"
+                    [style.width.%]="progressPercent"
+                    [class.bg-success]="progressPercent === 100"
+                  ></div>
+                </div>
+                <span class="progress-label">{{ doneTasks }} / {{ checklistTasks.length }} done</span>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Findings & Recommendations -->
+    <div class="section-header mt-4">
+      <i class="bi bi-journal-text me-2"></i>Findings & Recommendations
+    </div>
+    <div class="row g-3 mt-1">
+      <div class="col-12 col-md-6">
+        <label class="form-label">Findings / Remarks</label>
+        <textarea class="form-control" rows="4" [readonly]="isReadOnly" [(ngModel)]="globalFindings"></textarea>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Recommendation</label>
+        <textarea class="form-control" rows="4" [(ngModel)]="globalRecommendation" [readonly]="isReadOnly"></textarea>
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div class="section-header mt-4">
+      <i class="bi bi-pen me-2"></i>Digital Signature
+    </div>
+
+    <div class="mt-3" *ngIf="!isReadOnly">
+      <!-- Show captured signature preview -->
+      <div *ngIf="signatureDataUrl && !isSignaturePadVisible" class="mb-2">
+        <img [src]="signatureDataUrl" alt="Signature" class="border rounded p-2" style="max-width: 420px; display: block;" />
+        <button class="btn btn-sm btn-outline-secondary mt-2" (click)="showSignaturePad()">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Redo Signature
+        </button>
+      </div>
+
+      <!-- Add Signature button -->
+      <div *ngIf="!signatureDataUrl && !isSignaturePadVisible">
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="showSignaturePad()">
+          <i class="bi bi-pen me-1"></i> Add Signature
+        </button>
+      </div>
+
+      <!-- Signature Pad -->
+      <div *ngIf="isSignaturePadVisible" class="signature-container">
+        <canvas #signaturePad class="border rounded" style="cursor: crosshair;"></canvas>
+        <div class="d-flex gap-2 mt-2">
+          <button (click)="clearSignature()" class="btn btn-light btn-sm">
+            <i class="bi bi-eraser me-1"></i> Clear
+          </button>
+          <button (click)="captureSignature()" class="btn btn-success btn-sm">
+            <i class="bi bi-check2 me-1"></i> Done
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signature read-only view -->
+    <div *ngIf="isReadOnly && signatureDataUrl" class="mt-3">
+      <img [src]="signatureDataUrl" alt="Signature" class="border rounded p-2" style="max-width: 420px; display: block;" />
+    </div>
+
+    <!-- Sign-off Fields -->
+    <div class="section-header mt-4">
+      <i class="bi bi-person-check me-2"></i>Sign-off
+    </div>
+    <div class="row g-3 mt-1">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Approved By</label>
+ 
+        <input
+          *ngIf="isReadOnly"
+          type="text"
+          class="form-control"
+          [value]="approvedBy"
+          readonly
+        />
+ 
+        <select
+          *ngIf="!isReadOnly"
+          class="form-select"
+          [(ngModel)]="approvedBy"
+          [disabled]="isLoadingStaff"
+        >
+          <option value="">
+            {{ isLoadingStaff ? 'Loading...' : '— Select personnel —' }}
+          </option>
+          <option *ngFor="let staff of itStaff" [value]="staff.name">
+            {{ staff.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label">Verified By</label>
+ 
+        <input
+          *ngIf="isReadOnly"
+          type="text"
+          class="form-control"
+          [value]="verifiedBy"
+          readonly
+        />
+ 
+        <select
+          *ngIf="!isReadOnly"
+          class="form-select"
+          [(ngModel)]="verifiedBy"
+          [disabled]="isLoadingStaff"
+        >
+          <option value="">
+            {{ isLoadingStaff ? 'Loading...' : '— Select personnel —' }}
+          </option>
+          <option *ngFor="let staff of itStaff" [value]="staff.name">
+            {{ staff.name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label">Noted By</label>
+        <input type="text" class="form-control" [(ngModel)]="notedBy"
+          [readonly]="isReadOnly" placeholder="Enter name" />
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Dialog Actions -->
+  <div class="dialog-actions">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge" [class.badge-complete]="progressPercent === 100" [class.badge-pending]="progressPercent < 100">
+        <i class="bi" [class.bi-check-circle-fill]="progressPercent === 100" [class.bi-hourglass-split]="progressPercent < 100"></i>
+        {{ progressPercent === 100 ? 'All tasks complete' : progressPercent + '% complete' }}
+      </span>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="onClose()">Cancel</button>
+      <button class="btn btn-save" (click)="onSave()" [disabled]="isSaving || isReadOnly">
+        <ng-container *ngIf="isSaving; else saveText">
+          <span class="spinner-border spinner-border-sm me-1"></span> Saving...
+        </ng-container>
+        <ng-template #saveText>
+          <i class="bi bi-floppy me-1"></i> Save Checklist
+        </ng-template>
+      </button>
+    </div>
+  </div>
+
+</div>

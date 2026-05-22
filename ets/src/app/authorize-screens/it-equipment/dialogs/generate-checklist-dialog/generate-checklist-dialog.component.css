@@ -1,0 +1,103 @@
+/* ================================
+   Dialog Layout
+=================================== */
+.generate-dialog {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface, #fff);
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 360px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+  background: var(--surface, #fff);
+}
+
+.dialog-header h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text, #1f2937);
+  margin: 0;
+}
+
+.dialog-body {
+  padding: 1.25rem;
+  background: var(--surface, #fff);
+}
+
+.dialog-body .form-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, #6b7280);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--border, #e5e7eb);
+  background: var(--content-bg, #f7f9fb);
+}
+
+/* ================================
+   Dark Mode
+=================================== */
+:host-context(.dark-mode) .generate-dialog {
+  background: var(--surface);
+}
+
+:host-context(.dark-mode) .dialog-header {
+  background: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+:host-context(.dark-mode) .dialog-header h5 {
+  color: var(--text);
+}
+
+:host-context(.dark-mode) .btn-close {
+  filter: invert(1) grayscale(1) brightness(2);
+}
+
+:host-context(.dark-mode) .dialog-body {
+  background: var(--surface);
+}
+
+:host-context(.dark-mode) .dialog-body .form-label {
+  color: var(--text-muted);
+}
+
+:host-context(.dark-mode) .dialog-body .form-select {
+  background-color: var(--content-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:host-context(.dark-mode) .dialog-body .form-select:focus {
+  background-color: var(--content-bg);
+  border-color: var(--accent);
+  color: var(--text);
+  box-shadow: 0 0 0 0.2rem rgba(100, 181, 246, 0.2);
+}
+
+:host-context(.dark-mode) .dialog-body .form-select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+:host-context(.dark-mode) .dialog-footer {
+  background: var(--content-bg);
+  border-top-color: var(--border);
+}
